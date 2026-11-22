@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+	HiTube Legacy — surface card background: rounded 8dp corners, flat
+	surface fill, neutral outline stroke. No gradient, no fake shadow.
+-->
+<shape xmlns:android="http://schemas.android.com/apk/res/android"
+	android:shape="rectangle">
+
+	<corners android:radius="@dimen/hitube_card_corner_radius" />
+
+	<solid android:color="@color/hitube_surface" />
+
+	<stroke
+		android:width="1dp"
+		android:color="@color/hitube_outline" />
+
+</shape>

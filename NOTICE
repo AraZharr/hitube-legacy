@@ -1,0 +1,43 @@
+HiTube Legacy — NOTICE
+========================
+
+HiTube Legacy is a redesign of SkyTube Legacy, giving it a fresh UI while
+keeping all of its features and its compatibility with old Android devices.
+
+Base project
+------------
+This application is based on:
+
+  SkyTube Legacy
+  https://github.com/SkyTubeTeam/SkyTubeLegacy
+  by SkyTubeTeam and contributors
+  License: GNU General Public License v3.0 (GPL-3.0) — see the LICENSE file.
+
+All credit for the original code, features and years of hard work goes to
+the SkyTubeTeam and the SkyTube Legacy contributors. Without their work,
+this project would not exist.
+
+What changed in this redesign
+-----------------------------
+Only the user interface (UI) was redesigned — a fresh UI with a new, modern
+look following modern Material 3 guidelines: a dark theme with a red accent,
+clean surfaces, rounded thumbnails and cards, and a consistent type scale.
+
+Nothing else changed:
+  * All features work exactly as they did in SkyTube Legacy.
+  * Compatibility with old Android is kept: minSdk 14 (Android 4.0+).
+  * The application ID is unchanged: free.rm.skytube.legacy.
+  * The display name is now "HiTube Legacy".
+
+License
+-------
+HiTube Legacy is free software, released under the same license as the
+project it is based on: the GNU General Public License v3.0 (GPL-3.0).
+See the LICENSE file for the full license text. In accordance with the
+GPL-3.0, the source code of this redesign remains open source under the
+same license.
+
+Trademarks
+----------
+This project is not affiliated with YouTube™ or any of its partners and/or
+products. YouTube™ and Android™ are registered trademarks of Google Inc.

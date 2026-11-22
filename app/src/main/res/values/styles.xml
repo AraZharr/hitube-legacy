@@ -1,0 +1,382 @@
+<resources>
+
+	<!-- HiTube Legacy theme — fresh UI, modern Material 3 dark palette -->
+	<style name="AppTheme" parent="Theme.MaterialComponents">
+		<item name="colorPrimary">@color/hitube_primary</item>
+		<item name="colorPrimaryDark">@color/hitube_background</item>
+		<item name="colorAccent">@color/hitube_primary</item>
+		<item name="colorSecondary">@color/hitube_primary</item>
+		<item name="colorSurface">@color/hitube_surface</item>
+		<item name="colorOnSurface">@color/hitube_on_surface</item>
+		<item name="colorError">@color/hitube_error</item>
+
+		<item name="android:windowBackground">@color/hitube_background</item>
+		<item name="android:colorBackground">@color/hitube_background</item>
+		<item name="android:textColorPrimary">@color/hitube_on_surface</item>
+		<item name="android:textColorSecondary">@color/hitube_on_surface_variant</item>
+
+		<item name="android:popupMenuStyle">@style/PopupMenu</item>
+		<item name="popupMenuStyle">@style/PopupMenu</item>
+
+		<item name="textAppearanceLargePopupMenu">@style/VideoOptionsTextAppearanceLarge</item>
+		<item name="android:textAppearanceLargePopupMenu">@style/VideoOptionsTextAppearanceLarge</item>
+
+		<item name="textAppearanceSmallPopupMenu">@style/VideoOptionsTextAppearanceSmall</item>
+		<item name="android:textAppearanceSmallPopupMenu">@style/VideoOptionsTextAppearanceSmall</item>
+	</style>
+
+	<!-- Settings / Preferences — dark, same palette (was Light before) -->
+	<style name="AppTheme.Preferences" parent="Theme.AppCompat">
+		<item name="colorPrimary">@color/hitube_primary</item>
+		<item name="colorPrimaryDark">@color/hitube_background</item>
+		<item name="colorAccent">@color/hitube_primary</item>
+		<item name="android:windowBackground">@color/hitube_background</item>
+		<item name="android:textColorPrimary">@color/hitube_on_surface</item>
+		<item name="android:textColorSecondary">@color/hitube_on_surface_variant</item>
+	</style>
+
+	<style name="AppTheme.CustomBackground" parent="AppTheme">
+		<item name="android:background">@color/colorPrimary</item>
+	</style>
+
+	<style name="FixedTabs">
+		<item name="android:background">@color/colorPrimary</item>
+		<item name="tabIndicatorColor">@color/colorAccent</item>
+		<item name="tabSelectedTextColor">@color/hitube_on_surface</item>
+		<item name="tabIndicatorHeight">3dp</item>
+		<item name="tabMaxWidth">0dp</item>
+	</style>
+
+	<style name="RegularTextStyle" parent="@style/TextAppearance.AppCompat.Small"></style>
+
+	<!-- *************************************************************************************** -->
+	<!--
+		Typography (Material 3 type scale, system font).
+		"Medium" weight uses sans-serif-medium (API 16+; falls back to the
+		default sans font on API 14-15 — no crash, just a lighter weight).
+	-->
+	<style name="HitubeDisplayLarge" parent="TextAppearance.AppCompat">
+		<item name="android:textSize">34sp</item>
+		<item name="android:fontFamily">sans-serif</item>
+		<item name="android:textStyle">bold</item>
+	</style>
+
+	<style name="HitubeDisplayMedium" parent="TextAppearance.AppCompat">
+		<item name="android:textSize">28sp</item>
+		<item name="android:fontFamily">sans-serif</item>
+		<item name="android:textStyle">bold</item>
+	</style>
+
+	<style name="HitubeHeadlineLarge" parent="TextAppearance.AppCompat">
+		<item name="android:textSize">24sp</item>
+		<item name="android:fontFamily">sans-serif-medium</item>
+	</style>
+
+	<style name="HitubeHeadlineMedium" parent="TextAppearance.AppCompat">
+		<item name="android:textSize">20sp</item>
+		<item name="android:fontFamily">sans-serif-medium</item>
+	</style>
+
+	<style name="HitubeTitleLarge" parent="TextAppearance.AppCompat">
+		<item name="android:textSize">18sp</item>
+		<item name="android:fontFamily">sans-serif-medium</item>
+	</style>
+
+	<style name="HitubeTitleMedium" parent="TextAppearance.AppCompat">
+		<item name="android:textSize">16sp</item>
+		<item name="android:fontFamily">sans-serif-medium</item>
+	</style>
+
+	<style name="HitubeTitleSmall" parent="TextAppearance.AppCompat">
+		<item name="android:textSize">14sp</item>
+		<item name="android:fontFamily">sans-serif-medium</item>
+	</style>
+
+	<style name="HitubeBodyLarge" parent="TextAppearance.AppCompat">
+		<item name="android:textSize">16sp</item>
+	</style>
+
+	<style name="HitubeBodyMedium" parent="TextAppearance.AppCompat">
+		<item name="android:textSize">14sp</item>
+	</style>
+
+	<style name="HitubeBodySmall" parent="TextAppearance.AppCompat">
+		<item name="android:textSize">12sp</item>
+	</style>
+
+	<style name="HitubeLabelLarge" parent="TextAppearance.AppCompat">
+		<item name="android:textSize">14sp</item>
+		<item name="android:fontFamily">sans-serif-medium</item>
+	</style>
+
+	<style name="HitubeLabelMedium" parent="TextAppearance.AppCompat">
+		<item name="android:textSize">12sp</item>
+		<item name="android:fontFamily">sans-serif-medium</item>
+	</style>
+
+	<style name="HitubeLabelSmall" parent="TextAppearance.AppCompat">
+		<item name="android:textSize">11sp</item>
+		<item name="android:fontFamily">sans-serif-medium</item>
+	</style>
+
+	<!-- *************************************************************************************** -->
+	<!--
+		Main Activity
+	-->
+
+	<style name="NoActionBarActivityTheme" parent="AppTheme">
+		<item name="windowActionBar">false</item>
+		<item name="windowNoTitle">true</item>
+		<item name="md_background_color">@color/colorPrimary</item>
+		<item name="md_title_color">@color/hitube_on_surface</item>
+		<item name="md_content_color">@color/hitube_on_surface</item>
+		<item name="md_positive_color">@color/hitube_primary</item>
+		<item name="md_neutral_color">@color/hitube_primary</item>
+		<item name="md_negative_color">@color/hitube_primary</item>
+	</style>
+
+	<style name="BlockedVideoTextView" parent="AppTheme">
+		<item name="android:padding">7dp</item>
+		<item name="android:textColor">@color/dialog_content_text</item>
+	</style>
+
+
+	<!-- *************************************************************************************** -->
+	<!--
+		Video Grid
+	-->
+
+	<style name="GridTextView" parent="AppTheme">
+		<item name="android:layout_width">match_parent</item>
+		<item name="android:layout_height">wrap_content</item>
+		<item name="android:textAppearance">@style/RegularTextStyle</item>
+		<item name="android:textColor">@color/video_cell_text_main</item>
+	</style>
+
+	<!-- Video title: titleMedium (16sp, medium weight) -->
+	<style name="GridTitleTextView" parent="GridTextView">
+		<item name="android:background">@android:color/transparent</item>
+		<item name="android:textSize">16sp</item>
+		<item name="android:fontFamily">sans-serif-medium</item>
+	</style>
+
+	<!-- Badges over the thumbnail (like %, duration): bodySmall on a dark chip -->
+	<style name="GridMicroDetailsTextView" parent="GridTextView">
+		<item name="android:layout_width">wrap_content</item>
+		<item name="android:paddingLeft">6dp</item>
+		<item name="android:paddingRight">6dp</item>
+		<item name="android:paddingTop">2dp</item>
+		<item name="android:paddingBottom">2dp</item>
+		<item name="android:background">@drawable/hitube_badge_background</item>
+		<item name="android:singleLine">true</item>
+		<item name="android:textSize">12sp</item>
+	</style>
+
+	<!-- Channel / views / date: bodySmall, secondary text -->
+	<style name="GridDetailsTextView" parent="GridTextView">
+		<item name="android:textColor">@color/video_cell_text_details</item>
+		<item name="android:singleLine">true</item>
+		<item name="android:textSize">12sp</item>
+	</style>
+
+	<style name="PopupMenu" parent="@android:style/Widget.PopupMenu">
+		<item name="android:popupBackground">@color/popup_menu</item>
+	</style>
+
+	<style name="VideoOptionsTextAppearanceLarge" parent="@style/TextAppearance.AppCompat.Widget.PopupMenu.Large">
+		<item name="android:textColor">@color/video_cell_text_main</item>
+	</style>
+
+	<style name="VideoOptionsTextAppearanceSmall" parent="@style/TextAppearance.AppCompat.Light.Widget.PopupMenu.Small">
+		<item name="android:textColor">@color/video_cell_text_main</item>
+	</style>
+
+
+	<!-- *************************************************************************************** -->
+	<!--
+		Subs Drawer
+	-->
+
+	<style name="SubsTextView" parent="AppTheme">
+		<item name="android:layout_width">wrap_content</item>
+		<item name="android:layout_height">wrap_content</item>
+		<item name="android:textColor">@color/subs_text</item>
+		<item name="android:textSize">14sp</item>
+	</style>
+
+
+	<!-- *************************************************************************************** -->
+	<!--
+		Video Player:  v1 and v2
+	-->
+
+	<style name="VideoPlayerActivityTheme" parent="AppTheme">
+		<item name="android:windowFullscreen">true</item>
+		<item name="windowActionBarOverlay">true</item>
+		<item name="actionBarStyle">@style/VideoPlayerActionBarTheme</item>
+	</style>
+
+	<style name="VideoPlayerActionBarTheme" parent="AppTheme">
+		<item name="background">@color/video_player_hud</item>    <!-- Actionbar background colour -->
+		<item name="displayOptions">showHome|homeAsUp|showTitle</item>
+	</style>
+
+	<!-- Video Description -->
+	<style name="VideoDescTextView" parent="AppTheme">
+		<item name="android:layout_width">wrap_content</item>
+		<item name="android:layout_height">wrap_content</item>
+		<item name="android:textColor">@color/video_player_drawer_text</item>
+		<item name="android:textSize">14sp</item>
+	</style>
+
+	<!-- Comments -->
+	<style name="CommentTextView" parent="AppTheme">
+		<item name="android:layout_width">wrap_content</item>
+		<item name="android:layout_height">wrap_content</item>
+		<item name="android:textColor">@color/comment_text</item>
+		<item name="android:textSize">14sp</item>
+	</style>
+
+	<style name="CommentInfoTextView" parent="CommentTextView">
+		<item name="android:textSize">12sp</item>
+	</style>
+
+	<style name="NoCommentsMsgTextView" parent="CommentTextView">
+	</style>
+
+	<!-- Volume / Brightness indicator -->
+	<style name="VideoPlayerIndicator" parent="LoadingProgressBar" />
+
+
+	<!-- *************************************************************************************** -->
+	<!--
+		Video Player:  v1 and v2
+	-->
+
+	<style name="VideoPlayerSeekBarTetView" parent="AppTheme">
+		<item name="android:layout_width">wrap_content</item>
+		<item name="android:layout_height">match_parent</item>
+		<item name="android:gravity">center_vertical</item>
+		<item name="android:paddingLeft">8dp</item>
+		<item name="android:paddingRight">8dp</item>
+		<item name="android:textColor">@color/hitube_on_surface_variant</item>
+		<item name="android:textSize">12sp</item>
+		<item name="android:textStyle">bold</item>
+	</style>
+
+
+
+	<!-- *************************************************************************************** -->
+	<!--
+		Video Player Tutorial
+	-->
+
+	<style name="HandGestureImageView" parent="AppTheme">
+		<item name="android:layout_width">@dimen/tutorial_hand_gesture_image_width</item>
+		<item name="android:layout_height">wrap_content</item>
+		<item name="android:scaleType">fitXY</item>
+		<item name="android:adjustViewBounds">true</item>
+		<item name="android:layout_marginBottom">8dp</item>
+		<item name="android:layout_marginEnd">8dp</item>
+		<item name="android:layout_marginLeft">8dp</item>
+		<item name="android:layout_marginRight">8dp</item>
+		<item name="android:layout_marginStart">8dp</item>
+	</style>
+
+	<style name="TutorialTextView" parent="@style/TextAppearance.AppCompat.Medium.Inverse">
+		<item name="android:layout_width">0dp</item>
+		<item name="android:layout_height">wrap_content</item>
+		<item name="android:padding">8dp</item>
+		<item name="android:gravity">center_horizontal</item>
+		<item name="android:text">Tutorial text goes here.</item>
+		<item name="android:layout_marginBottom">8dp</item>
+		<item name="android:layout_marginEnd">8dp</item>
+		<item name="android:layout_marginLeft">8dp</item>
+		<item name="android:layout_marginRight">8dp</item>
+		<item name="android:layout_marginStart">8dp</item>
+	</style>
+
+
+	<!-- *************************************************************************************** -->
+	<!--
+		Channel Browser
+	-->
+
+	<style name="ChannelSubsTextView" parent="AppTheme">
+		<item name="android:layout_width">wrap_content</item>
+		<item name="android:layout_height">wrap_content</item>
+		<item name="android:textColor">@color/channel_subs</item>
+		<item name="android:background">@drawable/hitube_badge_background</item>
+		<item name="android:singleLine">true</item>
+		<item name="android:textSize">14sp</item>
+		<item name="android:paddingLeft">8dp</item>
+		<item name="android:paddingRight">8dp</item>
+		<item name="android:paddingTop">4dp</item>
+		<item name="android:paddingBottom">4dp</item>
+	</style>
+
+	<style name="ChannelAboutTextView" parent="AppTheme">
+		<item name="android:textColor">@color/channel_about</item>
+		<item name="android:textSize">14sp</item>
+	</style>
+
+	<style name="PlaylistTitleTextView" parent="ChannelSubsTextView">
+		<item name="android:paddingTop">4dp</item>
+		<item name="android:paddingBottom">4dp</item>
+		<item name="android:paddingLeft">8dp</item>
+		<item name="android:paddingRight">8dp</item>
+	</style>
+
+
+	<!-- *************************************************************************************** -->
+	<!--
+		Subscriptions Feed Tab
+	-->
+
+	<style name="NoItemFoundMsgTextView" parent="AppTheme">
+		<item name="android:layout_width">match_parent</item>
+		<item name="android:layout_height">wrap_content</item>
+		<item name="android:gravity">center</item>
+		<item name="android:layout_marginTop">80dp</item>
+		<item name="android:layout_marginLeft">20dp</item>
+		<item name="android:layout_marginRight">20dp</item>
+		<item name="android:textColor">@color/feed_message_text</item>
+		<item name="android:textSize">16sp</item>
+	</style>
+
+	<style name="ImportSubscriptionsButton" parent="AppTheme">
+		<item name="android:layout_width">wrap_content</item>
+		<item name="android:layout_height">wrap_content</item>
+		<item name="android:layout_gravity">center_horizontal</item>
+		<item name="android:layout_marginTop">20dp</item>
+	</style>
+
+
+
+	<!-- *************************************************************************************** -->
+	<!--
+		PermissionsActivity / Transparent Activity
+	-->
+	<style name="TransparentActivity" parent="AppTheme">
+		<item name="android:windowIsTranslucent">true</item>
+		<item name="android:windowBackground">@android:color/transparent</item>
+		<item name="android:windowContentOverlay">@null</item>
+		<item name="android:windowNoTitle">true</item>
+		<item name="android:windowIsFloating">true</item>
+		<item name="android:backgroundDimEnabled">false</item>
+	</style>
+
+
+	<!-- *************************************************************************************** -->
+	<!--
+		Others
+	-->
+
+	<style name="LoadingProgressBar" parent="AppTheme">
+		<item name="android:layout_width">wrap_content</item>
+		<item name="android:layout_height">wrap_content</item>
+		<item name="android:padding">5dp</item>
+		<item name="android:background">@drawable/loading_rectangle</item>
+	</style>
+
+</resources>

@@ -1,0 +1,28 @@
+<resources>
+	<bool name="is_tablet">false</bool>
+
+	<dimen name="top_level_comment_thumbnail_width">60dp</dimen>
+	<dimen name="child_comment_thumbnail_width">42dp</dimen>
+
+	<dimen name="description_drawer_height">280dp</dimen>
+	<dimen name="comments_drawer_width">300dp</dimen>
+	<dimen name="tutorial_hand_gesture_image_width">100dp</dimen>
+
+	<dimen name="video_grid_progress_bar_top_margin">50dp</dimen>
+	<dimen name="fab_margin">16dp</dimen>
+
+	<!--
+		HiTube Legacy design dimensions (fresh UI, modern Material 3 spacing).
+	-->
+	<dimen name="hitube_list_item_height">64dp</dimen>
+	<dimen name="hitube_list_thumbnail_size">48dp</dimen>
+	<dimen name="hitube_grid_thumbnail_height_big">128dp</dimen>
+	<dimen name="hitube_grid_thumbnail_height_small">104dp</dimen>
+	<dimen name="hitube_thumbnail_corner_radius">6dp</dimen>
+	<dimen name="hitube_card_corner_radius">8dp</dimen>
+	<dimen name="hitube_content_padding_horizontal">12dp</dimen>
+	<dimen name="hitube_content_padding_vertical">12dp</dimen>
+	<dimen name="hitube_item_spacing">12dp</dimen>
+	<dimen name="hitube_grid_item_margin">6dp</dimen>
+	<dimen name="hitube_section_spacing">16dp</dimen>
+</resources>

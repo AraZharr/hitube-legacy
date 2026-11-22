@@ -1,0 +1,135 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+	<!--
+		HiTube Legacy design tokens (fresh UI, following modern Material 3
+		guidelines). The dark variant is this app's default theme; the
+		light tokens are provided for completeness. Every theme colour in
+		this app should reference these tokens, never a raw hex value in a
+		layout or style.
+	-->
+
+	<!-- Dark (app default) -->
+	<color name="hitube_primary">#FF0000</color>          <!-- YouTube red -->
+	<color name="hitube_on_primary">#FFFFFF</color>
+	<color name="hitube_secondary">#AAAAAA</color>
+	<color name="hitube_background">#0F0F0F</color>
+	<color name="hitube_surface">#1D1D1D</color>
+	<color name="hitube_surface_container_high">#262626</color>
+	<color name="hitube_on_surface">#F4F4F4</color>
+	<color name="hitube_on_surface_variant">#B8B8B8</color>
+	<color name="hitube_outline">#343434</color>
+	<color name="hitube_error">#EF5350</color>
+	<!-- Marks that stay YouTube red in every theme -->
+	<color name="hitube_youtube_red">#FF0000</color>
+	<!-- Dark translucent chip used for badges over thumbnails (duration, like %) -->
+	<color name="hitube_badge_background">#CC0F0F0F</color>
+
+	<!-- Light (tokens only; the app theme stays dark) -->
+	<color name="hitube_light_primary">#FF0000</color>
+	<color name="hitube_light_on_primary">#FFFFFF</color>
+	<color name="hitube_light_secondary">#606060</color>
+	<color name="hitube_light_background">#FFFFFF</color>
+	<color name="hitube_light_surface">#F3F3F3</color>
+	<color name="hitube_light_on_surface">#111111</color>
+	<color name="hitube_light_on_surface_variant">#5F5F5F</color>
+	<color name="hitube_light_outline">#D7D7D7</color>
+	<color name="hitube_light_error">#D32F2F</color>
+
+	<!--
+		Legacy SkyTube colour names, re-pointed at the tokens above.
+		Java/Kotlin code and layouts keep using these names; only the values changed.
+	-->
+	<color name="colorPrimary">@color/hitube_surface</color>
+	<color name="colorPrimaryDark">@color/hitube_background</color>
+	<color name="colorAccent">@color/hitube_primary</color>
+	<color name="brightText">@color/hitube_on_surface</color>
+	<color name="darkerText">@color/hitube_on_surface</color>
+
+	<color name="skytube_theme_colour">@color/hitube_primary</color>
+
+	<!--
+		Material Dialog Colors
+	-->
+	<color name="dialog_title">@color/hitube_on_surface</color>
+	<color name="dialog_background">@color/hitube_surface</color>
+	<color name="dialog_content_text">@color/hitube_on_surface</color>
+	<color name="dialog_positive_text">@color/hitube_primary</color>
+	<color name="dialog_negative_text">@color/hitube_primary</color>
+	<color name="dialog_neutral_text">@color/hitube_primary</color>
+	<color name="dialog_row_0">@color/hitube_surface_container_high</color>
+	<color name="dialog_row_1">@color/hitube_surface</color>
+
+	<!--
+		Sponsorblock, contains transparency (functional colours — unchanged)
+	-->
+	<color name="sponsorblock_category_sponsor">#B300d400</color>
+	<color name="sponsorblock_category_selfpromo">#B3ffff00</color>
+	<color name="sponsorblock_category_interaction">#B3cc00ff</color>
+	<color name="sponsorblock_category_music_offtopic">#B3ff9900</color>
+	<color name="sponsorblock_category_intro">#B300ffff</color>
+	<color name="sponsorblock_category_outro">#B30202ed</color>
+	<color name="sponsorblock_category_preview">#B3008fd6</color>
+	<color name="sponsorblock_category_filler">#B37300FF</color>
+
+	<!--
+		Subs Drawer Colours
+	-->
+	<color name="subs_drawer_background">#CC0F0F0F</color>
+	<drawable name="sub_channel_pressed">@color/hitube_surface_container_high</drawable>
+	<drawable name="sub_channel">@android:color/transparent</drawable>
+	<color name="subs_text">@color/hitube_on_surface</color>
+
+
+	<!--
+		Video (Grid) Cells
+	-->
+	<color name="video_cell_background">@color/hitube_surface</color>
+	<color name="video_cell_text_main">@color/hitube_on_surface</color>
+	<color name="video_cell_text_details">@color/hitube_on_surface_variant</color>
+	<color name="video_cell_highlighted_background">@color/hitube_surface_container_high</color>
+
+	<color name="grid_view_background">@color/hitube_background</color>
+	<color name="popup_menu">@color/hitube_surface_container_high</color>
+
+
+	<!--
+		Video Player Tutorial
+	-->
+	<color name="tutorial_background">@color/hitube_surface</color>
+	<color name="tutorial_swipe_area">#277AA2</color>
+
+
+	<!--
+		Video Player Colours
+	-->
+	<!-- Actionbar background colour ~~ which is the same as com.android.internal.R.layout.media_controller
+				(used to be #BB000000) -->
+	<color name="video_player_hud">#CC000000</color>
+	<color name="video_player_drawer_background">@color/video_player_hud</color>
+	<color name="video_player_drawer_text">@color/hitube_on_surface_variant</color>
+
+	<color name="video_desc_like_bar">@color/skytube_theme_colour</color>
+
+	<!-- Comments -->
+	<color name="comment_background">@color/video_player_hud</color>
+	<color name="comment_text">@color/hitube_on_surface_variant</color>
+
+	<!-- Player v2 -->
+	<color name="video_player_v2_hud">#7A000000</color>
+	<color name="video_player_v2_seek_bar">@color/hitube_primary</color>
+
+
+	<!--
+		Channel Browser
+	-->
+	<color name="channel_subs">@color/video_cell_text_main</color>
+	<color name="channel_about">@color/video_cell_text_main</color>
+	<color name="channel_subscribers_bkg">#66000000</color>
+
+
+	<!--
+		Subscriptions Feed
+	-->
+	<color name="feed_message_text">@color/hitube_on_surface</color>
+
+</resources>
