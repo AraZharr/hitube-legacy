@@ -1,0 +1,6 @@
+* Fix autoplay: next video starts from the beginning, no more black screen
+* Small outlined buttons for the Google warning dialog
+* Removed the first-play tutorial
+* App name is now HiTube
+* "Use newer formats" (VP9) off by default on Android below 5.0
+* Version 1.0.0

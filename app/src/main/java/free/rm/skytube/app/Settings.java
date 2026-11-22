@@ -45,7 +45,6 @@ import free.rm.skytube.gui.fragments.SubscriptionsFeedFragment;
  */
 public class Settings {
     private final SkyTubeApp app;
-    private static final String TUTORIAL_COMPLETED = "YouTubePlayerActivity.TutorialCompleted";
     private static final String LATEST_RELEASE_NOTES_DISPLAYED = "Settings.LATEST_RELEASE_NOTES_DISPLAYED";
     private static final String PRIVACY_CONTROL_CHECK_DONE = "Settings.PRIVACY_CONTROL_CHECK_DONE";
     private static final String KEY_ENABLE_SPONSORBLOCK = "pref_key_enable_sponsorblock";
@@ -67,7 +66,7 @@ public class Settings {
         setDefault(sharedPreferences, R.string.pref_key_video_quality, VideoQuality.BEST_QUALITY.name());
         setDefault(sharedPreferences, R.string.pref_key_video_quality_for_downloads, VideoQuality.BEST_QUALITY.name());
         setDefault(sharedPreferences, R.string.pref_key_video_quality_on_mobile, VideoQuality.LEAST_BANDWIDTH.name());
-        setDefault(sharedPreferences, R.string.pref_key_use_newer_formats, Build.VERSION.SDK_INT > 16);
+        setDefault(sharedPreferences, R.string.pref_key_use_newer_formats, Build.VERSION.SDK_INT >= 21);
         setDefault(sharedPreferences, R.string.pref_key_playback_speed, "1.0");
         Set<String> defaultTabs = new HashSet<>();
         defaultTabs.add(MainFragment.FEATURED_VIDEOS_FRAGMENT);
@@ -314,22 +313,6 @@ public class Settings {
         }
         long threeHoursAgo = System.currentTimeMillis() - REFRESH_TIME_IN_MS;
         return subscriptionsLastUpdated <= threeHoursAgo;
-    }
-
-    /**
-     * Will check whether the video player tutorial was completed before.  If no, it will return
-     * false and will save the value accordingly.
-     *
-     * @return True if the tutorial was completed in the past.
-     */
-    public boolean wasTutorialDisplayedBefore() {
-        boolean wasTutorialDisplayedBefore = getPreference(TUTORIAL_COMPLETED, false);
-        setPreference(TUTORIAL_COMPLETED, true);
-        return wasTutorialDisplayedBefore;
-    }
-
-    public void showTutorialAgain() {
-        setPreference(TUTORIAL_COMPLETED, false);
     }
 
     /**

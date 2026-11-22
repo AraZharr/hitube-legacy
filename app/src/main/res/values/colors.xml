@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 	<!--
-		HiTube Legacy design tokens (fresh UI, following modern Material 3
+		HiTube design tokens (fresh UI, following modern Material 3
 		guidelines). The dark variant is this app's default theme; the
 		light tokens are provided for completeness. Every theme colour in
 		this app should reference these tokens, never a raw hex value in a
@@ -15,6 +15,7 @@
 	<color name="hitube_background">#0F0F0F</color>
 	<color name="hitube_surface">#1D1D1D</color>
 	<color name="hitube_surface_container_high">#262626</color>
+	<color name="hitube_dialog_button_pressed">#333333</color>
 	<color name="hitube_on_surface">#F4F4F4</color>
 	<color name="hitube_on_surface_variant">#B8B8B8</color>
 	<color name="hitube_outline">#343434</color>

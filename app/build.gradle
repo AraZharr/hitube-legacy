@@ -12,8 +12,8 @@ android {
         //noinspection ExpiredTargetSdkVersion
         targetSdkVersion 28
 
-        versionName "3.000"    // digits of the *fractional part* shall NOT be > than "9"
-        versionCode 60
+        versionName "1.0.0"
+        versionCode 61
 
         // Third party devs:  pls be ethical and change the below keys
         buildConfigField 'String', 'YOUTUBE_API_KEYS_DEBUG', '""'
@@ -39,7 +39,7 @@ android {
         snapshot {
             initWith debug
             applicationIdSuffix ".snapshot"
-            resValue "string", "app_name", "HiTube Legacy Snapshot"
+            resValue "string", "app_name", "HiTube"
         }
     }
     flavorDimensions "skytube"
@@ -47,7 +47,7 @@ android {
         // 100% Open-Source Edition
         oss {
             applicationIdSuffix ".oss"
-            resValue "string", "app_name", "HiTube Legacy"
+            resValue "string", "app_name", "HiTube"
             resValue "string", "app_flavor", "OSS"
             dimension "skytube"
             buildConfigField 'String[]', 'YOUTUBE_API_KEYS', '{}'

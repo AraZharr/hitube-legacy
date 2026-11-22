@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+	HiTube — small outlined dialog button background (framework dialogs only):
+	rounded 16dp corners, dark fill, 1dp light outline. Pressed/focused state is
+	a touch lighter. The outline is the "line" the user asked for.
+-->
+<selector xmlns:android="http://schemas.android.com/apk/res/android">
+	<item android:state_pressed="true">
+		<shape android:shape="rectangle">
+			<corners android:radius="16dp" />
+			<solid android:color="@color/hitube_dialog_button_pressed" />
+			<stroke android:width="1dp" android:color="@color/hitube_on_surface_variant" />
+		</shape>
+	</item>
+	<item android:state_focused="true">
+		<shape android:shape="rectangle">
+			<corners android:radius="16dp" />
+			<solid android:color="@color/hitube_dialog_button_pressed" />
+			<stroke android:width="1dp" android:color="@color/hitube_on_surface_variant" />
+		</shape>
+	</item>
+	<item>
+		<shape android:shape="rectangle">
+			<corners android:radius="16dp" />
+			<solid android:color="@color/hitube_surface_container_high" />
+			<stroke android:width="1dp" android:color="@color/hitube_on_surface_variant" />
+		</shape>
+	</item>
+</selector>

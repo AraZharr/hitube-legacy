@@ -17,13 +17,20 @@
 
 package free.rm.skytube.gui.businessobjects;
 
+import android.content.Context;
 import android.net.Uri;
+import android.os.Handler;
+import android.os.Looper;
+import android.os.SystemClock;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.annotation.StringRes;
 
 import com.google.android.exoplayer2.DefaultLoadControl;
 import com.google.android.exoplayer2.DefaultRenderersFactory;
+import com.google.android.exoplayer2.ExoPlaybackException;
 import com.google.android.exoplayer2.ExoPlayerFactory;
 import com.google.android.exoplayer2.Player;
 import com.google.android.exoplayer2.SimpleExoPlayer;
@@ -39,6 +46,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 
+import free.rm.skytube.R;
 import free.rm.skytube.app.Settings;
 import free.rm.skytube.app.SkyTubeApp;
 import free.rm.skytube.app.StreamSelectionPolicy;
@@ -100,6 +108,15 @@ public class MiniPlayerManager {
 	/** True while an autoplay advance is in progress (avoids double advances). */
 	private boolean advancing = false;
 
+	/** When the last autoplay-advanced video first started playing (elapsedRealtime ms, 0 = never). */
+	private long lastAdvancePlayStartedMs = 0;
+
+	/** True when the current video was reached via an autoplay advance (not opened by the user). */
+	private boolean lastVideoWasAutoplayAdvanced = false;
+
+	/** A video that ends sooner than this after starting to play is treated as a broken/empty stream. */
+	private static final long MIN_AUTOPLAY_VIDEO_PLAY_MS = 2000;
+
 	private final CompositeDisposable disposables = new CompositeDisposable();
 	private final List<MiniPlayerListener> listeners = new CopyOnWriteArrayList<>();
 
@@ -108,8 +125,27 @@ public class MiniPlayerManager {
 		@Override
 		public void onPlayerStateChanged(boolean playWhenReady, int playbackState) {
 			notifyPlayStateChanged(isPlaying());
+			// Remember when an autoplay-advanced video actually starts playing, so a
+			// video that ends almost immediately can be recognised as a broken/empty
+			// stream (see maybeAdvanceToNext()).
+			if (playbackState == Player.STATE_READY && playWhenReady
+					&& lastVideoWasAutoplayAdvanced && lastAdvancePlayStartedMs == 0) {
+				lastAdvancePlayStartedMs = SystemClock.elapsedRealtime();
+			}
 			if (playbackState == Player.STATE_ENDED) {
 				maybeAdvanceToNext();
+			}
+		}
+
+		@Override
+		public void onPlayerError(ExoPlaybackException error) {
+			// The full player fragment shows its own error dialog when it is in the
+			// foreground. Only surface the error here when the player is minimised
+			// (the fragment is gone, so nobody else reports it) — otherwise the user
+			// would get both a dialog and a toast for the same failure.
+			if (minimized) {
+				Logger.e(this, "Playback error while minimised: " + error, error);
+				showToast(R.string.playback_error_toast);
 			}
 		}
 	};
@@ -193,6 +229,8 @@ public class MiniPlayerManager {
 		currentVideo = null;
 		currentStreamInfo = null;
 		currentResolution = null;
+		lastVideoWasAutoplayAdvanced = false;
+		lastAdvancePlayStartedMs = 0;
 		upNextVideoIds.clear();
 		upNextIndex = -1;
 		minimized = false;
@@ -229,6 +267,8 @@ public class MiniPlayerManager {
 
 	public synchronized void setCurrentVideo(@Nullable YouTubeVideo video) {
 		currentVideo = video;
+		lastVideoWasAutoplayAdvanced = false;
+		lastAdvancePlayStartedMs = 0;
 	}
 
 	@Nullable
@@ -263,6 +303,8 @@ public class MiniPlayerManager {
 			upNextVideoIds.addAll(videoIds);
 		}
 		upNextIndex = currentIndex;
+		lastVideoWasAutoplayAdvanced = false;
+		lastAdvancePlayStartedMs = 0;
 	}
 
 	@NonNull
@@ -315,6 +357,20 @@ public class MiniPlayerManager {
 		if (advancing) {
 			return;
 		}
+		// Guard against a chain of instant ends: if the video that just ended was
+		// itself reached by autoplay and it never really played (it ended before it
+		// started, or within 2 seconds of starting), its stream is broken or empty.
+		// Advancing again would just skip through the rest of the queue showing
+		// black screens, so stop here and tell the user instead.
+		if (lastVideoWasAutoplayAdvanced
+				&& (lastAdvancePlayStartedMs == 0
+						|| SystemClock.elapsedRealtime() - lastAdvancePlayStartedMs < MIN_AUTOPLAY_VIDEO_PLAY_MS)) {
+			Logger.e(this, "Autoplay: last advanced video ended almost immediately, stopping the chain");
+			lastVideoWasAutoplayAdvanced = false;
+			lastAdvancePlayStartedMs = 0;
+			showAutoplayError();
+			return;
+		}
 		Settings settings = SkyTubeApp.getSettings();
 		if (settings == null || !settings.isAutoplayEnabled()) {
 			return;
@@ -328,11 +384,12 @@ public class MiniPlayerManager {
 		disposables.add(
 				YouTubeTasks.getVideoDetails(SkyTubeApp.getContext(), VideoId.create(nextVideoId))
 						.subscribe(
-								video -> {
-									// Got the next video's details: update state and fetch its stream.
-									currentVideo = video;
-									upNextIndex++;
-									notifyVideoChanged(video);
+									video -> {
+									// Got the next video's details — fetch its stream first.
+									// The queue and the UI are only updated in playStream(),
+									// once a playable stream is confirmed, so a failed advance
+									// never leaves the queue/UI pointing at a video that is
+									// not actually playing.
 									disposables.add(
 											YouTubeTasks.getDesiredStream(video, new GetDesiredStreamListener() {
 												@Override
@@ -345,16 +402,19 @@ public class MiniPlayerManager {
 												public void onGetDesiredStreamError(Throwable throwable) {
 													advancing = false;
 													Logger.e(this, "Autoplay: could not get stream for next video: " + throwable, throwable);
+													showAutoplayError();
 												}
 											}).subscribe());
 								},
 								throwable -> {
 									advancing = false;
 									Logger.e(this, "Autoplay: could not get details for next video: " + throwable, throwable);
+									showAutoplayError();
 								},
 								() -> {
 									// Empty (error was already logged by getVideoDetails): nothing to play.
 									advancing = false;
+									showAutoplayError();
 								}));
 	}
 
@@ -370,16 +430,37 @@ public class MiniPlayerManager {
 		StreamSelectionPolicy.StreamSelection selection = selectionPolicy.select(streamInfo);
 		if (selection == null) {
 			Logger.e(this, "Autoplay: no stream available for next video: " + selectionPolicy.getErrorMessage(SkyTubeApp.getContext()));
+			showAutoplayError();
 			return;
 		}
 		Uri videoUri = selection.getVideoStreamUri();
+		if (videoUri == null) {
+			// Audio-only selection: there is no video to show. Never hand a null URI
+			// to the player (it would crash) — report it and stay on the old video.
+			Logger.e(this, "Autoplay: selected stream has no video URI for video " + video.getId());
+			showAutoplayError();
+			return;
+		}
+		// Only now, with a playable stream confirmed, move the queue and the UI to
+		// the new video. Updating them earlier (when the details arrived) left the
+		// queue/UI showing a video the player had never loaded whenever the stream
+		// fetch failed — and skipped that video for good.
+		currentVideo = video;
+		upNextIndex++;
+		notifyVideoChanged(video);
 		Logger.i(this, "Autoplay: playing %s, audio: %s", videoUri, selection.getAudioStreamUri());
 		DatasourceBuilder datasourceBuilder = new DatasourceBuilder(SkyTubeApp.getContext(), player);
 		datasourceBuilder.play(videoUri, selection.getAudioStreamUri(), streamInfo);
+		// prepare() resets the position to 0; seekTo(0) makes the "start from the
+		// beginning" explicit so no stale position can ever carry over.
 		player.seekTo(0);
 		player.setPlayWhenReady(true);
 		currentStreamInfo = streamInfo;
 		currentResolution = selection.getResolution();
+		// Mark this video as autoplay-advanced so a near-instant end (broken/empty
+		// stream) can be recognised in maybeAdvanceToNext() instead of chaining.
+		lastVideoWasAutoplayAdvanced = true;
+		lastAdvancePlayStartedMs = 0;
 	}
 
 	///////////////////////////////////////////////////////////////////////////////////////////////
@@ -410,6 +491,25 @@ public class MiniPlayerManager {
 		for (MiniPlayerListener listener : listeners) {
 			listener.onMiniPlayerClosed();
 		}
+	}
+
+	/**
+	 * Shows a short, visible message when an autoplay advance fails. Without this the
+	 * player would sit on a black/ended screen with no explanation.
+	 */
+	private void showAutoplayError() {
+		showToast(R.string.autoplay_next_video_error);
+	}
+
+	private void showToast(@StringRes int messageResId) {
+		Context context = SkyTubeApp.getContext();
+		if (context == null) {
+			return;
+		}
+		// The advance callbacks already run on the main thread, but post explicitly
+		// so the toast is safe no matter which thread reports the failure.
+		new Handler(Looper.getMainLooper()).post(() ->
+				Toast.makeText(context, messageResId, Toast.LENGTH_LONG).show());
 	}
 
 	///////////////////////////////////////////////////////////////////////////////////////////////

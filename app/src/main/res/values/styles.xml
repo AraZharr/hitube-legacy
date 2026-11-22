@@ -1,6 +1,6 @@
 <resources>
 
-	<!-- HiTube Legacy theme — fresh UI, modern Material 3 dark palette -->
+	<!-- HiTube theme — fresh UI, modern Material 3 dark palette -->
 	<style name="AppTheme" parent="Theme.MaterialComponents">
 		<item name="colorPrimary">@color/hitube_primary</item>
 		<item name="colorPrimaryDark">@color/hitube_background</item>
@@ -27,6 +27,11 @@
 		<!-- Rounded dialogs (28dp corners). Note: only MaterialAlertDialogBuilder
 			reads this; the AppCompat AlertDialog.Builder used in a few places does not. -->
 		<item name="materialAlertDialogTheme">@style/HitubeAlertDialog</item>
+
+		<!-- Framework AlertDialog theme (android.app.AlertDialog — used by the
+			FreeDroidWarn library dialog). Material dialogs are NOT affected: they
+			read materialAlertDialogTheme above. -->
+		<item name="android:alertDialogTheme">@style/HitubeFrameworkAlertDialog</item>
 	</style>
 
 	<style name="HitubeAlertDialog" parent="ThemeOverlay.MaterialComponents.MaterialAlertDialog">
@@ -36,6 +41,34 @@
 	<style name="HitubeDialogShape" parent="">
 		<item name="cornerFamily">rounded</item>
 		<item name="cornerSize">28dp</item>
+	</style>
+
+	<!-- Framework AlertDialog theme — dark dialog, white text, small outlined buttons.
+		Parent must be API 14+ compatible: Theme.AppCompat.Dialog.Alert (NOT a
+		Theme.Material.* parent, which only exists from API 21 and would crash the Q10).
+		The SOLUSI button stays red: the FreeDroidWarn library forces
+		android.R.color.holo_red_dark on it after show(), which no theme can override —
+		but on the dark fill with a light outline it stays readable. -->
+	<style name="HitubeFrameworkAlertDialog" parent="Theme.AppCompat.Dialog.Alert">
+		<item name="android:windowBackground">@color/hitube_surface</item>
+		<item name="android:colorBackground">@color/hitube_surface</item>
+		<item name="android:textColorPrimary">@color/hitube_on_surface</item>
+		<item name="android:textColorSecondary">@color/hitube_on_surface_variant</item>
+		<item name="android:colorAccent">@color/hitube_on_surface</item>
+		<item name="android:buttonBarPositiveButtonStyle">@style/HitubeFrameworkDialogButton</item>
+		<item name="android:buttonBarNegativeButtonStyle">@style/HitubeFrameworkDialogButton</item>
+		<item name="android:buttonBarNeutralButtonStyle">@style/HitubeFrameworkDialogButton</item>
+	</style>
+
+	<!-- Small outlined dialog button (framework dialogs only): 12sp text, 32dp high,
+		12dp side padding, dark fill + 1dp light outline ("line"), white text. -->
+	<style name="HitubeFrameworkDialogButton" parent="Widget.AppCompat.Button.ButtonBar.AlertDialog">
+		<item name="android:textColor">@color/hitube_on_surface</item>
+		<item name="android:textSize">12sp</item>
+		<item name="android:minHeight">32dp</item>
+		<item name="android:paddingLeft">12dp</item>
+		<item name="android:paddingRight">12dp</item>
+		<item name="android:background">@drawable/hitube_dialog_button_background</item>
 	</style>
 
 	<!-- Settings / Preferences — dark, same palette (was Light before) -->

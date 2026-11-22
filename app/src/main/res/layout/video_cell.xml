@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
-	HiTube Legacy — video card, fresh UI (modern Material 3 pattern):
+	HiTube — video card, fresh UI (modern Material 3 pattern):
 	rounded thumbnail on top with duration / like badges overlaid,
 	then title and channel metadata below. Flat — no card container,
 	no gradient, no fake shadow.

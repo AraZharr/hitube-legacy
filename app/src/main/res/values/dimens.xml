@@ -12,7 +12,7 @@
 	<dimen name="fab_margin">16dp</dimen>
 
 	<!--
-		HiTube Legacy design dimensions (fresh UI, modern Material 3 spacing).
+		HiTube design dimensions (fresh UI, modern Material 3 spacing).
 	-->
 	<dimen name="hitube_list_item_height">64dp</dimen>
 	<dimen name="hitube_list_thumbnail_size">48dp</dimen>

@@ -13,6 +13,9 @@
     <string name="featured">Featured</string>
     <string name="most_popular">Most Popular</string>
     <string name="trending_in">Trending (%s)</string>
+    <!-- Autoplay (mini player) -->
+    <string name="autoplay_next_video_error">Couldn\'t play the next video</string>
+    <string name="playback_error_toast">Video playback failed</string>
     <!-- Bottom navigation labels -->
     <string name="bottom_nav_home">Home</string>
     <string name="bottom_nav_search">Search</string>

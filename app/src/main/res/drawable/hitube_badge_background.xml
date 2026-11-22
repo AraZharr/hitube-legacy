@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
-	HiTube Legacy — dark translucent chip for badges over thumbnails
+	HiTube — dark translucent chip for badges over thumbnails
 	(video duration, like %). No gradient, no shadow — flat chip only.
 -->
 <shape xmlns:android="http://schemas.android.com/apk/res/android"
