@@ -28,6 +28,8 @@
 
 	<!-- Bottom navigation bar height (standard 56dp). -->
 	<dimen name="hitube_bottom_nav_height">56dp</dimen>
+	<!-- Height of the in-app mini player bar (docked above the bottom nav). -->
+	<dimen name="hitube_mini_player_height">56dp</dimen>
 	<!-- Shelf card width cap (the card is ~48% of the screen width, capped at this value,
 		so about two cards are visible on a narrow screen and more on a wide one). -->
 	<dimen name="hitube_shelf_card_width_max">200dp</dimen>

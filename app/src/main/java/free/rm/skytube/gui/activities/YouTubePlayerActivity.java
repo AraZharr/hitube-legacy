@@ -61,6 +61,12 @@ public class YouTubePlayerActivity extends BaseActivity implements YouTubePlayer
 
 	public static final String YOUTUBE_VIDEO_OBJ  = "YouTubePlayerActivity.video_object";
 
+	/** Intent extra: video ids of the list the video was opened from (for autoplay "up next"). */
+	public static final String YOUTUBE_VIDEO_IDS = "YouTubePlayerActivity.video_ids";
+
+	/** Intent extra: index of the current video inside {@link #YOUTUBE_VIDEO_IDS}. */
+	public static final String YOUTUBE_VIDEO_INDEX = "YouTubePlayerActivity.video_index";
+
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -130,12 +136,16 @@ public class YouTubePlayerActivity extends BaseActivity implements YouTubePlayer
 		return str.equals(defaultPlayerValue);
 	}
 
-	// If the back button in the toolbar is hit, save the video's progress (if playback history is not disabled)
+	// If the back button in the toolbar is hit, minimise into the mini player (if supported)
+	// instead of stopping the video. Falls back to stopping playback for players that do
+	// not support minimising.
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
 		// close this activity when the user clicks on the back button (action bar)
 		if (item.getItemId() == android.R.id.home) {
-			fragmentListener.videoPlaybackStopped();
+			if (!minimizeOrStop()) {
+				fragmentListener.videoPlaybackStopped();
+			}
 			finish();
 			return true;
 		}
@@ -274,10 +284,26 @@ public class YouTubePlayerActivity extends BaseActivity implements YouTubePlayer
 
 	@Override
 	public void onBackPressed() {
-		if (fragmentListener != null) {
-			fragmentListener.videoPlaybackStopped();
+		// Back in the full player minimises into the mini player bar (keeps playing) instead
+		// of killing the video. Players that do not support minimising fall back to stopping.
+		if (!minimizeOrStop()) {
+			if (fragmentListener != null) {
+				fragmentListener.videoPlaybackStopped();
+			}
 		}
 		super.onBackPressed();
+	}
+
+	/**
+	 * Asks the player fragment to minimise into the in-app mini player bar.
+	 *
+	 * @return True if the player was minimised (playback continues in the mini bar).
+	 */
+	private boolean minimizeOrStop() {
+		if (fragmentListener != null) {
+			return fragmentListener.minimizeToMiniPlayer();
+		}
+		return false;
 	}
 
 	@Override

@@ -39,8 +39,26 @@ public class YouTubePlayer {
 	 * @param youTubeVideo Video to be viewed.
 	 */
 	public static void launch(YouTubeVideo youTubeVideo, Context context) {
+		launch(youTubeVideo, context, null, -1);
+	}
+
+	/**
+	 * Launches the custom-made YouTube player so that the user can view the selected video,
+	 * and remembers the list it was opened from (for autoplay "up next").
+	 *
+	 * @param youTubeVideo Video to be viewed.
+	 * @param videoIds     Video ids of the list the video was opened from (may be null).
+	 * @param videoIndex   Index of the video inside {@code videoIds} (-1 when there is no list).
+	 */
+	public static void launch(YouTubeVideo youTubeVideo, Context context,
+							  java.util.List<String> videoIds, int videoIndex) {
 		Intent i = new Intent(context, YouTubePlayerActivity.class);
 		i.putExtra(YOUTUBE_VIDEO_OBJ, youTubeVideo);
+		if (videoIds != null && !videoIds.isEmpty() && videoIndex >= 0) {
+			i.putStringArrayListExtra(YouTubePlayerActivity.YOUTUBE_VIDEO_IDS,
+					new java.util.ArrayList<>(videoIds));
+			i.putExtra(YouTubePlayerActivity.YOUTUBE_VIDEO_INDEX, videoIndex);
+		}
 		context.startActivity(i);
 	}
 

@@ -268,8 +268,15 @@ public class Settings {
         setPreference(R.string.pref_key_disable_screen_gestures, disableGestures);
     }
 
-    public boolean isSwitchVolumeAndBrightness() {
-        return getPreference(R.string.pref_key_switch_volume_and_brightness, false);
+    /**
+     * @return True if the next video should start automatically when the current one ends.
+     */
+    public boolean isAutoplayEnabled() {
+        return getPreference(R.string.pref_key_autoplay, true);
+    }
+
+    public void setAutoplayEnabled(boolean autoplayEnabled) {
+        setPreference(R.string.pref_key_autoplay, autoplayEnabled);
     }
 
     /**

@@ -76,4 +76,10 @@
 		android:title="@string/pref_video_continuous_repeat_toggle"
 		app:showAsAction="never" />
 
+	<item
+		android:id="@+id/video_autoplay_toggle"
+		android:checkable="true"
+		android:title="@string/pref_title_autoplay"
+		app:showAsAction="never" />
+
 </menu>

@@ -25,6 +25,8 @@ import androidx.annotation.NonNull;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 
 import free.rm.skytube.R;
@@ -33,6 +35,7 @@ import free.rm.skytube.businessobjects.VideoCategory;
 import free.rm.skytube.businessobjects.YouTube.GetYouTubeVideos;
 import free.rm.skytube.businessobjects.YouTube.POJOs.CardData;
 import free.rm.skytube.businessobjects.YouTube.POJOs.YouTubeChannel;
+import free.rm.skytube.businessobjects.YouTube.POJOs.YouTubeVideo;
 import free.rm.skytube.businessobjects.YouTube.YouTubeTasks;
 import free.rm.skytube.businessobjects.YouTube.newpipe.ContentId;
 import free.rm.skytube.businessobjects.db.PlaybackStatusDb;
@@ -228,6 +231,7 @@ public class VideoGridAdapter extends RecyclerViewAdapterEx<CardData, GridViewHo
 	@Override
 	public void onBindViewHolder(@NonNull GridViewHolder viewHolder, int position) {
 		viewHolder.updateInfo(get(position), getContext(), listener);
+		setUpNextQueue(viewHolder, position);
 
 		// if it reached the bottom of the list, then try to get the next page of videos
 		if (position >= getItemCount() - 1) {
@@ -239,6 +243,26 @@ public class VideoGridAdapter extends RecyclerViewAdapterEx<CardData, GridViewHo
 						.subscribe(videos -> {}, error -> Logger.e(this, error, "Error loading more videos")));
 			}
 		}
+	}
+
+	/**
+	 * Builds the "up next" queue for autoplay and hands it to the holder: the ids of the
+	 * videos in this grid, in order, and the index of the video at the given position
+	 * inside that queue. Non-video cards (channels, playlists) are skipped.
+	 */
+	private void setUpNextQueue(@NonNull GridViewHolder viewHolder, int position) {
+		List<String> videoIds = new ArrayList<>();
+		int videoIndex = -1;
+		for (int i = 0; i < getItemCount(); i++) {
+			CardData card = get(i);
+			if (card instanceof YouTubeVideo) {
+				if (i == position) {
+					videoIndex = videoIds.size();
+				}
+				videoIds.add(card.getId());
+			}
+		}
+		viewHolder.setUpNextQueue(videoIds, videoIndex);
 	}
 
     public synchronized void notifyVideoGridUpdated() {

@@ -96,7 +96,19 @@ public class PlaylistVideosFragment extends VideosGridFragment {
     private void playVideoAt(int position) {
         CardData card = videoGridAdapter.getVideoAt(position);
         if (card instanceof YouTubeVideo) {
-            YouTubePlayer.launch((YouTubeVideo) card, requireContext());
+            // Pass the playlist's videos, so autoplay can play the next one.
+            java.util.List<String> videoIds = new java.util.ArrayList<>();
+            int videoIndex = -1;
+            for (int i = 0; i < videoGridAdapter.getItemCount(); i++) {
+                CardData item = videoGridAdapter.getVideoAt(i);
+                if (item instanceof YouTubeVideo) {
+                    if (i == position) {
+                        videoIndex = videoIds.size();
+                    }
+                    videoIds.add(item.getId());
+                }
+            }
+            YouTubePlayer.launch((YouTubeVideo) card, requireContext(), videoIds, videoIndex);
         } else {
             Toast.makeText(requireContext(), R.string.loading, Toast.LENGTH_SHORT).show();
         }

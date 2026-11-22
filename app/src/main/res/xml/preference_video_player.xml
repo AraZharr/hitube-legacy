@@ -51,9 +51,10 @@
 		app:iconSpaceReserved="false" />
 
 	<CheckBoxPreference
-		app:key="@string/pref_key_switch_volume_and_brightness"
-		app:title="@string/pref_title_switch_volume_and_brightness"
-		app:summary="@string/pref_summary_switch_volume_and_brightness"
+		app:key="@string/pref_key_autoplay"
+		app:title="@string/pref_title_autoplay"
+		app:summary="@string/pref_summary_autoplay"
+		app:defaultValue="true"
 		app:iconSpaceReserved="false" />
 
 	<ListPreference

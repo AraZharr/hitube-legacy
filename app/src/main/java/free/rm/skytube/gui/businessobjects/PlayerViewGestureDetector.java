@@ -25,21 +25,17 @@ import android.view.View;
 
 import androidx.core.view.GestureDetectorCompat;
 
-import free.rm.skytube.app.Settings;
-
 /**
  * Gesture detector for a PlayerView.  It will detect gestures that may result in showing comments,
- * video description, change in volume or brightness.
+ * video description, change in volume or seeking.
  */
 public abstract class PlayerViewGestureDetector implements View.OnTouchListener {
 
 	private final GestureDetectorCompat     gestureDetector;
 	private final PlayerViewGestureListener playerViewGestureListener;
-	private final Settings 					settings;
 
 
-	public PlayerViewGestureDetector(Context context, Settings settings) {
-		this.settings = settings;
+	public PlayerViewGestureDetector(Context context) {
 		playerViewGestureListener = new PlayerViewGestureListener();
 		gestureDetector = new GestureDetectorCompat(context, playerViewGestureListener);
 	}
@@ -67,9 +63,12 @@ public abstract class PlayerViewGestureDetector implements View.OnTouchListener 
 
 
 	/**
-	 * Called when the user double taps.
+	 * Called when the user double taps. The X coordinate of the tap (relative to the
+	 * PlayerView) is passed so the handler can tell the left side from the right side.
+	 *
+	 * @param tapX X coordinate of the double tap, relative to the PlayerView.
 	 */
-	public abstract void onDoubleTap();
+	public abstract void onDoubleTap(float tapX);
 
 
 	/**
@@ -88,12 +87,6 @@ public abstract class PlayerViewGestureDetector implements View.OnTouchListener 
 	 * Called every time any gesture is ended.
 	 */
 	public abstract void onGestureDone();
-
-
-	/**
-	 * User swiped from top to bottom or from bottom to top at the left side of the view.
-	 */
-	public abstract void adjustBrightness(double adjustPercent);
 
 
 	/**
@@ -123,7 +116,6 @@ public abstract class PlayerViewGestureDetector implements View.OnTouchListener 
 	 */
 	private enum SwipeGestureType {
 		NONE,
-		BRIGHTNESS,
 		VOLUME,
 		SEEK,
 		COMMENTS,
@@ -151,7 +143,7 @@ public abstract class PlayerViewGestureDetector implements View.OnTouchListener 
 
 		@Override
 		public boolean onDoubleTap(MotionEvent e) {
-			PlayerViewGestureDetector.this.onDoubleTap();
+			PlayerViewGestureDetector.this.onDoubleTap(e.getX());
 			return false;
 		}
 
@@ -170,10 +162,6 @@ public abstract class PlayerViewGestureDetector implements View.OnTouchListener 
 					onCommentsGesture();
 				} else if (currentGestureEvent == SwipeGestureType.DESCRIPTION) {
 					onVideoDescriptionGesture();
-				} else if (currentGestureEvent == SwipeGestureType.BRIGHTNESS) {
-					// use half of BrightnessRect's height to calculate percent.
-					double percent = yDistance / (getBrightnessRect(playerViewRect).height() / 2f) * -1f;
-					adjustBrightness(percent);
 				} else if (currentGestureEvent == SwipeGestureType.VOLUME) {
 					// use half of volumeRect's height to calculate percent.
 					double percent = yDistance / (getVolumeRect(playerViewRect).height() / 2f) * -1f;
@@ -226,11 +214,11 @@ public abstract class PlayerViewGestureDetector implements View.OnTouchListener 
 			} else if (Math.abs(currentY - startY) >= SWIPE_THRESHOLD) {
 				if (getDescriptionRect(playerViewRect).contains((int) startX, (int) startY) && diffY > 0) {
 					return SwipeGestureType.DESCRIPTION;
-				} else if (getBrightnessRect(playerViewRect).contains((int) startX, (int) startY)) {
-					return settings.isSwitchVolumeAndBrightness() ? SwipeGestureType.VOLUME : SwipeGestureType.BRIGHTNESS;
 				} else if (getVolumeRect(playerViewRect).contains((int) startX, (int) startY)) {
-					return settings.isSwitchVolumeAndBrightness() ? SwipeGestureType.BRIGHTNESS : SwipeGestureType.VOLUME;
+					// Volume is always on the left half of the screen.
+					return SwipeGestureType.VOLUME;
 				}
+				// A vertical swipe on the right half does nothing (brightness control was removed).
 			}
 
 			return SwipeGestureType.NONE;
@@ -238,16 +226,8 @@ public abstract class PlayerViewGestureDetector implements View.OnTouchListener 
 
 
 		/**
-		 * Here we decide in what place of the screen user should swipe to get a new brightness value.
-		 */
-		private Rect getBrightnessRect(final Rect playerViewRect) {
-			return new Rect(playerViewRect.right / 2, (int)(playerViewRect.bottom * 0.2),   // top (X, Y) coordinates
-					playerViewRect.right, playerViewRect.bottom);                                // bottom (X, Y) coordinates
-		}
-
-
-		/**
 		 * Here we decide in what place of the screen user should swipe to get a new volume value.
+		 * Volume is always on the left half of the screen.
 		 */
 		private Rect getVolumeRect(final Rect playerViewRect) {
 			return new Rect(0, (int)(playerViewRect.bottom * 0.2),

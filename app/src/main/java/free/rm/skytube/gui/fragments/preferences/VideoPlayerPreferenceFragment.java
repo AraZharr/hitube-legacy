@@ -63,12 +63,6 @@ public class VideoPlayerPreferenceFragment extends BasePreferenceFragment {
 			videoPlayersListPref.setEntries(modifiedVideoPlayersList);
 		}
 
-		Preference creditsPref = findPreference(getString(R.string.pref_key_switch_volume_and_brightness));
-		creditsPref.setOnPreferenceClickListener(preference -> {
-			SkyTubeApp.getSettings().showTutorialAgain();
-			return true;
-		});
-
 		configureCountrySelector();
 		configureLanguageSelector();
 	}

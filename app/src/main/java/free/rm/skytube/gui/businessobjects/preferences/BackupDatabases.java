@@ -58,7 +58,6 @@ public class BackupDatabases {
 			R.string.pref_youtube_api_key,
 			R.string.pref_key_default_content_country,
 			R.string.pref_key_default_tab_name,
-			R.string.pref_key_switch_volume_and_brightness,
 			R.string.pref_key_disable_screen_gestures,
 			R.string.pref_key_mobile_network_usage_policy,
 			R.string.pref_key_download_to_separate_directories,

@@ -48,4 +48,9 @@
     <string name="cleaner_watched_bookmarks">Remove watched bookmarks</string>
     <string name="video_comments_are_disabled">Video comments off</string>
     <string name="incorrect_pin">Incorrect PIN</string>
+    <!-- Mini player -->
+    <string name="mini_player_play">Play</string>
+    <string name="mini_player_pause">Pause</string>
+    <string name="mini_player_close">Close mini player</string>
+    <string name="mini_player_expand">Expand player</string>
 </resources>

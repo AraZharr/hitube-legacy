@@ -58,6 +58,10 @@ public class VideoOptionsBottomSheet {
 	private final Menu menu;
 	private final PopupMenu.OnMenuItemClickListener menuItemClickListener;
 	private final BottomSheetDialog dialog;
+	/** The "up next" queue for autoplay (may be null when the video has no list context). */
+	private final java.util.List<String> upNextVideoIds;
+	/** Index of the video inside the up-next queue (-1 when there is no queue). */
+	private final int upNextVideoIndex;
 
 	private final LinearLayout optionsContainer;
 	private final ImageView saveIcon;
@@ -69,10 +73,19 @@ public class VideoOptionsBottomSheet {
 	public VideoOptionsBottomSheet(@NonNull Context context, @NonNull YouTubeVideo video,
 								   @NonNull Menu menu,
 								   @NonNull PopupMenu.OnMenuItemClickListener menuItemClickListener) {
+		this(context, video, menu, menuItemClickListener, null, -1);
+	}
+
+	public VideoOptionsBottomSheet(@NonNull Context context, @NonNull YouTubeVideo video,
+								   @NonNull Menu menu,
+								   @NonNull PopupMenu.OnMenuItemClickListener menuItemClickListener,
+								   java.util.List<String> upNextVideoIds, int upNextVideoIndex) {
 		this.context = context;
 		this.video = video;
 		this.menu = menu;
 		this.menuItemClickListener = menuItemClickListener;
+		this.upNextVideoIds = upNextVideoIds;
+		this.upNextVideoIndex = upNextVideoIndex;
 
 		dialog = new BottomSheetDialog(context, R.style.HitubeBottomSheetDialog);
 		View root = LayoutInflater.from(context).inflate(R.layout.video_options_bottom_sheet, null);
@@ -113,7 +126,7 @@ public class VideoOptionsBottomSheet {
 
 		playAction.setOnClickListener(v -> {
 			dialog.dismiss();
-			YouTubePlayer.launch(video, context);
+			YouTubePlayer.launch(video, context, upNextVideoIds, upNextVideoIndex);
 		});
 		saveAction.setOnClickListener(v -> {
 			MenuItem item = findVisibleMenuItem(R.id.bookmark_video, R.id.unbookmark_video);

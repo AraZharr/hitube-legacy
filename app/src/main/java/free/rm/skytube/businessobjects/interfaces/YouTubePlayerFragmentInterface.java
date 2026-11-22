@@ -39,4 +39,14 @@ public interface YouTubePlayerFragmentInterface {
 	void play();
 
 	void setPlaybackStateListener(PlaybackStateListener listener);
+
+	/**
+	 * Minimise the player into the in-app mini player bar (keeps the video playing) instead
+	 * of stopping it. Called when the user presses Back (or Up) in the full player.
+	 *
+	 * @return True if the player was minimised (the Activity should just finish, without
+	 *         stopping playback); false if minimising is not supported by this player
+	 *         implementation (the Activity then falls back to stopping playback).
+	 */
+	boolean minimizeToMiniPlayer();
 }

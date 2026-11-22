@@ -3,13 +3,13 @@ package free.rm.skytube.gui.fragments;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.graphics.Rect;
 import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.Looper;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -17,7 +17,6 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.WindowManager;
 import android.widget.BaseExpandableListAdapter;
 import android.widget.Toast;
 
@@ -25,7 +24,6 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.core.content.ContextCompat;
 import androidx.media.AudioManagerCompat;
-import androidx.preference.PreferenceManager;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
@@ -84,7 +82,6 @@ public class YouTubePlayerV1Fragment extends ImmersiveModeFragment implements Me
 	private static final String TAG = YouTubePlayerV1Fragment.class.getSimpleName();
 
 	private static final int MAX_VIDEO_STEP_TIME = 60 * 1000;
-	private static final int MAX_BRIGHTNESS = 100;
 
 	private PlaybackStateListener playbackStateListener;
 
@@ -106,7 +103,6 @@ public class YouTubePlayerV1Fragment extends ImmersiveModeFragment implements Me
 	private Handler hideHudTimerHandler = null;
 	private Handler hideVideoDescAndCommentsIconsTimerHandler = null;
 
-	private float startBrightness = -1.0f;
 	private float startVolumePercent  = -1.0f;
 	private int startVideoTime = -1;
 
@@ -241,13 +237,53 @@ public class YouTubePlayerV1Fragment extends ImmersiveModeFragment implements Me
 				return true;
 			}
 
-			@Override
-			public boolean onDoubleTap() {
-				if (fragmentBinding.videoView.isPlaying()) {
-					pause();
-				} else {
-					play();
+			/** How far a double tap skips, in milliseconds (5 seconds). */
+			private static final int DOUBLE_TAP_SEEK_MS = 5 * 1000;
+
+			/** True while the double-tap seek indicator is shown (hides onGestureDone from hiding it). */
+			private boolean doubleTapSeekIndicatorVisible = false;
+
+			private final Handler indicatorHandler = new Handler(Looper.getMainLooper());
+
+			private final Runnable hideDoubleTapIndicatorRunnable = () -> {
+				doubleTapSeekIndicatorVisible = false;
+				if (fragmentBinding != null) {
+					hideIndicator();
 				}
+			};
+
+			@Override
+			public boolean onDoubleTap(float tapX) {
+				// Double tap seeks 5 seconds: right side = forward, left side = back.
+				// (Play/pause is done with the play button in the player controls.)
+				if (disableGestures || fragmentBinding == null) {
+					return true;
+				}
+				int duration = fragmentBinding.videoView.getDuration();
+				if (duration <= 0) {
+					return true;
+				}
+				int currentPosition = fragmentBinding.videoView.getCurrentPosition();
+				int targetPosition;
+				int iconRes;
+				if (tapX > fragmentBinding.voidView.getWidth() / 2f) {
+					targetPosition = Math.min(duration, currentPosition + DOUBLE_TAP_SEEK_MS);
+					iconRes = R.drawable.ic_forward;
+				} else {
+					targetPosition = Math.max(0, currentPosition - DOUBLE_TAP_SEEK_MS);
+					iconRes = R.drawable.ic_rewind;
+				}
+				fragmentBinding.videoView.seekTo(targetPosition);
+
+				// show the seek indicator (same as the horizontal seek gesture); keep it
+				// visible for a second, as onGestureDone (fired right after the double tap)
+				// would hide it immediately otherwise.
+				fragmentBinding.indicatorImageView.setImageResource(iconRes);
+				fragmentBinding.indicatorTextView.setText(formatDuration(targetPosition / 1000));
+				showIndicator();
+				doubleTapSeekIndicatorVisible = true;
+				indicatorHandler.removeCallbacks(hideDoubleTapIndicatorRunnable);
+				indicatorHandler.postDelayed(hideDoubleTapIndicatorRunnable, 1000);
 				return true;
 			}
 
@@ -259,44 +295,13 @@ public class YouTubePlayerV1Fragment extends ImmersiveModeFragment implements Me
 
 			@Override
 			public void onGestureDone() {
-				startBrightness = -1.0f;
 				startVolumePercent = -1.0f;
 				startVideoTime = -1;
-				hideIndicator();
-			}
-
-			@Override
-			public void adjustBrightness(double adjustPercent) {
-				if (disableGestures) {
-					return;
+				// Do not hide the indicator if a double-tap seek just showed it; the delayed
+				// runnable hides it after a second.
+				if (!doubleTapSeekIndicatorVisible) {
+					hideIndicator();
 				}
-
-				// We are setting brightness percent to a value that should be from -1.0 to 1.0. We need to limit it here for these values first
-				if (adjustPercent < -1.0f) {
-					adjustPercent = -1.0f;
-				} else if (adjustPercent > 1.0f) {
-					adjustPercent = 1.0f;
-				}
-
-				WindowManager.LayoutParams lp = getActivity().getWindow().getAttributes();
-				if (startBrightness < 0) {
-					startBrightness = lp.screenBrightness;
-				}
-				// We are getting a final brightness value when summing current brightness and the percent we got from swipe action. Should be >= 0 and <= 1
-				float targetBrightness = (float) (startBrightness + adjustPercent * 1.0f);
-				if (targetBrightness <= 0.0f) {
-					targetBrightness = 0.0f;
-				} else if (targetBrightness >= 1.0f) {
-					targetBrightness = 1.0f;
-				}
-				lp.screenBrightness = targetBrightness;
-				getActivity().getWindow().setAttributes(lp);
-
-				fragmentBinding.indicatorImageView.setImageResource(R.drawable.ic_brightness);
-				fragmentBinding.indicatorTextView.setText((int) (targetBrightness * MAX_BRIGHTNESS) + "%");
-
-				// Show indicator. It will be hidden once onGestureDone will be called
-				showIndicator();
 			}
 
 			@Override
@@ -502,42 +507,9 @@ public class YouTubePlayerV1Fragment extends ImmersiveModeFragment implements Me
 		}
 		saveVideoPosition(videoCurrentPosition);
 
-		saveCurrentBrightness();
 		super.onPause();
 	}
 
-
-	@Override
-	public void onResume() {
-		super.onResume();
-
-		setupUserPrefs();
-	}
-
-
-	// We can also add volume level or something in the future.
-	private void setupUserPrefs() {
-		SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(requireActivity());
-		float brightnessLevel = sp.getFloat(getString(R.string.pref_key_brightness_level), -1.0f);
-		setBrightness(brightnessLevel);
-	}
-
-
-	private void saveCurrentBrightness() {
-		WindowManager.LayoutParams lp = requireActivity().getWindow().getAttributes();
-		float brightnessLevel = lp.screenBrightness;
-		SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(getActivity());
-		sp.edit().putFloat(getString(R.string.pref_key_brightness_level), brightnessLevel).apply();
-		Logger.d(this, "BRIGHTNESS: %f", brightnessLevel);
-	}
-
-	private void setBrightness(float level) {
-		if(level <= 0.0f && level > 1.0f) return;
-
-		WindowManager.LayoutParams lp = requireActivity().getWindow().getAttributes();
-		lp.screenBrightness = level;
-		getActivity().getWindow().setAttributes(lp);
-	}
 
 	/**
 	 * @return True if the HUD is visible (provided that this Fragment is also visible).
@@ -654,6 +626,12 @@ public class YouTubePlayerV1Fragment extends ImmersiveModeFragment implements Me
 		inflater.inflate(R.menu.menu_youtube_player, menu);
 
 		this.menu = menu;
+
+		// Autoplay is only supported by the ExoPlayer (V2) player, so hide its toggle here.
+		MenuItem autoplayItem = menu.findItem(R.id.video_autoplay_toggle);
+		if (autoplayItem != null) {
+			autoplayItem.setVisible(false);
+		}
 
 		listener.onOptionsMenuCreated(menu);
 
@@ -932,6 +910,14 @@ public class YouTubePlayerV1Fragment extends ImmersiveModeFragment implements Me
 		stopPlayback();
 
 		saveVideoPosition(position);
+	}
+
+	@Override
+	public boolean minimizeToMiniPlayer() {
+		// The legacy player (VideoView / YouTube Android Player API) cannot share its player
+		// with the mini player bar, so minimising is not supported here. The Activity falls
+		// back to stopping playback (the previous back-button behaviour).
+		return false;
 	}
 
 	private void saveVideoPosition(int position) {

@@ -550,14 +550,14 @@
     </string-array>
     <string name="pref_key_disable_screen_gestures" translatable="false">pref_key_screen_gestures</string>
     <string name="pref_title_disable_screen_gestures">No video gestures</string>
-    <string name="pref_summary_disable_screen_gestures">Turn off gestures to control volume, brightness and seeking forward/backwards in videos.</string>
+    <string name="pref_summary_disable_screen_gestures">Turn off gestures to control volume and seeking forward/backwards in videos.</string>
     <string name="pref_video_continuous_repeat_toggle">Continuous repetition</string>
     <string name="pref_key_enable_immersive_mode" translatable="false">pref_key_enable_immersive_mode</string>
     <string name="pref_title_enable_immersive_mode">Immersive mode</string>
     <string name="pref_summary_enable_immersive_mode">Hide navigation bar and the status bar during playback.</string>
-    <string name="pref_key_switch_volume_and_brightness" translatable="false">pref_key_switch_volume_and_brightness</string>
-    <string name="pref_title_switch_volume_and_brightness">Switch Volume and Brightness Gesture</string>
-    <string name="pref_summary_switch_volume_and_brightness">Places the volume control on the right, and brightness on the left.</string>
+    <string name="pref_key_autoplay" translatable="false">pref_key_autoplay</string>
+    <string name="pref_title_autoplay">Autoplay next video</string>
+    <string name="pref_summary_autoplay">Automatically play the next video when the current one ends.</string>
     <string name="pref_youtube_api_key" translatable="false">pref_youtube_api_key</string>
     <string name="pref_title_youtube_api_key">YouTube API key</string>
     <string name="pref_summary_youtube_api_key">Enter a personal YouTube API key to use instead.</string>
@@ -575,7 +575,6 @@
     <string name="pref_title_use_dislike_api">Return dislike counter</string>
     <string name="pref_summary_use_dislike_api">Return dislike counter using returnyoutubedislike.com</string>
     <bool name="pref_use_dislike_api">false</bool>
-    <string name="pref_key_brightness_level" translatable="false">pref_key_brightness_level</string>
     <string name="pref_category_downloads">Downloads</string>
     <string name="pref_category_video_resolutions">Video Resolution</string>
     <string name="pref_category_download_resolutions">Video resolution for downloads</string>

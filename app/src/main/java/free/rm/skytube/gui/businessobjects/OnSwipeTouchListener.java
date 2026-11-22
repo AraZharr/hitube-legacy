@@ -88,11 +88,13 @@ public abstract class OnSwipeTouchListener implements View.OnTouchListener {
 
 
 	/**
-	 * User double tapped.
+	 * User double tapped. The X coordinate of the tap (relative to the view) is passed
+	 * so the handler can tell the left side from the right side.
 	 *
+	 * @param tapX X coordinate of the double tap, relative to the view.
 	 * @return True if the event was consumed.
 	 */
-	public boolean onDoubleTap() {
+	public boolean onDoubleTap(float tapX) {
 		return false;
 	}
 
@@ -111,12 +113,6 @@ public abstract class OnSwipeTouchListener implements View.OnTouchListener {
 	 * Called every time any gesture is ended.
 	 */
 	public abstract void onGestureDone();
-
-
-	/**
-	 * User swiped from top to bottom or from bottom to top at the left side of the view.
-	 */
-	public abstract void adjustBrightness(double adjustPercent);
 
 
 	/**
@@ -142,7 +138,6 @@ public abstract class OnSwipeTouchListener implements View.OnTouchListener {
 
 	private enum SwipeEventType {
 		NONE,
-		BRIGHTNESS,
 		VOLUME,
 		SEEK,
 		COMMENTS,
@@ -158,7 +153,7 @@ public abstract class OnSwipeTouchListener implements View.OnTouchListener {
 
 		@Override
 		public boolean onDoubleTap(MotionEvent e) {
-			return OnSwipeTouchListener.this.onDoubleTap();
+			return OnSwipeTouchListener.this.onDoubleTap(e.getX());
 		}
 
 
@@ -171,7 +166,7 @@ public abstract class OnSwipeTouchListener implements View.OnTouchListener {
 		@Override
 		public boolean onScroll(MotionEvent start, MotionEvent end,
 								float distanceX, float distanceY) {
-			// function depends on start position. (volume or brightness or play position.)
+			// function depends on start position. (volume or play position.)
 			double yDistance = end.getY() - start.getY();
 			double xDistance = end.getX() - start.getX();
 
@@ -179,10 +174,6 @@ public abstract class OnSwipeTouchListener implements View.OnTouchListener {
 				return onSwipeLeft();
 			} else if (swipeEventType == SwipeEventType.DESCRIPTION) {
 				return onSwipeTop();
-			} else if (swipeEventType == SwipeEventType.BRIGHTNESS) {
-				// use half of BrightnessRect's height to calculate percent.
-				double percent = yDistance / (getBrightnessRect().height() / 2.0f) * -1.0f;
-				adjustBrightness(percent);
 			} else if (swipeEventType == SwipeEventType.VOLUME) {
 				// use half of volumeRect's height to calculate percent.
 				double percent = yDistance / (getVolumeRect().height() / 2.0f) * -1.0f;
@@ -245,26 +236,19 @@ public abstract class OnSwipeTouchListener implements View.OnTouchListener {
 			} else if (Math.abs(currentY - startY) >= SWIPE_THRESHOLD) {
 				if (getDescriptionRect().contains((int) startX, (int) startY) && diffY > 0) {
 					return SwipeEventType.DESCRIPTION;
-				} else if (getBrightnessRect().contains((int) startX, (int) startY)) {
-					return SwipeEventType.BRIGHTNESS;
 				} else if (getVolumeRect().contains((int) startX, (int) startY)) {
+					// Volume is always on the left half of the screen.
 					return SwipeEventType.VOLUME;
 				}
+				// A vertical swipe on the right half does nothing (brightness control was removed).
 			}
 			return SwipeEventType.NONE;
 		}
 
 
 		/**
-		 * Here we decide in what place of the screen user should swipe to get a new brightness value.
-		 */
-		private Rect getBrightnessRect() {
-			return new Rect(viewRect().right / 2, 0, viewRect().right, viewRect().bottom);
-		}
-
-
-		/**
 		 * Here we decide in what place of the screen user should swipe to get a new volume value.
+		 * Volume is always on the left half of the screen.
 		 */
 		private Rect getVolumeRect() {
 			return new Rect(0, 0, viewRect().right / 2, viewRect().bottom);

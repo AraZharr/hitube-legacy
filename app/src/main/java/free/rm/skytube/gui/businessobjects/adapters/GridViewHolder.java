@@ -31,6 +31,7 @@ import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
 
 import java.io.Serializable;
+import java.util.List;
 
 import free.rm.skytube.R;
 import free.rm.skytube.app.SkyTubeApp;
@@ -62,6 +63,10 @@ public class GridViewHolder extends RecyclerView.ViewHolder implements Serializa
 	private Context context = null;
 	private MainActivityListener mainActivityListener;
 	private boolean showChannelInfo;
+	/** The "up next" queue for autoplay: video ids of the list this card belongs to. */
+	private List<String> upNextVideoIds = null;
+	/** Index of {@link #currentCard} inside {@link #upNextVideoIds} (-1 when there is no queue). */
+	private int upNextVideoIndex = -1;
 	/** True when this card is shown inside a horizontal shelf: the channel avatar is hidden (too cramped at shelf width). */
 	private boolean compactMode = false;
 
@@ -89,7 +94,8 @@ public class GridViewHolder extends RecyclerView.ViewHolder implements Serializa
 
 		binding.thumbnailImageView.setOnClickListener(thumbnailView -> {
 			if (currentCard instanceof YouTubeVideo) {
-				YouTubePlayer.launch((YouTubeVideo) currentCard, context);
+				// Pass the list this video was opened from, so autoplay can play the next one.
+				YouTubePlayer.launch((YouTubeVideo) currentCard, context, upNextVideoIds, upNextVideoIndex);
 			} else if (currentCard instanceof YouTubePlaylist) {
 				mainActivityListener.onPlaylistClick((YouTubePlaylist) currentCard);
 			} else if (currentCard instanceof YouTubeChannel) {
@@ -154,6 +160,15 @@ public class GridViewHolder extends RecyclerView.ViewHolder implements Serializa
 		this.context = context;
 		this.mainActivityListener = listener;
 		updateViewsData();
+	}
+
+	/**
+	 * Sets the "up next" queue for autoplay: the video ids of the list this card belongs to,
+	 * and the index of this card's video inside that list.
+	 */
+	void setUpNextQueue(List<String> videoIds, int videoIndex) {
+		this.upNextVideoIds = videoIds;
+		this.upNextVideoIndex = videoIndex;
 	}
 
 	/**
@@ -356,7 +371,7 @@ public class GridViewHolder extends RecyclerView.ViewHolder implements Serializa
 		popupMenu.setOnMenuItemClickListener(menuItemClickListener);
 
 		// Show the actions as a bottom sheet instead of a popup menu.
-		bottomSheetHolder[0] = new VideoOptionsBottomSheet(view.getContext(), youTubeVideo, menu, menuItemClickListener);
+		bottomSheetHolder[0] = new VideoOptionsBottomSheet(view.getContext(), youTubeVideo, menu, menuItemClickListener, upNextVideoIds, upNextVideoIndex);
 		bottomSheetHolder[0].show();
 	}
 
