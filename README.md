@@ -99,28 +99,17 @@ You can help us translate this app into your native language by visiting [SkyTub
 ## Screenshots
 ### Phone
 
-<a href="screenshots/trending.jpg">
-<img src="screenshots/trending.jpg" alt="Trending" width="140px"/>
+<a href="screenshots/hitube-home.png">
+<img src="screenshots/hitube-home.png" alt="Home with bottom navigation, filter chips and video shelves" width="140px"/>
 </a>
 
-<a href="screenshots/channel.jpg">
-<img src="screenshots/channel.jpg" alt="Browse video" width="444px"/>
+<a href="screenshots/hitube-player-menu.png">
+<img src="screenshots/hitube-player-menu.png" alt="Player menu with Autoplay toggle" width="140px"/>
 </a>
 
-<a href="screenshots/play.jpg">
-<img src="screenshots/play.jpg" alt="Play video" width="444px"/>
+<a href="screenshots/hitube-playlist.png">
+<img src="screenshots/hitube-playlist.png" alt="Playlist detail with Play and Shuffle" width="140px"/>
 </a>
-
-<a href="screenshots/subs.jpg">
-<img src="screenshots/subs.jpg" alt="Subscriptions" width="140px"/>
-</a>
-
-<a href="screenshots/sb_skipped.png">
-<img src="screenshots/sb_skipped.png" alt="SponsorBlock" width="450px"/>
-</a>
-
-### Tablet
-![Browse channel using tablet](screenshots/channel_tablet.jpg)
 
 ## Contribute
 This project was possible with the support and contribution of [numerous volunteers and third-party projects](http://skytube-app.com/credits.html).
