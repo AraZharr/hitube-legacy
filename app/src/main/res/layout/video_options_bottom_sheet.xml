@@ -1,0 +1,198 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+	Video actions bottom sheet. The whole content scrolls (NestedScrollView),
+	so on a short screen (e.g. 360dp tall) every action stays reachable by
+	scrolling — nothing is cut off at the bottom edge.
+-->
+<androidx.core.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+	android:layout_width="match_parent"
+	android:layout_height="wrap_content">
+
+	<LinearLayout
+		android:layout_width="match_parent"
+		android:layout_height="wrap_content"
+		android:orientation="vertical"
+		android:paddingTop="@dimen/hitube_content_padding_vertical"
+		android:paddingBottom="@dimen/hitube_content_padding_vertical">
+
+		<!-- Header: thumbnail + title + channel. -->
+		<LinearLayout
+			android:layout_width="match_parent"
+			android:layout_height="wrap_content"
+			android:gravity="center_vertical"
+			android:orientation="horizontal"
+			android:paddingStart="@dimen/hitube_content_padding_horizontal"
+			android:paddingEnd="@dimen/hitube_content_padding_horizontal"
+			android:paddingBottom="@dimen/hitube_content_padding_vertical">
+
+			<ImageView
+				android:id="@+id/bottom_sheet_thumbnail_image_view"
+				android:layout_width="64dp"
+				android:layout_height="36dp"
+				android:contentDescription="@string/video"
+				android:scaleType="centerCrop" />
+
+			<LinearLayout
+				android:layout_width="0dp"
+				android:layout_height="wrap_content"
+				android:layout_marginStart="@dimen/hitube_content_padding_horizontal"
+				android:layout_weight="1"
+				android:orientation="vertical">
+
+				<TextView
+					android:id="@+id/bottom_sheet_title_text_view"
+					android:layout_width="match_parent"
+					android:layout_height="wrap_content"
+					android:ellipsize="end"
+					android:maxLines="2"
+					android:textAppearance="@style/HitubeTitleSmall" />
+
+				<TextView
+					android:id="@+id/bottom_sheet_channel_text_view"
+					android:layout_width="match_parent"
+					android:layout_height="wrap_content"
+					android:ellipsize="end"
+					android:maxLines="1"
+					android:textAppearance="@style/HitubeBodySmall" />
+			</LinearLayout>
+		</LinearLayout>
+
+		<!-- Primary actions: Play, Save, Share, Download (labelled icons). -->
+		<LinearLayout
+			android:id="@+id/bottom_sheet_primary_actions"
+			android:layout_width="match_parent"
+			android:layout_height="wrap_content"
+			android:orientation="horizontal"
+			android:paddingStart="@dimen/hitube_content_padding_horizontal"
+			android:paddingEnd="@dimen/hitube_content_padding_horizontal"
+			android:paddingBottom="@dimen/hitube_content_padding_vertical">
+
+			<LinearLayout
+				android:id="@+id/bottom_sheet_action_play"
+				android:layout_width="0dp"
+				android:layout_height="wrap_content"
+				android:layout_weight="1"
+				android:clickable="true"
+				android:background="?attr/selectableItemBackground"
+				android:focusable="true"
+				android:gravity="center_horizontal"
+				android:orientation="vertical"
+				android:paddingTop="8dp"
+				android:paddingBottom="8dp">
+
+				<ImageView
+					android:layout_width="24dp"
+					android:layout_height="24dp"
+					android:src="@drawable/ic_play"
+					android:tint="@color/hitube_on_surface" />
+
+				<TextView
+					android:layout_width="wrap_content"
+					android:layout_height="wrap_content"
+					android:layout_marginTop="4dp"
+					android:text="@string/play"
+					style="@style/HitubeBottomSheetActionLabel" />
+			</LinearLayout>
+
+			<LinearLayout
+				android:id="@+id/bottom_sheet_action_save"
+				android:layout_width="0dp"
+				android:layout_height="wrap_content"
+				android:layout_weight="1"
+				android:clickable="true"
+				android:background="?attr/selectableItemBackground"
+				android:focusable="true"
+				android:gravity="center_horizontal"
+				android:orientation="vertical"
+				android:paddingTop="8dp"
+				android:paddingBottom="8dp">
+
+				<ImageView
+					android:id="@+id/bottom_sheet_action_save_icon"
+					android:layout_width="24dp"
+					android:layout_height="24dp"
+					android:src="@drawable/ic_bookmark"
+					android:tint="@color/hitube_on_surface" />
+
+				<TextView
+					android:id="@+id/bottom_sheet_action_save_label"
+					android:layout_width="wrap_content"
+					android:layout_height="wrap_content"
+					android:layout_marginTop="4dp"
+					android:text="@string/save"
+					style="@style/HitubeBottomSheetActionLabel" />
+			</LinearLayout>
+
+			<LinearLayout
+				android:id="@+id/bottom_sheet_action_share"
+				android:layout_width="0dp"
+				android:layout_height="wrap_content"
+				android:layout_weight="1"
+				android:clickable="true"
+				android:background="?attr/selectableItemBackground"
+				android:focusable="true"
+				android:gravity="center_horizontal"
+				android:orientation="vertical"
+				android:paddingTop="8dp"
+				android:paddingBottom="8dp">
+
+				<ImageView
+					android:layout_width="24dp"
+					android:layout_height="24dp"
+					android:src="@drawable/ic_share"
+					android:tint="@color/hitube_on_surface" />
+
+				<TextView
+					android:layout_width="wrap_content"
+					android:layout_height="wrap_content"
+					android:layout_marginTop="4dp"
+					android:text="@string/share"
+					style="@style/HitubeBottomSheetActionLabel" />
+			</LinearLayout>
+
+			<LinearLayout
+				android:id="@+id/bottom_sheet_action_download"
+				android:layout_width="0dp"
+				android:layout_height="wrap_content"
+				android:layout_weight="1"
+				android:clickable="true"
+				android:background="?attr/selectableItemBackground"
+				android:focusable="true"
+				android:gravity="center_horizontal"
+				android:orientation="vertical"
+				android:paddingTop="8dp"
+				android:paddingBottom="8dp">
+
+				<ImageView
+					android:id="@+id/bottom_sheet_action_download_icon"
+					android:layout_width="24dp"
+					android:layout_height="24dp"
+					android:src="@drawable/ic_download"
+					android:tint="@color/hitube_on_surface" />
+
+				<TextView
+					android:id="@+id/bottom_sheet_action_download_label"
+					android:layout_width="wrap_content"
+					android:layout_height="wrap_content"
+					android:layout_marginTop="4dp"
+					android:text="@string/download"
+					style="@style/HitubeBottomSheetActionLabel" />
+			</LinearLayout>
+		</LinearLayout>
+
+		<View
+			android:layout_width="match_parent"
+			android:layout_height="1dp"
+			android:layout_marginStart="@dimen/hitube_content_padding_horizontal"
+			android:layout_marginEnd="@dimen/hitube_content_padding_horizontal"
+			android:background="@color/hitube_outline" />
+
+		<!-- Secondary options, built from the video options menu at runtime. -->
+		<LinearLayout
+			android:id="@+id/bottom_sheet_options_container"
+			android:layout_width="match_parent"
+			android:layout_height="wrap_content"
+			android:orientation="vertical" />
+
+	</LinearLayout>
+</androidx.core.widget.NestedScrollView>

@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+	<!--
+		Tall screens (height >= 600dp): allow wider shelf cards.
+		Short screens (e.g. the square 360x360dp display) keep the
+		smaller default cap from values/dimens.xml, so about two
+		shelf cards stay visible and reachable by swiping.
+	-->
+	<dimen name="hitube_shelf_card_width_max">280dp</dimen>
+</resources>

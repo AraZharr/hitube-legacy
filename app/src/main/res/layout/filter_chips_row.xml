@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+	Filter chip row at the top of the home feed. The chips live in a horizontally
+	scrolling RecyclerView (not a static row) so no chip is ever cut off on a
+	narrow screen — the rest are reached by swiping.
+-->
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+	android:layout_width="match_parent"
+	android:layout_height="wrap_content"
+	android:paddingTop="@dimen/hitube_content_padding_vertical"
+	android:paddingBottom="@dimen/hitube_content_padding_vertical">
+
+	<androidx.recyclerview.widget.RecyclerView
+		android:id="@+id/filter_chips_recycler_view"
+		android:layout_width="match_parent"
+		android:layout_height="wrap_content"
+		android:clipToPadding="false"
+		android:paddingStart="@dimen/hitube_content_padding_horizontal"
+		android:paddingEnd="@dimen/hitube_content_padding_horizontal" />
+
+</FrameLayout>

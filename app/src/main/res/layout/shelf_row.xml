@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+	A single horizontal shelf on the home feed: a section title with a chevron
+	"more" control on top, and a horizontally scrolling row of video cards below.
+	The row scrolls, so on a narrow screen (e.g. 360dp wide) only about two cards
+	are visible at a time and the rest are reached by swiping.
+-->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+	android:layout_width="match_parent"
+	android:layout_height="wrap_content"
+	android:orientation="vertical"
+	android:paddingBottom="@dimen/hitube_section_spacing">
+
+	<LinearLayout
+		android:layout_width="match_parent"
+		android:layout_height="wrap_content"
+		android:gravity="center_vertical"
+		android:orientation="horizontal"
+		android:paddingStart="@dimen/hitube_content_padding_horizontal"
+		android:paddingEnd="@dimen/hitube_content_padding_horizontal"
+		android:paddingTop="@dimen/hitube_content_padding_vertical"
+		android:paddingBottom="@dimen/hitube_content_padding_vertical">
+
+		<TextView
+			android:id="@+id/shelf_title_text_view"
+			android:layout_width="0dp"
+			android:layout_height="wrap_content"
+			android:layout_weight="1"
+			android:ellipsize="end"
+			android:maxLines="1"
+			android:textAppearance="@style/HitubeTitleMedium" />
+
+		<ImageButton
+			android:id="@+id/shelf_more_button"
+			android:layout_width="48dp"
+			android:layout_height="48dp"
+			android:background="?attr/selectableItemBackgroundBorderless"
+			android:contentDescription="@string/more"
+			android:scaleType="centerInside"
+			android:src="@drawable/ic_chevron_right"
+			android:tint="@color/hitube_on_surface" />
+	</LinearLayout>
+
+	<androidx.recyclerview.widget.RecyclerView
+		android:id="@+id/shelf_recycler_view"
+		android:layout_width="match_parent"
+		android:layout_height="wrap_content"
+		android:clipToPadding="false"
+		android:paddingStart="@dimen/hitube_grid_item_margin"
+		android:paddingEnd="@dimen/hitube_grid_item_margin" />
+
+</LinearLayout>

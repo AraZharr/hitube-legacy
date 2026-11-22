@@ -75,6 +75,15 @@ public class ChannelActionHandler {
     }
 
     public void updateSubscribeMenuItem(@Nullable ChannelId channelId, Menu menu) {
+        updateSubscribeMenuItem(channelId, menu, null);
+    }
+
+    /**
+     * Same as {@link #updateSubscribeMenuItem(ChannelId, Menu)}, but also runs
+     * {@code onUpdated} (if given) once the menu has been updated, so a view
+     * built from the menu (e.g. a bottom sheet) can refresh itself.
+     */
+    public void updateSubscribeMenuItem(@Nullable ChannelId channelId, Menu menu, Runnable onUpdated) {
         setVisible(menu, R.id.open_channel, channelId != null);
         if (channelId != null) {
             compositeDisposable.add(SubscriptionsDb.getSubscriptionsDb().getUserSubscribedToChannel(channelId)
@@ -82,7 +91,17 @@ public class ChannelActionHandler {
                     .subscribe(subscribed -> {
                         setVisible(menu, R.id.subscribe_channel, !subscribed);
                         setVisible(menu, R.id.unsubscribe_channel, subscribed);
-                    }, error -> Logger.e(this, error, "Error getting subscription status for %s", channelId)));
+                        if (onUpdated != null) {
+                            onUpdated.run();
+                        }
+                    }, error -> {
+                        Logger.e(this, error, "Error getting subscription status for %s", channelId);
+                        if (onUpdated != null) {
+                            onUpdated.run();
+                        }
+                    }));
+        } else if (onUpdated != null) {
+            onUpdated.run();
         }
     }
 

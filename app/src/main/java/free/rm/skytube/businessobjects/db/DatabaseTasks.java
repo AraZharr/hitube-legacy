@@ -141,11 +141,28 @@ public class DatabaseTasks {
      * video.
      */
     public static Disposable isVideoBookmarked(@NonNull String videoId, @NonNull Menu menu) {
+        return isVideoBookmarked(videoId, menu, null);
+    }
+
+    /**
+     * Same as {@link #isVideoBookmarked(String, Menu)}, but also runs
+     * {@code onUpdated} (if given) once the menu has been updated, so a view
+     * built from the menu (e.g. a bottom sheet) can refresh itself.
+     */
+    public static Disposable isVideoBookmarked(@NonNull String videoId, @NonNull Menu menu, Runnable onUpdated) {
         return BookmarksDb.getBookmarksDb().isVideoBookmarked(videoId)
                 .subscribe(videoIsBookmarked -> {
                     menu.findItem(R.id.bookmark_video).setVisible(!videoIsBookmarked);
                     menu.findItem(R.id.unbookmark_video).setVisible(videoIsBookmarked);
-                }, error -> Log.e(TAG, "Error checking bookmark status for " + videoId, error));
+                    if (onUpdated != null) {
+                        onUpdated.run();
+                    }
+                }, error -> {
+                    Log.e(TAG, "Error checking bookmark status for " + videoId, error);
+                    if (onUpdated != null) {
+                        onUpdated.run();
+                    }
+                });
     }
 
     public static void updateDownloadedVideoMenu(@NonNull YouTubeVideo video, @NonNull Menu menu) {
@@ -165,12 +182,29 @@ public class DatabaseTasks {
      * A task that checks if the passed {@link YouTubeVideo} is marked as watched, to update the passed {@link Menu} accordingly.
      */
     public static Disposable isVideoWatched(@NonNull String videoId, @NonNull Menu menu) {
+        return isVideoWatched(videoId, menu, null);
+    }
+
+    /**
+     * Same as {@link #isVideoWatched(String, Menu)}, but also runs
+     * {@code onUpdated} (if given) once the menu has been updated, so a view
+     * built from the menu (e.g. a bottom sheet) can refresh itself.
+     */
+    public static Disposable isVideoWatched(@NonNull String videoId, @NonNull Menu menu, Runnable onUpdated) {
         return PlaybackStatusDb.getPlaybackStatusDb().getVideoWatchedStatusAsync(videoId)
                 .subscribe(videoStatus -> {
                     boolean videoIsWatched = videoStatus != null && videoStatus.isFullyWatched();
                     menu.findItem(R.id.mark_watched).setVisible(!videoIsWatched);
                     menu.findItem(R.id.mark_unwatched).setVisible(videoIsWatched);
-                }, error -> Log.e(TAG, "Error checking watched status for " + videoId, error));
+                    if (onUpdated != null) {
+                        onUpdated.run();
+                    }
+                }, error -> {
+                    Log.e(TAG, "Error checking watched status for " + videoId, error);
+                    if (onUpdated != null) {
+                        onUpdated.run();
+                    }
+                });
     }
 
     /**

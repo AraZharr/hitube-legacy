@@ -23,6 +23,17 @@
 	<dimen name="hitube_content_padding_horizontal">12dp</dimen>
 	<dimen name="hitube_content_padding_vertical">12dp</dimen>
 	<dimen name="hitube_item_spacing">12dp</dimen>
-	<dimen name="hitube_grid_item_margin">6dp</dimen>
+	<dimen name="hitube_grid_item_margin">8dp</dimen>
 	<dimen name="hitube_section_spacing">16dp</dimen>
+
+	<!-- Bottom navigation bar height (standard 56dp). -->
+	<dimen name="hitube_bottom_nav_height">56dp</dimen>
+	<!-- Shelf card width cap (the card is ~48% of the screen width, capped at this value,
+		so about two cards are visible on a narrow screen and more on a wide one). -->
+	<dimen name="hitube_shelf_card_width_max">200dp</dimen>
+	<!-- Shelf card height is driven by its 16:9 thumbnail + text; no fixed height. -->
+	<!-- Channel avatar shown on full-width video cards. -->
+	<dimen name="hitube_channel_avatar_size">40dp</dimen>
+	<!-- Filter chip height (visual); the touch target stays 48dp via Chip defaults. -->
+	<dimen name="hitube_filter_chip_height">32dp</dimen>
 </resources>

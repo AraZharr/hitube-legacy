@@ -35,6 +35,8 @@
 
 		<ImageButton
 			android:id="@id/exo_rew"
+			android:layout_width="48dp"
+			android:layout_height="48dp"
 			style="@style/ExoMediaButton.Rewind"/>
 
 		<!-- <ImageButton android:id="@id/exo_shuffle"
@@ -45,14 +47,20 @@
 
 		<ImageButton
 			android:id="@id/exo_play"
+			android:layout_width="56dp"
+			android:layout_height="56dp"
 			style="@style/ExoMediaButton.Play"/>
 
 		<ImageButton
 			android:id="@id/exo_pause"
+			android:layout_width="56dp"
+			android:layout_height="56dp"
 			style="@style/ExoMediaButton.Pause"/>
 
 		<ImageButton
 			android:id="@id/exo_ffwd"
+			android:layout_width="48dp"
+			android:layout_height="48dp"
 			style="@style/ExoMediaButton.FastForward"/>
 
 		<!-- <ImageButton
@@ -66,7 +74,7 @@
 	<LinearLayout
 		android:id="@+id/exo_timeline"
 		android:layout_width="match_parent"
-		android:layout_height="26dp"
+		android:layout_height="32dp"
 		android:background="@color/video_player_v2_hud"
 		android:gravity="center_horizontal"
 		android:orientation="horizontal"
@@ -81,7 +89,7 @@
 		<LinearLayout
 			android:id="@+id/exo_timeline_inner"
 			android:layout_width="0dp"
-			android:layout_height="26dp"
+			android:layout_height="32dp"
 			android:gravity="center_horizontal"
 			android:orientation="vertical"
 			android:layout_weight="20">
@@ -90,6 +98,9 @@
 				android:id="@id/exo_progress"
 				android:layout_width="match_parent"
 				android:layout_height="wrap_content"
+				app:bar_height="6dp"
+				app:scrubber_enabled_size="16dp"
+				app:scrubber_dragged_size="20dp"
 				app:played_color="@color/video_player_v2_seek_bar"/>
 
 			<free.rm.skytube.businessobjects.Sponsorblock.SBTimeBarView

@@ -26,13 +26,18 @@ import android.widget.GridView;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.GridLayoutManager;
+import androidx.recyclerview.widget.LinearLayoutManager;
 
 import com.bumptech.glide.Glide;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import free.rm.skytube.R;
 import free.rm.skytube.businessobjects.VideoCategory;
 import free.rm.skytube.databinding.VideosGridviewBinding;
 import free.rm.skytube.gui.businessobjects.MainActivityListener;
+import free.rm.skytube.gui.businessobjects.adapters.ShelfVideoGridAdapter;
 import free.rm.skytube.gui.businessobjects.adapters.VideoGridAdapter;
 import free.rm.skytube.gui.businessobjects.fragments.BaseVideosGridFragment;
 
@@ -41,6 +46,8 @@ import free.rm.skytube.gui.businessobjects.fragments.BaseVideosGridFragment;
  */
 public abstract class VideosGridFragment extends BaseVideosGridFragment {
     protected VideosGridviewBinding gridviewBinding;
+    /** Wraps {@link #videoGridAdapter} as horizontal shelves; only used when {@link #useShelfLayout()} is true. */
+    private ShelfVideoGridAdapter shelfVideoGridAdapter;
 
     public VideosGridFragment() {
     }
@@ -66,14 +73,42 @@ public abstract class VideosGridFragment extends BaseVideosGridFragment {
         videoGridAdapter.setListener((MainActivityListener)getActivity());
 
         gridviewBinding.gridView.setHasFixedSize(true);
-        gridviewBinding.gridView.setLayoutManager(new GridLayoutManager(getActivity(),
-                getResources().getInteger(R.integer.video_grid_num_columns)));
-        gridviewBinding.gridView.setAdapter(videoGridAdapter);
+        if (useShelfLayout()) {
+            // Home feed: vertical list of horizontal shelves (+ a filter chip row on top).
+            shelfVideoGridAdapter = new ShelfVideoGridAdapter(requireContext(), videoGridAdapter, getShelfTitles());
+            gridviewBinding.gridView.setLayoutManager(new LinearLayoutManager(getActivity()));
+            gridviewBinding.gridView.setAdapter(shelfVideoGridAdapter);
+        } else {
+            gridviewBinding.gridView.setLayoutManager(new GridLayoutManager(getActivity(),
+                    getResources().getInteger(R.integer.video_grid_num_columns)));
+            gridviewBinding.gridView.setAdapter(videoGridAdapter);
+        }
         gridviewBinding.swipeRefreshLayout.setOnRefreshListener(this);
+    }
+
+    /**
+     * @return true if this feed should be shown as horizontal shelves instead of a
+     * flat vertical grid. Only the browse feeds (Most Popular, Featured) use shelves;
+     * feed/bookmarks/downloads keep the flat list.
+     */
+    protected boolean useShelfLayout() {
+        return false;
+    }
+
+    /**
+     * @return Section titles for the shelves, in order. The last title repeats for
+     * any further shelves. Only used when {@link #useShelfLayout()} is true.
+     */
+    protected List<String> getShelfTitles() {
+        return new ArrayList<>();
     }
 
     @Override
     public void onDestroyView() {
+        if (shelfVideoGridAdapter != null) {
+            shelfVideoGridAdapter.release();
+            shelfVideoGridAdapter = null;
+        }
         gridviewBinding.gridView.setAdapter(null);
         gridviewBinding = null;
         super.onDestroyView();

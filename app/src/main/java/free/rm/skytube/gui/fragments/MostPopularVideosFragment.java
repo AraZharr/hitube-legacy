@@ -17,6 +17,10 @@
 
 package free.rm.skytube.gui.fragments;
 
+import java.util.Arrays;
+import java.util.List;
+
+import free.rm.skytube.R;
 import free.rm.skytube.app.SkyTubeApp;
 import free.rm.skytube.businessobjects.VideoCategory;
 
@@ -28,6 +32,19 @@ public class MostPopularVideosFragment extends VideosGridFragment {
 	@Override
 	protected VideoCategory getVideoCategory() {
 		return VideoCategory.MOST_POPULAR;
+	}
+
+	@Override
+	protected boolean useShelfLayout() {
+		return true;
+	}
+
+	@Override
+	protected List<String> getShelfTitles() {
+		return Arrays.asList(
+				SkyTubeApp.getStr(R.string.shelf_quick_picks),
+				SkyTubeApp.getStr(R.string.shelf_trending_now),
+				SkyTubeApp.getStr(R.string.shelf_more_to_explore));
 	}
 
 	@Override

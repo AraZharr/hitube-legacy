@@ -62,6 +62,8 @@ public class GridViewHolder extends RecyclerView.ViewHolder implements Serializa
 	private Context context = null;
 	private MainActivityListener mainActivityListener;
 	private boolean showChannelInfo;
+	/** True when this card is shown inside a horizontal shelf: the channel avatar is hidden (too cramped at shelf width). */
+	private boolean compactMode = false;
 
 	private final transient VideoCellBinding binding;
 	private final transient CompositeDisposable compositeDisposable;
@@ -114,6 +116,34 @@ public class GridViewHolder extends RecyclerView.ViewHolder implements Serializa
 	}
 
 	/**
+	 * Compact mode (used by shelf cards): hides the channel avatar, which is too
+	 * cramped at shelf width. The title then takes the full card width.
+	 */
+	void setCompactMode(boolean compactMode) {
+		this.compactMode = compactMode;
+		if (binding.channelAvatarTextView != null) {
+			binding.channelAvatarTextView.setVisibility(compactMode ? View.GONE : View.VISIBLE);
+		}
+	}
+
+	/**
+	 * Shows the first letter of the given name in the circular channel avatar.
+	 * The feed does not carry a channel thumbnail URL, so the initial stands in
+	 * for the channel picture. Hidden in compact mode.
+	 */
+	private void setAvatarLetter(String name) {
+		if (binding.channelAvatarTextView == null) {
+			return;
+		}
+		if (compactMode || name == null || name.trim().isEmpty()) {
+			binding.channelAvatarTextView.setVisibility(View.GONE);
+			return;
+		}
+		binding.channelAvatarTextView.setVisibility(View.VISIBLE);
+		binding.channelAvatarTextView.setText(name.trim().substring(0, 1).toUpperCase());
+	}
+
+	/**
 	 * Updates the contents of this ViewHolder such that the data of these views is equal to the
 	 * given youTubeVideo.
 	 *
@@ -153,6 +183,7 @@ public class GridViewHolder extends RecyclerView.ViewHolder implements Serializa
 	}
 
 	private void updateViewsData(@NonNull YouTubeChannel currentCard) {
+		setAvatarLetter(currentCard.getTitle());
 		if (currentCard.getSubscriberCount() >= 0) {
 			binding.viewsTextView.setText(currentCard.getTotalSubscribers());
 		} else {
@@ -168,6 +199,8 @@ public class GridViewHolder extends RecyclerView.ViewHolder implements Serializa
 	}
 
 	private void updateViewsData(@NonNull YouTubePlaylist playlistInfoItem) {
+		String channelTitle = playlistInfoItem.getChannelTitle();
+		setAvatarLetter(channelTitle != null ? channelTitle : playlistInfoItem.getTitle());
 		binding.viewsTextView.setText(String.format(context.getString(R.string.num_videos), playlistInfoItem.getVideoCount()));
 
 		binding.thumbsUpTextView.setVisibility(View.GONE);
@@ -179,6 +212,7 @@ public class GridViewHolder extends RecyclerView.ViewHolder implements Serializa
 	}
 
     private void updateViewsData(@NonNull YouTubeVideo youTubeVideo) {
+        setAvatarLetter(youTubeVideo.getChannelName());
         binding.channelTextView.setText(showChannelInfo ? youTubeVideo.getChannelName() : "");
         binding.videoDurationTextView.setText(youTubeVideo.getDuration());
         binding.viewsTextView.setText(youTubeVideo.getViewsCount());
@@ -230,11 +264,23 @@ public class GridViewHolder extends RecyclerView.ViewHolder implements Serializa
 	private void onOptionsButtonClick(final View view, YouTubeVideo youTubeVideo) {
 		final PopupMenu popupMenu = createPopup(R.menu.video_options_menu, view);
 		final Menu menu = popupMenu.getMenu();
-		compositeDisposable.add(DatabaseTasks.isVideoBookmarked(youTubeVideo.getId(), menu));
+
+		// The bottom sheet is a view over this (hidden) menu: the menu keeps owning
+		// the options, their visibility and their click handling. The sheet is created
+		// below, once the click listener exists; the async checks refresh it when
+		// they finish so the sheet stays in sync with the menu.
+		final VideoOptionsBottomSheet[] bottomSheetHolder = new VideoOptionsBottomSheet[1];
+		final Runnable refreshSheet = () -> {
+			if (bottomSheetHolder[0] != null) {
+				bottomSheetHolder[0].refreshFromMenu();
+			}
+		};
+
+		compositeDisposable.add(DatabaseTasks.isVideoBookmarked(youTubeVideo.getId(), menu, refreshSheet));
 
 		// If playback history is not disabled, see if this video has been watched. Otherwise, hide the "mark watched" & "mark unwatched" options from the menu.
 		if (SkyTubeApp.getSettings().isPlaybackStatusEnabled()) {
-			compositeDisposable.add(DatabaseTasks.isVideoWatched(youTubeVideo.getId(), menu));
+			compositeDisposable.add(DatabaseTasks.isVideoWatched(youTubeVideo.getId(), menu, refreshSheet));
 		} else {
 			menu.findItem(R.id.mark_watched).setVisible(false);
 			menu.findItem(R.id.mark_unwatched).setVisible(false);
@@ -251,12 +297,13 @@ public class GridViewHolder extends RecyclerView.ViewHolder implements Serializa
 			} else {
 				menu.findItem(R.id.download_video).setVisible(online);
 			}
+			refreshSheet.run();
 		}));
 
 		actionHandler.updateBlockingMenuItem(menu);
-		actionHandler.updateSubscribeMenuItem(youTubeVideo.getChannelId(), menu);
+		actionHandler.updateSubscribeMenuItem(youTubeVideo.getChannelId(), menu, refreshSheet);
 
-		popupMenu.setOnMenuItemClickListener(item -> {
+		PopupMenu.OnMenuItemClickListener menuItemClickListener = item -> {
 			if (actionHandler.handleChannelActions(context, youTubeVideo.getChannel(), item.getItemId())) {
 				return true;
 			}
@@ -305,8 +352,12 @@ public class GridViewHolder extends RecyclerView.ViewHolder implements Serializa
 					return true;
 			}
 			return false;
-		});
-		popupMenu.show();
+		};
+		popupMenu.setOnMenuItemClickListener(menuItemClickListener);
+
+		// Show the actions as a bottom sheet instead of a popup menu.
+		bottomSheetHolder[0] = new VideoOptionsBottomSheet(view.getContext(), youTubeVideo, menu, menuItemClickListener);
+		bottomSheetHolder[0].show();
 	}
 
 	private PopupMenu createPopup(@MenuRes int menuId, View view) {

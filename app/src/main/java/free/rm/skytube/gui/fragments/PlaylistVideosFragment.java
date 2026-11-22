@@ -7,6 +7,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBar;
@@ -14,10 +15,15 @@ import androidx.appcompat.app.ActionBar;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
 
+import java.util.Random;
+
 import free.rm.skytube.R;
 import free.rm.skytube.businessobjects.VideoCategory;
+import free.rm.skytube.businessobjects.YouTube.POJOs.CardData;
 import free.rm.skytube.businessobjects.YouTube.POJOs.YouTubePlaylist;
+import free.rm.skytube.businessobjects.YouTube.POJOs.YouTubeVideo;
 import free.rm.skytube.databinding.FragmentPlaylistVideosBinding;
+import free.rm.skytube.gui.businessobjects.YouTubePlayer;
 
 /**
  * A Fragment that displays the videos of a playlist in a {@link VideosGridFragment}
@@ -72,8 +78,28 @@ public class PlaylistVideosFragment extends VideosGridFragment {
                 .apply(new RequestOptions().placeholder(R.drawable.banner_default))
                 .into(binding.playlistBannerImageView);
 
+        // Play / Shuffle pills: Play starts the first video, Shuffle a random one.
+        binding.playlistPlayButton.setOnClickListener(v -> playVideoAt(0));
+        binding.playlistShuffleButton.setOnClickListener(v -> {
+            int count = videoGridAdapter.getItemCount();
+            if (count > 0) {
+                playVideoAt(new Random().nextInt(count));
+            } else {
+                Toast.makeText(context, R.string.loading, Toast.LENGTH_SHORT).show();
+            }
+        });
+
         // Force initialization
         videoGridAdapter.initializeList();
+    }
+
+    private void playVideoAt(int position) {
+        CardData card = videoGridAdapter.getVideoAt(position);
+        if (card instanceof YouTubeVideo) {
+            YouTubePlayer.launch((YouTubeVideo) card, requireContext());
+        } else {
+            Toast.makeText(requireContext(), R.string.loading, Toast.LENGTH_SHORT).show();
+        }
     }
 
 	@Override

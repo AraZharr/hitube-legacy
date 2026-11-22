@@ -18,6 +18,8 @@
 			android:layout_width="match_parent"
 			android:layout_height="match_parent"
 			android:fillViewport="true"
+			android:paddingBottom="@dimen/hitube_bottom_nav_height"
+			android:clipToPadding="false"
 			app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
 			<!-- Scrolling content -->
@@ -45,12 +47,14 @@
 				android:theme="@style/AppTheme.CustomBackground"
 				app:layout_scrollFlags="scroll|enterAlways" />
 
-			<!-- TABS -->
+			<!-- TABS — kept (but hidden) so the ViewPager wiring in MainFragment
+				keeps working; navigation now lives in the bottom bar below. -->
 			<com.google.android.material.tabs.TabLayout
 				android:id="@+id/tab_layout"
 				android:layout_width="match_parent"
 				android:layout_height="wrap_content"
 				android:layout_gravity="center_horizontal"
+				android:visibility="gone"
                 app:tabMode="scrollable"
                 style="@style/FixedTabs"
 
@@ -60,6 +64,19 @@
 
 	</androidx.coordinatorlayout.widget.CoordinatorLayout>
 
+	<!-- Bottom navigation: Home / Search / Library. Sits above the content;
+		the scroll view above has bottom padding equal to this bar's height
+		so no content is hidden behind it (important on short screens). -->
+	<com.google.android.material.bottomnavigation.BottomNavigationView
+		android:id="@+id/bottom_nav"
+		android:layout_width="match_parent"
+		android:layout_height="@dimen/hitube_bottom_nav_height"
+		android:layout_gravity="bottom"
+		android:background="@color/hitube_surface"
+		app:itemIconTint="@color/hitube_bottom_nav_item_color"
+		app:itemTextColor="@color/hitube_bottom_nav_item_color"
+		app:labelVisibilityMode="labeled"
+		app:menu="@menu/bottom_nav_menu" />
 
 	<include
 		android:id="@+id/subs_drawer"

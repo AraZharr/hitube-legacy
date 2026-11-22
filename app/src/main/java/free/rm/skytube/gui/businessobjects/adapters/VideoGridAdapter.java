@@ -274,6 +274,17 @@ public class VideoGridAdapter extends RecyclerViewAdapterEx<CardData, GridViewHo
 		return currentVideoCategory;
 	}
 
+	/**
+	 * Returns the card at the given position, or null if the position is out of range.
+	 * Used by the playlist Play / Shuffle actions to pick the first (or a random) video.
+	 */
+	public CardData getVideoAt(int position) {
+		if (position >= 0 && position < getItemCount()) {
+			return get(position);
+		}
+		return null;
+	}
+
     @Override
     public void onVideoStatusUpdated(CardData video) {
         if (video != null) {

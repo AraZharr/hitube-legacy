@@ -23,6 +23,19 @@
 
 		<item name="textAppearanceSmallPopupMenu">@style/VideoOptionsTextAppearanceSmall</item>
 		<item name="android:textAppearanceSmallPopupMenu">@style/VideoOptionsTextAppearanceSmall</item>
+
+		<!-- Rounded dialogs (28dp corners). Note: only MaterialAlertDialogBuilder
+			reads this; the AppCompat AlertDialog.Builder used in a few places does not. -->
+		<item name="materialAlertDialogTheme">@style/HitubeAlertDialog</item>
+	</style>
+
+	<style name="HitubeAlertDialog" parent="ThemeOverlay.MaterialComponents.MaterialAlertDialog">
+		<item name="shapeAppearanceOverlay">@style/HitubeDialogShape</item>
+	</style>
+
+	<style name="HitubeDialogShape" parent="">
+		<item name="cornerFamily">rounded</item>
+		<item name="cornerSize">28dp</item>
 	</style>
 
 	<!-- Settings / Preferences — dark, same palette (was Light before) -->
@@ -117,6 +130,42 @@
 	<style name="HitubeLabelSmall" parent="TextAppearance.AppCompat">
 		<item name="android:textSize">11sp</item>
 		<item name="android:fontFamily">sans-serif-medium</item>
+	</style>
+
+	<!-- Filter chip used in the horizontally scrolling chip row at the top of the home feed.
+		Selected chip is a solid accent pill; unselected chips are dark grey pills. -->
+	<style name="HitubeFilterChip" parent="Widget.MaterialComponents.Chip.Choice">
+		<item name="chipBackgroundColor">@color/hitube_chip_background</item>
+		<item name="android:textColor">@color/hitube_chip_text</item>
+		<item name="chipMinHeight">@dimen/hitube_filter_chip_height</item>
+		<item name="chipCornerRadius">16dp</item>
+		<item name="chipStrokeWidth">0dp</item>
+		<item name="android:textAppearance">@style/HitubeLabelMedium</item>
+		<item name="android:textStyle">bold</item>
+	</style>
+
+	<!-- Bottom sheet for video actions: rounded top corners with a small gap at the screen edges. -->
+	<style name="HitubeBottomSheetDialog" parent="Theme.MaterialComponents.BottomSheetDialog">
+		<item name="bottomSheetStyle">@style/HitubeBottomSheet</item>
+	</style>
+
+	<style name="HitubeBottomSheet" parent="Widget.MaterialComponents.BottomSheet.Modal">
+		<item name="shapeAppearanceOverlay">@style/HitubeBottomSheetShape</item>
+	</style>
+
+	<style name="HitubeBottomSheetShape" parent="">
+		<item name="cornerFamily">rounded</item>
+		<item name="cornerSizeTopLeft">28dp</item>
+		<item name="cornerSizeTopRight">28dp</item>
+		<item name="cornerSizeBottomLeft">0dp</item>
+		<item name="cornerSizeBottomRight">0dp</item>
+	</style>
+
+	<style name="HitubeBottomSheetActionLabel">
+		<item name="android:textSize">12sp</item>
+		<item name="android:textColor">@color/hitube_on_surface</item>
+		<item name="android:gravity">center</item>
+		<item name="android:maxLines">1</item>
 	</style>
 
 	<!-- *************************************************************************************** -->

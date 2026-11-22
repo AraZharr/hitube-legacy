@@ -13,6 +13,22 @@
     <string name="featured">Featured</string>
     <string name="most_popular">Most Popular</string>
     <string name="trending_in">Trending (%s)</string>
+    <!-- Bottom navigation labels -->
+    <string name="bottom_nav_home">Home</string>
+    <string name="bottom_nav_search">Search</string>
+    <string name="bottom_nav_library">Library</string>
+    <!-- Filter chips on the home feed -->
+    <string name="filter_chip_all">All</string>
+    <!-- Shelf titles on the home feed -->
+    <string name="shelf_quick_picks">Quick picks</string>
+    <string name="shelf_trending_now">Trending now</string>
+    <string name="shelf_more_to_explore">More to explore</string>
+    <!-- Playlist actions -->
+    <string name="shuffle">Shuffle</string>
+    <string name="save">Save</string>
+    <string name="saved">Saved</string>
+    <string name="downloaded">Downloaded</string>
+    <string name="more">More</string>
     <string name="video">Video</string>
     <string name="videos">Videos</string>
     <string name="num_videos">%d videos</string>

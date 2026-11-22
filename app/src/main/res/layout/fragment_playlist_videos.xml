@@ -69,6 +69,43 @@
 
 				</RelativeLayout>
 
+				<!-- Wide Play / Shuffle pills (large touch targets, 48dp tall). -->
+				<LinearLayout
+					android:layout_width="match_parent"
+					android:layout_height="wrap_content"
+					android:orientation="horizontal"
+					android:paddingStart="@dimen/hitube_content_padding_horizontal"
+					android:paddingEnd="@dimen/hitube_content_padding_horizontal"
+					android:paddingTop="8dp"
+					android:paddingBottom="8dp">
+
+					<com.google.android.material.button.MaterialButton
+						android:id="@+id/playlist_play_button"
+						android:layout_width="0dp"
+						android:layout_height="48dp"
+						android:layout_weight="1"
+						android:text="@string/play"
+						android:textColor="@android:color/black"
+						app:backgroundTint="@android:color/white"
+						app:cornerRadius="24dp"
+						app:icon="@drawable/ic_play"
+						app:iconTint="@android:color/black" />
+
+					<com.google.android.material.button.MaterialButton
+						android:id="@+id/playlist_shuffle_button"
+						android:layout_width="0dp"
+						android:layout_height="48dp"
+						android:layout_marginStart="12dp"
+						android:layout_marginLeft="12dp"
+						android:layout_weight="1"
+						android:text="@string/shuffle"
+						android:textColor="@color/hitube_on_surface"
+						app:backgroundTint="@color/hitube_surface_container_high"
+						app:cornerRadius="24dp"
+						app:icon="@drawable/ic_shuffle"
+						app:iconTint="@color/hitube_on_surface" />
+				</LinearLayout>
+
 			</LinearLayout>
 		</FrameLayout>
 	</com.google.android.material.appbar.AppBarLayout>

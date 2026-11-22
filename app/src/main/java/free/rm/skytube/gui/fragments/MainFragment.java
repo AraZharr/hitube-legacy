@@ -21,6 +21,7 @@ import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentPagerAdapter;
 import androidx.preference.PreferenceManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.viewpager.widget.ViewPager;
 
 import com.google.android.material.tabs.TabLayout;
 
@@ -162,6 +163,8 @@ public class MainFragment extends FragmentEx {
 			}
 		});
 
+		setupBottomNav();
+
 		// select the default tab:  the default tab is defined by the user through the Preferences
 		SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(getActivity());
 
@@ -193,10 +196,110 @@ public class MainFragment extends FragmentEx {
 		// won't know that it's selected. When the Feeds fragment is the default tab, this will prevent the
 		// refresh dialog from showing when an automatic refresh happens.
 		videosPagerAdapter.selectTabAtPosition(fragmentBinding.pager.getCurrentItem());
+		syncBottomNav(fragmentBinding.pager.getCurrentItem());
 
 		EventBus.getInstance().registerMainFragment(this);
 
 		return fragmentBinding.getRoot();
+	}
+
+	/**
+	 * Bottom navigation (Home / Search / Library) synced with the ViewPager.
+	 * The top TabLayout is hidden but kept, so all ViewPager wiring keeps working.
+	 * Search is an action (it opens the toolbar search view), not a page, so it
+	 * never stays highlighted.
+	 */
+	private void setupBottomNav() {
+		fragmentBinding.bottomNav.setOnItemSelectedListener(item -> {
+			int itemId = item.getItemId();
+			if (itemId == R.id.bottom_nav_search) {
+				MenuItem searchItem = fragmentBinding.toolbar.getMenu().findItem(R.id.menu_search);
+				if (searchItem != null) {
+					if (searchItem.isActionViewExpanded()) {
+						searchItem.collapseActionView();
+					} else {
+						searchItem.expandActionView();
+					}
+				}
+				// Not a page: do not highlight the Search item.
+				return false;
+			}
+			// Home / Library: collapse an expanded search view first.
+			MenuItem searchItem = fragmentBinding.toolbar.getMenu().findItem(R.id.menu_search);
+			if (searchItem != null && searchItem.isActionViewExpanded()) {
+				searchItem.collapseActionView();
+			}
+			int targetIndex;
+			if (itemId == R.id.bottom_nav_home) {
+				targetIndex = getHomeTabIndex();
+			} else if (itemId == R.id.bottom_nav_library) {
+				targetIndex = getLibraryTabIndex();
+			} else {
+				return false;
+			}
+			if (targetIndex < 0) {
+				return false;
+			}
+			if (fragmentBinding.pager.getCurrentItem() == targetIndex) {
+				// Re-tapping the current page scrolls to the top (same as tab re-select).
+				scrollCurrentTabToTop();
+			} else {
+				fragmentBinding.pager.setCurrentItem(targetIndex);
+			}
+			return true;
+		});
+
+		fragmentBinding.pager.addOnPageChangeListener(new ViewPager.SimpleOnPageChangeListener() {
+			@Override
+			public void onPageSelected(int position) {
+				syncBottomNav(position);
+			}
+		});
+	}
+
+	private int getHomeTabIndex() {
+		int index = videosPagerAdapter.getIndexOf(MOST_POPULAR_VIDEOS_FRAGMENT);
+		if (index < 0) {
+			index = videosPagerAdapter.getIndexOf(FEATURED_VIDEOS_FRAGMENT);
+		}
+		return index < 0 ? 0 : index;
+	}
+
+	private int getLibraryTabIndex() {
+		int index = videosPagerAdapter.getIndexOf(BOOKMARKS_FRAGMENT);
+		if (index < 0) {
+			index = videosPagerAdapter.getIndexOf(DOWNLOADED_VIDEOS_FRAGMENT);
+		}
+		return index < 0 ? videosPagerAdapter.getCount() - 1 : index;
+	}
+
+	private void scrollCurrentTabToTop() {
+		VideosGridFragment fragment = videosPagerAdapter.getFragmentFrom(fragmentBinding.pager.getCurrentItem(), true);
+		if (fragment != null && fragment.gridviewBinding != null) {
+			fragment.gridviewBinding.gridView.smoothScrollToPosition(TOP_LIST_INDEX);
+		}
+	}
+
+	/** Highlights the bottom-nav item matching the given page (directly setting the
+	 * checked state, so the item listener is not triggered). Tabs with no bottom-nav
+	 * equivalent (e.g. the Subscriptions feed) leave nothing highlighted. */
+	private void syncBottomNav(int position) {
+		if (fragmentBinding == null || fragmentBinding.bottomNav == null) {
+			return;
+		}
+		android.view.Menu menu = fragmentBinding.bottomNav.getMenu();
+		MenuItem homeItem = menu.findItem(R.id.bottom_nav_home);
+		MenuItem searchItem = menu.findItem(R.id.bottom_nav_search);
+		MenuItem libraryItem = menu.findItem(R.id.bottom_nav_library);
+		if (homeItem != null) {
+			homeItem.setChecked(position == getHomeTabIndex());
+		}
+		if (searchItem != null) {
+			searchItem.setChecked(false);
+		}
+		if (libraryItem != null) {
+			libraryItem.setChecked(position == getLibraryTabIndex());
+		}
 	}
 
 	private static String[] getTabListValues() {
@@ -236,6 +339,7 @@ public class MainFragment extends FragmentEx {
 		if (videosPagerAdapter != null && fragmentBinding != null) {
 			Logger.d(this, "MAINFRAGMENT RESUMED " + fragmentBinding.tabLayout.getSelectedTabPosition());
 			videosPagerAdapter.selectTabAtPosition(fragmentBinding.tabLayout.getSelectedTabPosition());
+			syncBottomNav(fragmentBinding.pager.getCurrentItem());
 		}
 		// If the selectedFragment is not the subscriptionsFeedFragment, try out refreshing the subs in the background
 		if (SkyTubeApp.getSettings().isFullRefreshTimely()) {
@@ -266,6 +370,7 @@ public class MainFragment extends FragmentEx {
 		switch (settingChange) {
 			case HIDE_TABS: {
 				videosPagerAdapter.updateVisibleTabs(fragmentBinding.tabLayout);
+				syncBottomNav(fragmentBinding.pager.getCurrentItem());
 				break;
 			}
 			case CONTENT_COUNTRY: {
