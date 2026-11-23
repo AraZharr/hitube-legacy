@@ -280,6 +280,12 @@ public class MiniPlayerManager {
 		currentVideo = video;
 		lastVideoWasAutoplayAdvanced = false;
 		lastAdvancePlayStartedMs = 0;
+		// Tell listeners (e.g. the background playback service) about the
+		// new video: without this, the notification kept showing the previous
+		// video's title while a manually picked video was playing.
+		if (video != null) {
+			notifyVideoChanged(video);
+		}
 	}
 
 	@Nullable

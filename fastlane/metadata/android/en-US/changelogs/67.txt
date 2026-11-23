@@ -1,1 +1,1 @@
-Added a light theme (Settings > Others > Theme: Dark / Light / System default) and UI animations: fade + slide activity transitions and a staggered fade-in for the video grid.
+Added a light theme (Settings > Others > Theme: Dark / Light / System default) and UI animations: fade + slide activity transitions and a staggered fade-in for the video grid. Fixed the background playback notification showing the previous video's title when a new video was picked manually.
