@@ -201,6 +201,17 @@ public class MiniPlayerManager {
 				&& player.getPlaybackState() == Player.STATE_READY;
 	}
 
+	/**
+	 * @return True if the shared player exists, is supposed to be playing, and has a
+	 *         stream loaded (buffering or ready). Used to decide whether audio should
+	 *         keep playing in the background when the app leaves the foreground.
+	 */
+	public synchronized boolean isActive() {
+		return player != null && player.getPlayWhenReady()
+				&& player.getPlaybackState() != Player.STATE_IDLE
+				&& player.getPlaybackState() != Player.STATE_ENDED;
+	}
+
 	public synchronized void play() {
 		if (player != null) {
 			player.setPlayWhenReady(true);

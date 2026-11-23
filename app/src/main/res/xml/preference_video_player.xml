@@ -57,6 +57,13 @@
 		app:defaultValue="true"
 		app:iconSpaceReserved="false" />
 
+	<CheckBoxPreference
+		app:key="@string/pref_key_background_playback"
+		app:title="@string/pref_title_background_playback"
+		app:summary="@string/pref_summary_background_playback"
+		app:defaultValue="true"
+		app:iconSpaceReserved="false" />
+
 	<ListPreference
 		app:key="@string/pref_key_default_content_country"
 		app:title="@string/pref_title_default_content_country"

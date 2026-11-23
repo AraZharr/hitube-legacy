@@ -17,7 +17,9 @@
 
 package free.rm.skytube.app;
 
+import android.app.Activity;
 import android.app.AlarmManager;
+import android.app.Application;
 import android.app.PendingIntent;
 import android.content.ActivityNotFoundException;
 import android.content.ClipData;
@@ -31,6 +33,8 @@ import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.Uri;
 import android.os.Build;
+import android.os.Bundle;
+import android.os.Handler;
 import android.os.Looper;
 import android.os.StrictMode;
 import android.os.SystemClock;
@@ -74,6 +78,8 @@ import free.rm.skytube.businessobjects.YouTube.newpipe.ContentId;
 import free.rm.skytube.businessobjects.YouTube.newpipe.NewPipeService;
 import free.rm.skytube.businessobjects.db.DatabaseTasks;
 import free.rm.skytube.gui.activities.MainActivity;
+import free.rm.skytube.gui.businessobjects.BackgroundPlayerService;
+import free.rm.skytube.gui.businessobjects.MiniPlayerManager;
 import free.rm.skytube.gui.businessobjects.YouTubePlayer;
 import free.rm.skytube.gui.fragments.ChannelBrowserFragment;
 import free.rm.skytube.gui.fragments.FragmentNames;
@@ -91,6 +97,27 @@ public class SkyTubeApp extends MultiDexApplication {
 	/** SkyTube Application databaseInstance. */
 	private static SkyTubeApp skyTubeApp = null;
 	private Settings settings;
+
+	/** Number of activities currently in the started state. */
+	private int foregroundActivities = 0;
+
+	private final Handler backgroundPlaybackHandler = new Handler(Looper.getMainLooper());
+
+	/**
+	 * Runs shortly after the last activity stops: if the app is still in the
+	 * background (not just navigating between activities or rotating), and a
+	 * video is playing, hand playback over to the background service.
+	 */
+	private final Runnable checkBackgroundRunnable = new Runnable() {
+		@Override
+		public void run() {
+			if (foregroundActivities == 0 && settings != null
+					&& settings.isBackgroundPlaybackEnabled()
+					&& MiniPlayerManager.getInstance().isActive()) {
+				BackgroundPlayerService.start(SkyTubeApp.this);
+			}
+		}
+	};
 	private FragmentNames names;
 
 	private static final String TAG = "SkyTubeApp";
@@ -109,6 +136,7 @@ public class SkyTubeApp extends MultiDexApplication {
 		this.settings.migrate();
 		this.names = new FragmentNames(this);
 		skyTubeApp = this;
+		registerBackgroundPlaybackLifecycleCallbacks();
 		setupRxJava();
 		preloadPrettyTime();
 		if (BuildConfig.DEBUG) {
@@ -127,6 +155,55 @@ public class SkyTubeApp extends MultiDexApplication {
 					.build());
 		}
 		initChannels();
+	}
+
+	/**
+	 * Watches the app move between foreground and background. When the last activity
+	 * stops while a video is playing, audio keeps playing through the background
+	 * service (with a notification); when the app returns, the service stops and
+	 * the in-app mini player takes over again. The short delay avoids starting
+	 * the service for the brief gap between two activities (navigation, rotation).
+	 */
+	private void registerBackgroundPlaybackLifecycleCallbacks() {
+		registerActivityLifecycleCallbacks(new Application.ActivityLifecycleCallbacks() {
+			@Override
+			public void onActivityStarted(Activity activity) {
+				if (foregroundActivities == 0) {
+					// Back in the foreground: cancel any pending start and stop the service.
+					backgroundPlaybackHandler.removeCallbacks(checkBackgroundRunnable);
+					BackgroundPlayerService.stop(SkyTubeApp.this);
+				}
+				foregroundActivities++;
+			}
+
+			@Override
+			public void onActivityStopped(Activity activity) {
+				foregroundActivities = Math.max(0, foregroundActivities - 1);
+				if (foregroundActivities == 0) {
+					backgroundPlaybackHandler.postDelayed(checkBackgroundRunnable, 600);
+				}
+			}
+
+			@Override
+			public void onActivityCreated(Activity activity, Bundle savedInstanceState) {
+			}
+
+			@Override
+			public void onActivityResumed(Activity activity) {
+			}
+
+			@Override
+			public void onActivityPaused(Activity activity) {
+			}
+
+			@Override
+			public void onActivitySaveInstanceState(Activity activity, Bundle outState) {
+			}
+
+			@Override
+			public void onActivityDestroyed(Activity activity) {
+			}
+		});
 	}
 
 	private void setupRxJava() {

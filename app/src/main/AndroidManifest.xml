@@ -7,6 +7,8 @@
     <!-- <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED"/> -->
     <!-- [Optional]  If enabled via the preferences, the app will periodically check for new videos published by the subscribed channels -->
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE_MEDIA_PLAYBACK" />
 
     <application
         android:name=".app.SkyTubeApp"
@@ -189,6 +191,10 @@
                 android:name="autoStoreLocales"
                 android:value="true" />
         </service>
+        <service
+            android:name=".gui.businessobjects.BackgroundPlayerService"
+            android:exported="false"
+            android:foregroundServiceType="mediaPlayback" />
     </application>
 
 </manifest>

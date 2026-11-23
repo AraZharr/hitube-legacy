@@ -63,4 +63,11 @@
     <string name="crash_report_github">Report on GitHub</string>
     <string name="crash_report_close">Close</string>
     <string name="crash_report_copied">Crash log copied — paste it into the GitHub issue</string>
+
+    <!-- Background playback notification -->
+    <string name="background_playback_channel_name">Background playback</string>
+    <string name="background_playback_channel_description">Shows playback controls while audio plays in the background.</string>
+    <string name="background_playback_play">Play</string>
+    <string name="background_playback_pause">Pause</string>
+    <string name="background_playback_stop">Stop</string>
 </resources>

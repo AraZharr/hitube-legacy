@@ -1,0 +1,1 @@
+Removed the FreeDroidWarn upgrade dialog (it opened keepandroidopen.org) and added background playback: videos keep playing audio when you leave the app.

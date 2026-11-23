@@ -558,6 +558,9 @@
     <string name="pref_key_autoplay" translatable="false">pref_key_autoplay</string>
     <string name="pref_title_autoplay">Autoplay next video</string>
     <string name="pref_summary_autoplay">Automatically play the next video when the current one ends.</string>
+    <string name="pref_key_background_playback" translatable="false">pref_key_background_playback</string>
+    <string name="pref_title_background_playback">Background playback</string>
+    <string name="pref_summary_background_playback">Keep playing audio when you leave the app, with controls in the notification.</string>
     <string name="pref_youtube_api_key" translatable="false">pref_youtube_api_key</string>
     <string name="pref_title_youtube_api_key">YouTube API key</string>
     <string name="pref_summary_youtube_api_key">Enter a personal YouTube API key to use instead.</string>

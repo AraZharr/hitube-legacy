@@ -279,6 +279,17 @@ public class Settings {
     }
 
     /**
+     * @return True if audio should keep playing when the app goes to the background.
+     */
+    public boolean isBackgroundPlaybackEnabled() {
+        return getPreference(R.string.pref_key_background_playback, true);
+    }
+
+    public void setBackgroundPlaybackEnabled(boolean backgroundPlaybackEnabled) {
+        setPreference(R.string.pref_key_background_playback, backgroundPlaybackEnabled);
+    }
+
+    /**
      * Instruct the {@link SubscriptionsFeedFragment} to refresh the subscriptions feed.
      *
      * This might occur due to user subscribing/unsubscribing to a channel.

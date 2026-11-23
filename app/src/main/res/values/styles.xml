@@ -28,8 +28,7 @@
 			reads this; the AppCompat AlertDialog.Builder used in a few places does not. -->
 		<item name="materialAlertDialogTheme">@style/HitubeAlertDialog</item>
 
-		<!-- Framework AlertDialog theme (android.app.AlertDialog — used by the
-			FreeDroidWarn library dialog). Material dialogs are NOT affected: they
+		<!-- Framework AlertDialog theme (android.app.AlertDialog). Material dialogs are NOT affected: they
 			read materialAlertDialogTheme above. -->
 		<item name="android:alertDialogTheme">@style/HitubeFrameworkAlertDialog</item>
 	</style>
@@ -45,10 +44,7 @@
 
 	<!-- Framework AlertDialog theme — dark dialog, white text, small outlined buttons.
 		Parent must be API 14+ compatible: Theme.AppCompat.Dialog.Alert (NOT a
-		Theme.Material.* parent, which only exists from API 21 and would crash the Q10).
-		The SOLUSI button stays red: the FreeDroidWarn library forces
-		android.R.color.holo_red_dark on it after show(), which no theme can override —
-		but on the dark fill with a light outline it stays readable. -->
+		Theme.Material.* parent, which only exists from API 21 and would crash the Q10). -->
 	<style name="HitubeFrameworkAlertDialog" parent="Theme.AppCompat.Dialog.Alert">
 		<item name="android:windowBackground">@color/hitube_surface</item>
 		<item name="android:colorBackground">@color/hitube_surface</item>
