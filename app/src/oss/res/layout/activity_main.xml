@@ -1,5 +1,22 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!-- The mini player bar is a direct child of this root (NOT of the fragment
+	container) so it shows on every page — home, channel, search, library,
+	downloads — instead of only on MainFragment. It sits at the bottom of the
+	screen, above the fragment container's bottom edge; MainActivity shrinks
+	the fragment container by the bar height while the bar is visible, so the
+	bar never covers the bottom nav (home) or the last list items (other
+	pages). No view here is a direct child of a DrawerLayout. -->
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
-			 android:id="@+id/fragment_container"
 			 android:layout_width="match_parent"
-			 android:layout_height="match_parent" />
+			 android:layout_height="match_parent">
+	<FrameLayout
+		android:id="@+id/fragment_container"
+		android:layout_width="match_parent"
+		android:layout_height="match_parent" />
+	<include
+		android:id="@+id/mini_player_bar_container"
+		layout="@layout/mini_player_bar"
+		android:layout_width="match_parent"
+		android:layout_height="@dimen/hitube_mini_player_height"
+		android:layout_gravity="bottom" />
+</FrameLayout>

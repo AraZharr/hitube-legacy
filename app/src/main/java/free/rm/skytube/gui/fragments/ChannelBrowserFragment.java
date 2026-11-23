@@ -32,7 +32,7 @@ import androidx.viewpager.widget.ViewPager;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
-import com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton;
+import com.google.android.material.button.MaterialButton;
 import com.google.android.material.tabs.TabLayout;
 import com.mikepenz.iconics.IconicsDrawable;
 import com.mikepenz.iconics.typeface.library.materialdesigniconic.MaterialDesignIconic;
@@ -166,9 +166,9 @@ public class ChannelBrowserFragment extends FragmentEx implements ChannelSubscri
 		super.onDestroy();
 	}
 
-	private static void startAnimation(View fab) {
-		fab.setRotation(0);
-		ViewCompat.animate(fab)
+	private static void startAnimation(View view) {
+		view.setRotation(0);
+		ViewCompat.animate(view)
 				.rotation(360)
 				.withLayer()
 				//.setDuration(1000)
@@ -178,7 +178,7 @@ public class ChannelBrowserFragment extends FragmentEx implements ChannelSubscri
 
 	@Override
 	public void setSubscribedState(boolean subscribed) {
-		final ExtendedFloatingActionButton channelSubscribeButton = binding.channelSubscribeButton;
+		final MaterialButton channelSubscribeButton = binding.channelSubscribeButton;
 		channelSubscribeButton.setVisibility(View.VISIBLE);
 		userSubscribed = subscribed;
 		if (subscribed) {
@@ -280,7 +280,7 @@ public class ChannelBrowserFragment extends FragmentEx implements ChannelSubscri
 
 			Glide.with(requireContext())
 					.load(channel.getThumbnailUrl())
-					.apply(new RequestOptions().placeholder(R.drawable.channel_thumbnail_default))
+					.apply(new RequestOptions().placeholder(R.drawable.channel_thumbnail_default).circleCrop())
 					.into(binding.channelThumbnailImageView);
 
 			Glide.with(requireContext())
@@ -299,6 +299,9 @@ public class ChannelBrowserFragment extends FragmentEx implements ChannelSubscri
 			if (actionBar != null) {
 				actionBar.setTitle(channel.getTitle());
 			}
+
+			// The header below the banner shows the channel name as well.
+			binding.channelNameTextView.setText(channel.getTitle());
 
 			// if the user has subscribed to this channel, then change the state of the
 			// subscribe button

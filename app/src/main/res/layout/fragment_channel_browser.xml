@@ -33,12 +33,22 @@
         android:background="@color/colorPrimary"
 		>
 
+		<!-- TOOLBAR / ACTIONBAR: solid background (via AppTheme.CustomBackground)
+			and pinned at the top, so the back button and the channel name never
+			collide with the banner art and stay reachable while scrolling. -->
+		<androidx.appcompat.widget.Toolbar
+			android:id="@+id/toolbar"
+			android:layout_width="match_parent"
+			android:layout_height="?attr/actionBarSize"
+			android:theme="@style/AppTheme.CustomBackground"
+			/>
+
+		<!-- BANNER IMAGE (scrolls away with the header below) -->
 		<FrameLayout
 			android:layout_width="match_parent"
 			android:layout_height="wrap_content"
 			app:layout_scrollFlags="scroll|enterAlways">
 
-			<!-- BANNER IMAGE -->
 			<ImageView
 				android:id="@+id/channel_banner_image_view"
 				android:layout_width="match_parent"
@@ -47,47 +57,73 @@
 				android:scaleType="fitXY"
 				android:src="@drawable/banner_default"/>
 
+		</FrameLayout>
+
+		<!-- CHANNEL HEADER: avatar + name + subscriber count + subscribe pill.
+			Sits below the banner (not on top of it) and scrolls away with it,
+			like the official app. -->
+		<LinearLayout
+			android:layout_width="match_parent"
+			android:layout_height="wrap_content"
+			android:orientation="horizontal"
+			android:gravity="center_vertical"
+			android:paddingStart="16dp"
+			android:paddingEnd="16dp"
+			android:paddingTop="12dp"
+			android:paddingBottom="12dp"
+			app:layout_scrollFlags="scroll|enterAlways">
+
+			<!-- CHANNEL THUMBNAIL -->
+			<ImageView
+				android:id="@+id/channel_thumbnail_image_view"
+				android:layout_width="72dp"
+				android:layout_height="72dp"
+				android:scaleType="centerCrop"
+				android:src="@drawable/channel_thumbnail_default"/>
+
 			<LinearLayout
-				android:layout_width="match_parent"
+				android:layout_width="0dp"
 				android:layout_height="wrap_content"
+				android:layout_weight="1"
+				android:layout_marginStart="12dp"
+				android:layout_marginEnd="8dp"
 				android:orientation="vertical">
 
-				<!-- TOOLBAR / ACTIONBAR -->
-				<androidx.appcompat.widget.Toolbar
-					android:id="@+id/toolbar"
+				<!-- CHANNEL NAME -->
+				<TextView
+					android:id="@+id/channel_name_text_view"
 					android:layout_width="match_parent"
-					android:layout_height="?attr/actionBarSize"
-					/>
+					android:layout_height="wrap_content"
+					android:ellipsize="end"
+					android:maxLines="1"
+					android:textColor="@color/hitube_on_surface"
+					android:textSize="18sp"
+					android:textStyle="bold" />
 
-				<RelativeLayout
-					android:layout_width="match_parent"
-					android:layout_height="wrap_content">
-
-					<!-- CHANNEL THUMBNAIL -->
-					<ImageView
-						android:id="@+id/channel_thumbnail_image_view"
-						android:layout_width="97dp"
-						android:layout_height="wrap_content"
-						android:layout_centerVertical="true"
-						android:adjustViewBounds="true"
-						android:padding="12dp"
-						android:scaleType="fitXY"
-						android:src="@drawable/channel_thumbnail_default"/>
-
-					<!-- NUMBER OF SUBSCRIBERS -->
-					<TextView
-						android:id="@+id/channel_subs_text_view"
-						android:layout_centerVertical="true"
-						android:layout_toEndOf="@+id/channel_thumbnail_image_view"
-						android:padding="10dp"
-						android:text="@string/loading"
-						style="@style/ChannelSubsTextView"/>
-
-
-				</RelativeLayout>
+				<!-- NUMBER OF SUBSCRIBERS -->
+				<TextView
+					android:id="@+id/channel_subs_text_view"
+					android:layout_width="wrap_content"
+					android:layout_height="wrap_content"
+					android:text="@string/loading"
+					android:textColor="@color/hitube_on_surface_variant"
+					android:textSize="14sp" />
 
 			</LinearLayout>
-		</FrameLayout>
+
+			<!-- SUBSCRIBE BUTTON: pill shape in the header row, replacing the
+				floating action button that used to hover over the banner. -->
+			<com.google.android.material.button.MaterialButton
+				android:id="@+id/channel_subscribe_button"
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:text="@string/subscribe"
+				android:textColor="@android:color/white"
+				app:backgroundTint="@color/hitube_youtube_red"
+				app:cornerRadius="18dp"
+				app:iconTint="@android:color/white" />
+
+		</LinearLayout>
 
 
 		<com.google.android.material.tabs.TabLayout
@@ -100,17 +136,5 @@
 			app:tabMode="scrollable"/>
 
 	</com.google.android.material.appbar.AppBarLayout>
-
-    <com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
-        android:id="@+id/channel_subscribe_button"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="56dp"
-        android:layout_marginRight="8dp"
-        android:visibility="visible"
-        android:text="@string/subscribe"
-
-        app:layout_anchor="@id/app_bar_layout"
-        app:layout_anchorGravity="top|right|end" />
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

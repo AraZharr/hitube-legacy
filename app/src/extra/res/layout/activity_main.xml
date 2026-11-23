@@ -21,6 +21,16 @@
 			android:id="@+id/fragment_container"
 			android:layout_width="match_parent"
 			android:layout_height="match_parent" />
+		<!-- Mini player bar (activity level, so it shows on every page, not
+			just on MainFragment). Anchored to the bottom of the main content;
+			MainActivity shrinks the fragment container by the bar height
+			while the bar is visible, so it never covers content. -->
+		<include
+			android:id="@+id/mini_player_bar_container"
+			layout="@layout/mini_player_bar"
+			android:layout_width="match_parent"
+			android:layout_height="@dimen/hitube_mini_player_height"
+			android:layout_alignParentBottom="true" />
 		<ProgressBar
 			android:id="@+id/chromecastLoadingSpinner"
 			android:layout_centerInParent="true"

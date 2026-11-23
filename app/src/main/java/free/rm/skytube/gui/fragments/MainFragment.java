@@ -35,13 +35,10 @@ import free.rm.skytube.app.FeedUpdateTask;
 import free.rm.skytube.app.SkyTubeApp;
 import free.rm.skytube.app.utils.WeaklyReferencedMap;
 import free.rm.skytube.businessobjects.Logger;
-import free.rm.skytube.businessobjects.YouTube.POJOs.YouTubeVideo;
 import free.rm.skytube.businessobjects.YouTube.newpipe.ChannelId;
 import free.rm.skytube.databinding.FragmentMainBinding;
 import free.rm.skytube.databinding.SubsDrawerBinding;
 import free.rm.skytube.gui.activities.BaseActivity;
-import free.rm.skytube.gui.businessobjects.MiniPlayerManager;
-import free.rm.skytube.gui.businessobjects.YouTubePlayer;
 import free.rm.skytube.gui.businessobjects.adapters.SubsAdapter;
 import free.rm.skytube.gui.businessobjects.fragments.FragmentEx;
 
@@ -61,9 +58,6 @@ public class MainFragment extends FragmentEx {
 
 	private SubsAdapter subsAdapter = null;
 	private ActionBarDrawerToggle subsDrawerToggle;
-
-	/** Listens to the shared player so the mini player bar stays in sync. */
-	private MiniPlayerManager.MiniPlayerListener miniPlayerListener;
 
 	private SimplePagerAdapter videosPagerAdapter = null;
 
@@ -170,7 +164,6 @@ public class MainFragment extends FragmentEx {
 		});
 
 		setupBottomNav();
-		setupMiniPlayer();
 
 		// select the default tab:  the default tab is defined by the user through the Preferences
 		SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(getActivity());
@@ -307,143 +300,8 @@ public class MainFragment extends FragmentEx {
 		return SkyTubeApp.getStringArray(R.array.tab_list_values);
 	}
 
-	///////////////////////////////////////////////////////////////////////////////////////////////
-	// In-app mini player (docked above the bottom nav)
-	///////////////////////////////////////////////////////////////////////////////////////////////
-
-	/**
-	 * Wires the mini player bar: tap the bar to expand back to the full player, tap the
-	 * play/pause button to pause/resume, tap X to stop playback and remove the bar.
-	 */
-	private void setupMiniPlayer() {
-		fragmentBinding.miniPlayerBar.setOnClickListener(v -> expandMiniPlayer());
-		fragmentBinding.miniPlayerPlayPause.setOnClickListener(v -> {
-			MiniPlayerManager manager = MiniPlayerManager.getInstance();
-			if (manager.isPlaying()) {
-				manager.pause();
-			} else {
-				manager.play();
-			}
-		});
-		fragmentBinding.miniPlayerClose.setOnClickListener(v -> {
-			MiniPlayerManager.getInstance().closePlayer();
-		});
-
-		miniPlayerListener = new MiniPlayerManager.MiniPlayerListener() {
-			@Override
-			public void onCurrentVideoChanged(@NonNull YouTubeVideo video) {
-				refreshMiniPlayer();
-			}
-
-			@Override
-			public void onPlayStateChanged(boolean isPlaying) {
-				updateMiniPlayerPlayPause(isPlaying);
-			}
-
-			@Override
-			public void onMiniPlayerClosed() {
-				hideMiniPlayer();
-			}
-		};
-		MiniPlayerManager.getInstance().addListener(miniPlayerListener);
-		refreshMiniPlayer();
-	}
-
-	/**
-	 * Shows or hides the mini player bar according to the shared player's state. Called when
-	 * this fragment resumes (e.g. after the full player was minimised) and whenever the
-	 * manager notifies a change.
-	 */
-	private void refreshMiniPlayer() {
-		if (fragmentBinding == null) {
-			return;
-		}
-		MiniPlayerManager manager = MiniPlayerManager.getInstance();
-		if (manager.isMinimized() && manager.hasPlayer() && manager.getCurrentVideo() != null) {
-			showMiniPlayer(manager.getCurrentVideo());
-		} else {
-			hideMiniPlayer();
-		}
-	}
-
-	private void showMiniPlayer(@NonNull YouTubeVideo video) {
-		if (fragmentBinding == null) {
-			return;
-		}
-		fragmentBinding.miniPlayerTitle.setText(video.getTitle());
-		updateMiniPlayerPlayPause(MiniPlayerManager.getInstance().isPlaying());
-		if (fragmentBinding.miniPlayerBar.getVisibility() != View.VISIBLE) {
-			fragmentBinding.miniPlayerBar.setVisibility(View.VISIBLE);
-			// Make room for the bar above the bottom nav so it does not cover content.
-			setContentBottomPadding(true);
-		}
-		// Attach the shared player so the video keeps playing in the mini bar.
-		MiniPlayerManager.getInstance().attachToPlayerView(fragmentBinding.miniPlayerView);
-	}
-
-	private void hideMiniPlayer() {
-		if (fragmentBinding == null) {
-			return;
-		}
-		MiniPlayerManager.getInstance().detachPlayerView();
-		if (fragmentBinding.miniPlayerBar.getVisibility() != View.GONE) {
-			fragmentBinding.miniPlayerBar.setVisibility(View.GONE);
-			setContentBottomPadding(false);
-		}
-	}
-
-	/**
-	 * The scroll view's bottom padding must cover the bottom nav (56dp) plus the mini player
-	 * bar (56dp) while the bar is visible, so the bar never covers content.
-	 */
-	private void setContentBottomPadding(boolean miniPlayerVisible) {
-		if (fragmentBinding == null || fragmentBinding.mainScrollView == null) {
-			return;
-		}
-		int bottomNavHeight = getResources().getDimensionPixelSize(R.dimen.hitube_bottom_nav_height);
-		int miniPlayerHeight = miniPlayerVisible
-				? getResources().getDimensionPixelSize(R.dimen.hitube_mini_player_height) : 0;
-		fragmentBinding.mainScrollView.setPadding(
-				fragmentBinding.mainScrollView.getPaddingLeft(),
-				fragmentBinding.mainScrollView.getPaddingTop(),
-				fragmentBinding.mainScrollView.getPaddingRight(),
-				bottomNavHeight + miniPlayerHeight);
-	}
-
-	private void updateMiniPlayerPlayPause(boolean isPlaying) {
-		if (fragmentBinding == null) {
-			return;
-		}
-		fragmentBinding.miniPlayerPlayPause.setImageResource(isPlaying ? R.drawable.ic_pause : R.drawable.ic_play);
-		fragmentBinding.miniPlayerPlayPause.setContentDescription(
-				getString(isPlaying ? R.string.mini_player_pause : R.string.mini_player_play));
-	}
-
-	/**
-	 * Expands the mini player back to the full player, at the same position: launches the
-	 * player for the video the shared player is currently playing, with the current
-	 * up-next queue, so the fragment resumes the existing player instead of reloading.
-	 */
-	private void expandMiniPlayer() {
-		MiniPlayerManager manager = MiniPlayerManager.getInstance();
-		YouTubeVideo video = manager.getCurrentVideo();
-		if (video == null || getContext() == null) {
-			return;
-		}
-		manager.setMinimized(false);
-		manager.detachPlayerView();
-		YouTubePlayer.launch(video, getContext(), manager.getUpNextVideoIds(), manager.getUpNextIndex());
-	}
-
 	@Override
 	public void onDestroyView() {
-		if (miniPlayerListener != null) {
-			MiniPlayerManager.getInstance().removeListener(miniPlayerListener);
-			miniPlayerListener = null;
-		}
-		if (fragmentBinding != null) {
-			MiniPlayerManager.getInstance().detachPlayerView();
-		}
 		videosPagerAdapter = null;
 		subsDrawerBinding.subsDrawerRecyclerView.setAdapter(null); // cleanup the reference from the SubsAdapter back to the view
 		subsDrawerToggle = null;
@@ -469,10 +327,6 @@ public class MainFragment extends FragmentEx {
 	@Override
 	public void onResume() {
 		super.onResume();
-
-		// The full player may have been minimised into the mini player bar while this
-		// fragment was paused: show or hide the bar accordingly.
-		refreshMiniPlayer();
 
 		// when the MainFragment is resumed (e.g. after Preferences is minimized), inform the
 		// current fragment that it is selected.

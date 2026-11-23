@@ -28,6 +28,7 @@ import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.AutoCompleteTextView;
 import android.widget.FrameLayout;
 
@@ -58,6 +59,7 @@ import free.rm.skytube.businessobjects.Logger;
 import free.rm.skytube.businessobjects.TLSSocketFactory;
 import free.rm.skytube.businessobjects.YouTube.POJOs.YouTubeChannel;
 import free.rm.skytube.businessobjects.YouTube.POJOs.YouTubePlaylist;
+import free.rm.skytube.businessobjects.YouTube.POJOs.YouTubeVideo;
 import free.rm.skytube.businessobjects.YouTube.VideoBlocker;
 import free.rm.skytube.businessobjects.YouTube.newpipe.ChannelId;
 import free.rm.skytube.businessobjects.db.DownloadedVideosDb;
@@ -67,8 +69,10 @@ import free.rm.skytube.databinding.DialogEnterVideoUrlBinding;
 import free.rm.skytube.gui.businessobjects.BlockedVideosDialog;
 import free.rm.skytube.gui.businessobjects.CleanerDialog;
 import free.rm.skytube.gui.businessobjects.CrashReportDialog;
+import free.rm.skytube.gui.businessobjects.MiniPlayerManager;
 import free.rm.skytube.gui.businessobjects.PinUtils;
 import free.rm.skytube.gui.businessobjects.PrivacyControlDialog;
+import free.rm.skytube.gui.businessobjects.YouTubePlayer;
 import free.rm.skytube.gui.businessobjects.adapters.SearchHistoryCursorAdapter;
 import free.rm.skytube.gui.businessobjects.fragments.FragmentEx;
 import free.rm.skytube.gui.businessobjects.updates.UpdatesCheckerTask;
@@ -88,6 +92,9 @@ public class MainActivity extends BaseActivity {
 
 	/** Fragment that shows Videos from a specific Playlist */
 	private VideoBlockerPlugin      videoBlockerPlugin;
+
+	/** Listens to the shared player so the mini player bar stays in sync. */
+	private MiniPlayerManager.MiniPlayerListener miniPlayerListener;
 
 	/** Set to true of the UpdatesCheckerTask has run; false otherwise. */
 	private static boolean updatesCheckerTaskRan = false;
@@ -135,6 +142,10 @@ public class MainActivity extends BaseActivity {
 		new DownloadedVideosDb.RemoveMissingVideosTask().executeInParallel();
 
 		setContentView(binding.getRoot());
+
+		// The mini player bar lives in this activity's layout (not in
+		// MainFragment) so it shows on every page.
+		setupMiniPlayer();
 
 		// Show the privacy control dialog once (i.e. the dialog that offers to enable/disable
 		// the SponsorBlock and Return YouTube Dislike features), if it was never run before.
@@ -186,6 +197,15 @@ public class MainActivity extends BaseActivity {
 	protected void onResumeFragments() {
 		super.onResumeFragments();
 		Logger.i(MainActivity.this, "onResumeFragments "+getIntent());
+	}
+
+	@Override
+	protected void onDestroy() {
+		if (miniPlayerListener != null) {
+			MiniPlayerManager.getInstance().removeListener(miniPlayerListener);
+			miniPlayerListener = null;
+		}
+		super.onDestroy();
 	}
 
 	private void handleIntent(Intent intent) {
@@ -269,6 +289,10 @@ public class MainActivity extends BaseActivity {
 		if (channelBrowserFragment != null) {
 			channelBrowserFragment.getChannelPlaylistsFragment().setMainActivityListener(this);
 		}
+
+		// The full player may have been minimised into the mini player bar while this
+		// activity was paused: show or hide the bar accordingly.
+		refreshMiniPlayer();
 	}
 
 	private ChannelBrowserFragment getChannelBrowserFragment() {
@@ -539,6 +563,122 @@ public class MainActivity extends BaseActivity {
 		bundle.putString(SearchVideoGridFragment.QUERY, query);
 		searchVideoGridFragment.setArguments(bundle);
 		switchToFragment(searchVideoGridFragment, true, SEARCH_FRAGMENT_TAG);
+	}
+
+	///////////////////////////////////////////////////////////////////////////////////////////////
+	// In-app mini player (docked at the bottom of the screen, above the fragment
+	// container). Lives at activity level so it shows on every page — home,
+	// channel, search, library, downloads — instead of only on MainFragment.
+	///////////////////////////////////////////////////////////////////////////////////////////////
+
+	/**
+	 * Wires the mini player bar: tap the bar to expand back to the full player, tap the
+	 * play/pause button to pause/resume, tap X to stop playback and remove the bar.
+	 */
+	private void setupMiniPlayer() {
+		binding.miniPlayerBarContainer.miniPlayerBar.setOnClickListener(v -> expandMiniPlayer());
+		binding.miniPlayerBarContainer.miniPlayerPlayPause.setOnClickListener(v -> {
+			MiniPlayerManager manager = MiniPlayerManager.getInstance();
+			if (manager.isPlaying()) {
+				manager.pause();
+			} else {
+				manager.play();
+			}
+		});
+		binding.miniPlayerBarContainer.miniPlayerClose.setOnClickListener(v -> {
+			MiniPlayerManager.getInstance().closePlayer();
+		});
+
+		miniPlayerListener = new MiniPlayerManager.MiniPlayerListener() {
+			@Override
+			public void onCurrentVideoChanged(@NonNull YouTubeVideo video) {
+				refreshMiniPlayer();
+			}
+
+			@Override
+			public void onPlayStateChanged(boolean isPlaying) {
+				updateMiniPlayerPlayPause(isPlaying);
+			}
+
+			@Override
+			public void onMiniPlayerClosed() {
+				hideMiniPlayer();
+			}
+		};
+		MiniPlayerManager.getInstance().addListener(miniPlayerListener);
+		refreshMiniPlayer();
+	}
+
+	/**
+	 * Shows or hides the mini player bar according to the shared player's state. Called when
+	 * this activity resumes (e.g. after the full player was minimised) and whenever the
+	 * manager notifies a change.
+	 */
+	private void refreshMiniPlayer() {
+		MiniPlayerManager manager = MiniPlayerManager.getInstance();
+		if (manager.isMinimized() && manager.hasPlayer() && manager.getCurrentVideo() != null) {
+			showMiniPlayer(manager.getCurrentVideo());
+		} else {
+			hideMiniPlayer();
+		}
+	}
+
+	private void showMiniPlayer(@NonNull YouTubeVideo video) {
+		binding.miniPlayerBarContainer.miniPlayerTitle.setText(video.getTitle());
+		updateMiniPlayerPlayPause(MiniPlayerManager.getInstance().isPlaying());
+		if (binding.miniPlayerBarContainer.miniPlayerBar.getVisibility() != View.VISIBLE) {
+			binding.miniPlayerBarContainer.miniPlayerBar.setVisibility(View.VISIBLE);
+			// Shrink the fragment container by the bar height so the bar never
+			// covers the bottom nav (home) or the last list items (other pages).
+			setMiniPlayerContainerInset(true);
+		}
+		// Attach the shared player so the video keeps playing in the mini bar.
+		MiniPlayerManager.getInstance().attachToPlayerView(binding.miniPlayerBarContainer.miniPlayerView);
+	}
+
+	private void hideMiniPlayer() {
+		MiniPlayerManager.getInstance().detachPlayerView();
+		if (binding.miniPlayerBarContainer.miniPlayerBar.getVisibility() != View.GONE) {
+			binding.miniPlayerBarContainer.miniPlayerBar.setVisibility(View.GONE);
+			setMiniPlayerContainerInset(false);
+		}
+	}
+
+	/**
+	 * Shrinks (or restores) the fragment container by the mini player bar height, so the
+	 * bar never covers the bottom navigation or the content of the current page.
+	 */
+	private void setMiniPlayerContainerInset(boolean miniPlayerVisible) {
+		int inset = miniPlayerVisible
+				? getResources().getDimensionPixelSize(R.dimen.hitube_mini_player_height) : 0;
+		ViewGroup.MarginLayoutParams layoutParams =
+				(ViewGroup.MarginLayoutParams) binding.fragmentContainer.getLayoutParams();
+		if (layoutParams.bottomMargin != inset) {
+			layoutParams.bottomMargin = inset;
+			binding.fragmentContainer.setLayoutParams(layoutParams);
+		}
+	}
+
+	private void updateMiniPlayerPlayPause(boolean isPlaying) {
+		binding.miniPlayerBarContainer.miniPlayerPlayPause.setImageResource(isPlaying ? R.drawable.ic_pause : R.drawable.ic_play);
+		binding.miniPlayerBarContainer.miniPlayerPlayPause.setContentDescription(
+				getString(isPlaying ? R.string.mini_player_pause : R.string.mini_player_play));
+	}
+
+	/**
+	 * Expands the mini player back to the full player, at the same position: launches the
+	 * player for the video the shared player is currently playing, with the current
+	 * up-next queue, so the activity resumes the existing player instead of reloading.
+	 */
+	private void expandMiniPlayer() {
+		MiniPlayerManager manager = MiniPlayerManager.getInstance();
+		YouTubeVideo video = manager.getCurrentVideo();
+		if (video == null) {
+			return;
+		}
+		manager.setMinimized(false);
+		manager.detachPlayerView();
+		YouTubePlayer.launch(video, this, manager.getUpNextVideoIds(), manager.getUpNextIndex());
 	}
 
 	//////////////////////////////////////////////////////////////////////////////////////////

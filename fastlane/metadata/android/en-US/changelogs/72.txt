@@ -1,0 +1,1 @@
+HiTube 1.0.11: the mini player now stays visible on every page (channel, search, library, downloads) — no more invisible playback. The channel page got a cleaner header: solid toolbar, channel name, subscriber count and a subscribe button below the banner.

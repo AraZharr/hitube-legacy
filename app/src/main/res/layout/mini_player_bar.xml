@@ -1,0 +1,54 @@
+<!-- Mini player bar: small video surface + title + play/pause + close.
+	Hidden when nothing is playing. Tapping the bar (not the buttons)
+	expands back to the full player at the same position.
+	Lives in the activity layout (see activity_main.xml) so it shows on
+	every page — home, channel, search, library, downloads — not just on
+	MainFragment. Wired up in MainActivity. -->
+<LinearLayout
+	xmlns:android="http://schemas.android.com/apk/res/android"
+	xmlns:app="http://schemas.android.com/apk/res-auto"
+	android:id="@+id/mini_player_bar"
+	android:layout_width="match_parent"
+	android:layout_height="@dimen/hitube_mini_player_height"
+	android:background="@color/hitube_surface"
+	android:contentDescription="@string/mini_player_expand"
+	android:gravity="center_vertical"
+	android:orientation="horizontal"
+	android:visibility="gone">
+
+	<com.google.android.exoplayer2.ui.PlayerView
+		android:id="@+id/mini_player_view"
+		android:layout_width="96dp"
+		android:layout_height="match_parent"
+		android:layout_margin="1dp"
+		app:use_controller="false" />
+
+	<TextView
+		android:id="@+id/mini_player_title"
+		android:layout_width="0dp"
+		android:layout_height="wrap_content"
+		android:layout_marginStart="8dp"
+		android:layout_marginEnd="4dp"
+		android:layout_weight="1"
+		android:ellipsize="end"
+		android:maxLines="1"
+		android:textColor="@color/hitube_on_surface"
+		android:textSize="14sp" />
+
+	<ImageButton
+		android:id="@+id/mini_player_play_pause"
+		android:layout_width="48dp"
+		android:layout_height="48dp"
+		android:background="?attr/selectableItemBackgroundBorderless"
+		android:contentDescription="@string/mini_player_pause"
+		android:src="@drawable/ic_pause" />
+
+	<ImageButton
+		android:id="@+id/mini_player_close"
+		android:layout_width="48dp"
+		android:layout_height="48dp"
+		android:background="?attr/selectableItemBackgroundBorderless"
+		android:contentDescription="@string/mini_player_close"
+		android:src="@drawable/ic_close" />
+
+</LinearLayout>
