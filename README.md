@@ -113,6 +113,10 @@ All five contain the same app — the split files only exist so you can pick the
 <img src="screenshots/hitube-bottomsheet.png" alt="Video action bottom sheet" width="140px"/>
 </a>
 
+<a href="screenshots/hitube-crash-report.png">
+<img src="screenshots/hitube-crash-report.png" alt="Crash report dialog with copy and report buttons" width="140px"/>
+</a>
+
 ## Contribute
 Contributions are welcome — open an issue or a pull request in this repository.
 
