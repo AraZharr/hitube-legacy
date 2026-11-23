@@ -1,0 +1,1 @@
+HiTube 1.0.4: release assets now include one APK per ABI (arm64-v8a, armeabi-v7a, x86, x86_64) plus the universal APK. Stream fallback and crash log reporter from 1.0.3 included.

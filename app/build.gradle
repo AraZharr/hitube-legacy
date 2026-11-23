@@ -12,8 +12,8 @@ android {
         //noinspection ExpiredTargetSdkVersion
         targetSdkVersion 28
 
-        versionName "1.0.3"
-        versionCode 64
+        versionName "1.0.4"
+        versionCode 65
 
         // Third party devs:  pls be ethical and change the below keys
         buildConfigField 'String', 'YOUTUBE_API_KEYS_DEBUG', '""'
@@ -25,6 +25,18 @@ android {
         buildConfigField 'long', 'BUILD_TIME', String.valueOf(System.currentTimeMillis()) + 'L'
         vectorDrawables.useSupportLibrary true
         multiDexEnabled true    // as we have over 65536 lines of code...
+    }
+    // ABI splits: one APK per CPU architecture (armeabi-v7a, arm64-v8a, x86,
+    // x86_64) PLUS the universal APK. The app has no native libraries, so all
+    // five APKs contain the same code — the split files exist so users can
+    // pick the build matching their device on the release page.
+    splits {
+        abi {
+            enable true
+            reset()
+            include 'armeabi-v7a', 'arm64-v8a', 'x86', 'x86_64'
+            universalApk true
+        }
     }
     // Fixed debug keystore (committed to the repo as app/debug.keystore) so
     // every CI build is signed with the same key and updates install over
@@ -72,10 +84,15 @@ android {
             dimension "skytube"
         }
     }
-    // Generate APK filenames as follows:  <App Name>-<Flavor><Version>
+    // Generate APK filenames as follows:  <App Name>-<Flavor><Version>[-<ABI>]
+    // The ABI suffix is required: without it every split APK would get the
+    // same filename and overwrite each other. The universal APK has no ABI
+    // filter, so it keeps the plain name.
     applicationVariants.all { variant ->
         outputs.all { output ->
-            outputFileName = "${parent.name}-Legacy-${productFlavors[0].name.capitalize()}-${versionName}.apk"
+            def abi = output.getFilter(com.android.build.OutputFile.ABI)
+            def abiSuffix = abi != null ? "-${abi}" : ""
+            outputFileName = "${parent.name}-Legacy-${productFlavors[0].name.capitalize()}-${versionName}${abiSuffix}.apk"
         }
     }
     // Ignore missing translations
