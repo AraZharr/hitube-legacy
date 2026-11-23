@@ -1,0 +1,3 @@
+Fixed signing: all builds now use the same key, so updates install over the installed app.
+- Fixed debug keystore (app/debug.keystore) for stable signing.
+- Version 1.0.1.

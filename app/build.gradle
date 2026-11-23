@@ -12,8 +12,8 @@ android {
         //noinspection ExpiredTargetSdkVersion
         targetSdkVersion 28
 
-        versionName "1.0.0"
-        versionCode 61
+        versionName "1.0.1"
+        versionCode 62
 
         // Third party devs:  pls be ethical and change the below keys
         buildConfigField 'String', 'YOUTUBE_API_KEYS_DEBUG', '""'
@@ -25,6 +25,18 @@ android {
         buildConfigField 'long', 'BUILD_TIME', String.valueOf(System.currentTimeMillis()) + 'L'
         vectorDrawables.useSupportLibrary true
         multiDexEnabled true    // as we have over 65536 lines of code...
+    }
+    // Fixed debug keystore (committed to the repo as app/debug.keystore) so
+    // every CI build is signed with the same key and updates install over
+    // each other without uninstall. This overrides the default debug keystore
+    // that CI runners generate fresh on every run.
+    signingConfigs {
+        debug {
+            storeFile file('debug.keystore')
+            storePassword 'android'
+            keyAlias 'androiddebugkey'
+            keyPassword 'android'
+        }
     }
     buildTypes {
         release {
