@@ -1,6 +1,8 @@
 # HiTube Legacy
 **A copylefted libre / open source YouTube player for Android, without ads — with a fresh UI.**
 
+🌐 **Website:** https://arazharr.github.io/hitube-legacy/
+
 ## About this redesign
 
 HiTube Legacy is based on **SkyTube Legacy** by **SkyTubeTeam** —
