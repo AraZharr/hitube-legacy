@@ -111,6 +111,14 @@ You can help us translate this app into your native language by visiting [SkyTub
 <img src="screenshots/hitube-playlist.png" alt="Playlist detail with Play and Shuffle" width="140px"/>
 </a>
 
+<a href="screenshots/hitube-dialog.png">
+<img src="screenshots/hitube-dialog.png" alt="FreeDroidWarn dialog with readable buttons" width="140px"/>
+</a>
+
+<a href="screenshots/hitube-bottomsheet.png">
+<img src="screenshots/hitube-bottomsheet.png" alt="Video action bottom sheet" width="140px"/>
+</a>
+
 ## Contribute
 This project was possible with the support and contribution of [numerous volunteers and third-party projects](http://skytube-app.com/credits.html).
 
