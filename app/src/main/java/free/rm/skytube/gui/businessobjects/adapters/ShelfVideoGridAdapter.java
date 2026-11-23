@@ -227,16 +227,17 @@ public class ShelfVideoGridAdapter extends RecyclerView.Adapter<RecyclerView.Vie
 		}
 	}
 
-	/** Callback for filter chip taps. */
-	interface OnChipSelectedListener {
+	/** Callback for filter chip taps. Shared with {@link FilterChipsHeaderAdapter}. */
+	public interface OnChipSelectedListener {
 		void onChipSelected(VideoCategory category);
 	}
 
 	/**
 	 * The horizontally scrolling filter chip row. Chips are: All (Most Popular),
 	 * Featured and Subscriptions. Tapping a chip switches the feed's video category.
+	 * Shared with {@link FilterChipsHeaderAdapter}.
 	 */
-	private static class FilterChipAdapter extends RecyclerView.Adapter<FilterChipAdapter.ChipViewHolder> {
+	public static class FilterChipAdapter extends RecyclerView.Adapter<FilterChipAdapter.ChipViewHolder> {
 
 		private static class ChipItem {
 			final VideoCategory category;
@@ -256,11 +257,11 @@ public class ShelfVideoGridAdapter extends RecyclerView.Adapter<RecyclerView.Vie
 		private final OnChipSelectedListener listener;
 		private VideoCategory selectedCategory;
 
-		FilterChipAdapter(OnChipSelectedListener listener) {
+		public FilterChipAdapter(OnChipSelectedListener listener) {
 			this.listener = listener;
 		}
 
-		void setSelectedCategory(VideoCategory category) {
+		public void setSelectedCategory(VideoCategory category) {
 			if (category != selectedCategory) {
 				selectedCategory = category;
 				notifyDataSetChanged();

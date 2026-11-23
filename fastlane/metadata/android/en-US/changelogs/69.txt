@@ -1,0 +1,1 @@
+Added an in-app update checker: HiTube now tells you when a new version is out, shows the version number and what's new, and links to the download. Check manually in Settings → Others → Check for updates.

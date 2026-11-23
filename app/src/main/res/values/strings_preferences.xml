@@ -562,6 +562,12 @@
     <string name="pref_title_background_playback">Background playback</string>
     <string name="pref_summary_background_playback">Keep playing audio when you leave the app, with controls in the notification.</string>
 
+    <string name="pref_key_check_for_updates" translatable="false">pref_key_check_for_updates</string>
+    <string name="pref_title_check_for_updates">Check for updates</string>
+    <string name="pref_summary_check_for_updates">Check if a new version of HiTube is available.</string>
+    <string name="pref_key_last_update_check" translatable="false">pref_key_last_update_check</string>
+    <string name="pref_key_skipped_update_version" translatable="false">pref_key_skipped_update_version</string>
+
     <string name="pref_key_theme" translatable="false">pref_key_theme</string>
     <string name="pref_title_theme">Theme</string>
     <string name="pref_summary_theme">App theme: %s</string>

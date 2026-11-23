@@ -408,6 +408,14 @@ public class Settings {
         setPreference(getStr(resId), value);
     }
 
+    private long getPreference(@StringRes int resId, long defaultValue) {
+        return getSharedPreferences().getLong(SkyTubeApp.getStr(resId), defaultValue);
+    }
+
+    private void setPreference(@StringRes int resId, long value) {
+        setPreference(SkyTubeApp.getStr(resId), value);
+    }
+
     private String getPreference(@StringRes int resId, String defaultValue) {
         return getSharedPreferences().getString(SkyTubeApp.getStr(resId), defaultValue);
     }
@@ -434,6 +442,30 @@ public class Settings {
 
     public void setDisplayedReleaseNoteTag(String newValue) {
         setPreference(LATEST_RELEASE_NOTES_DISPLAYED, newValue);
+    }
+
+    /**
+     * @return The time (in ms since epoch) of the last update check, or 0
+     *         if the app has never checked for updates.
+     */
+    public long getLastUpdateCheckTime() {
+        return getPreference(R.string.pref_key_last_update_check, 0L);
+    }
+
+    public void setLastUpdateCheckTime(long timeMs) {
+        setPreference(R.string.pref_key_last_update_check, timeMs);
+    }
+
+    /**
+     * @return The latest version the user tapped "Later" on in the update
+     *         dialog, or "" if the user never skipped a version.
+     */
+    public String getSkippedUpdateVersion() {
+        return getPreference(R.string.pref_key_skipped_update_version, "");
+    }
+
+    public void setSkippedUpdateVersion(String version) {
+        setPreference(R.string.pref_key_skipped_update_version, version);
     }
 
     /**

@@ -211,27 +211,15 @@ public class MainFragment extends FragmentEx {
 	}
 
 	/**
-	 * Bottom navigation (Home / Search / Library) synced with the ViewPager.
+	 * Bottom navigation (Home / Downloads / Library) synced with the ViewPager.
 	 * The top TabLayout is hidden but kept, so all ViewPager wiring keeps working.
-	 * Search is an action (it opens the toolbar search view), not a page, so it
-	 * never stays highlighted.
+	 * Search lives only in the toolbar now (its icon expands the SearchView);
+	 * the bottom bar no longer has a Search item.
 	 */
 	private void setupBottomNav() {
 		fragmentBinding.bottomNav.setOnItemSelectedListener(item -> {
 			int itemId = item.getItemId();
-			if (itemId == R.id.bottom_nav_search) {
-				MenuItem searchItem = fragmentBinding.toolbar.getMenu().findItem(R.id.menu_search);
-				if (searchItem != null) {
-					if (searchItem.isActionViewExpanded()) {
-						searchItem.collapseActionView();
-					} else {
-						searchItem.expandActionView();
-					}
-				}
-				// Not a page: do not highlight the Search item.
-				return false;
-			}
-			// Home / Library: collapse an expanded search view first.
+			// Home / Downloads / Library: collapse an expanded search view first.
 			MenuItem searchItem = fragmentBinding.toolbar.getMenu().findItem(R.id.menu_search);
 			if (searchItem != null && searchItem.isActionViewExpanded()) {
 				searchItem.collapseActionView();
@@ -239,6 +227,8 @@ public class MainFragment extends FragmentEx {
 			int targetIndex;
 			if (itemId == R.id.bottom_nav_home) {
 				targetIndex = getHomeTabIndex();
+			} else if (itemId == R.id.bottom_nav_downloads) {
+				targetIndex = getDownloadsTabIndex();
 			} else if (itemId == R.id.bottom_nav_library) {
 				targetIndex = getLibraryTabIndex();
 			} else {
@@ -280,6 +270,10 @@ public class MainFragment extends FragmentEx {
 		return index < 0 ? videosPagerAdapter.getCount() - 1 : index;
 	}
 
+	private int getDownloadsTabIndex() {
+		return videosPagerAdapter.getIndexOf(DOWNLOADED_VIDEOS_FRAGMENT);
+	}
+
 	private void scrollCurrentTabToTop() {
 		VideosGridFragment fragment = videosPagerAdapter.getFragmentFrom(fragmentBinding.pager.getCurrentItem(), true);
 		if (fragment != null && fragment.gridviewBinding != null) {
@@ -296,13 +290,13 @@ public class MainFragment extends FragmentEx {
 		}
 		android.view.Menu menu = fragmentBinding.bottomNav.getMenu();
 		MenuItem homeItem = menu.findItem(R.id.bottom_nav_home);
-		MenuItem searchItem = menu.findItem(R.id.bottom_nav_search);
+		MenuItem downloadsItem = menu.findItem(R.id.bottom_nav_downloads);
 		MenuItem libraryItem = menu.findItem(R.id.bottom_nav_library);
 		if (homeItem != null) {
 			homeItem.setChecked(position == getHomeTabIndex());
 		}
-		if (searchItem != null) {
-			searchItem.setChecked(false);
+		if (downloadsItem != null) {
+			downloadsItem.setChecked(position == getDownloadsTabIndex());
 		}
 		if (libraryItem != null) {
 			libraryItem.setChecked(position == getLibraryTabIndex());

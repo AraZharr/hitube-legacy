@@ -1,6 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 	<string name="update_available">New Version Available</string>
+	<string name="update_available_title">Update available — %1$s</string>
+	<string name="update_available_message">HiTube %1$s is available.</string>
+	<string name="update_notes_empty">See the release page for details.</string>
+	<string name="update_download">Download</string>
+	<string name="update_up_to_date_toast">You\'re on the latest version</string>
 	<string name="update_dialog_msg">A new version of HiTube is available. Version %s will be installed.</string>
 	<string name="up_to_date">Up To Date</string>
 	<string name="up_to_date_msg">You have the newest version of HiTube installed.</string>

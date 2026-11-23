@@ -17,6 +17,7 @@
 
 package free.rm.skytube.gui.businessobjects.updates;
 
+import android.app.Activity;
 import android.content.Context;
 import android.os.Build;
 import android.widget.Toast;
@@ -31,14 +32,21 @@ import free.rm.skytube.app.SkyTubeApp;
 import free.rm.skytube.app.Utils;
 import free.rm.skytube.businessobjects.AsyncTaskParallel;
 import free.rm.skytube.businessobjects.Logger;
+import free.rm.skytube.gui.businessobjects.UpdateAvailableDialog;
 
 /**
- * A task that will check if any SkyTube updates have been published.  If there are, then the
- * user will be notified.
+ * A task that will check if any HiTube updates have been published. If there are, then the
+ * user will be notified with the new version number and its release notes.
+ *
+ * Automatic checks (from MainActivity) run at most once a day and only when the device is
+ * online; a manual check (from Settings) always runs right away. Any failure fails silently.
  */
 public class UpdatesCheckerTask extends AsyncTaskParallel<Void, Void, UpdatesChecker> {
 
-	/** If set to true, it will display the "SkyTube is up to date" message.  */
+	/** Minimum time between two automatic update checks. */
+	private static final long AUTO_CHECK_INTERVAL_MS = 24L * 60L * 60L * 1000L;
+
+	/** If set to true, it will display the "HiTube is up to date" message.  */
 	private final boolean displayUpToDateMessage;
 	private final Context context;
 	private boolean showReleaseNotes;
@@ -59,50 +67,59 @@ public class UpdatesCheckerTask extends AsyncTaskParallel<Void, Void, UpdatesChe
 	@Override
 	protected UpdatesChecker doInBackground(Void... params) {
 		currentVersionNumber = getCurrentVerNumber();
+
+		// Automatic checks are throttled to once a day and need a connection;
+		// a manual check always runs. Returning null means "nothing to do".
+		if (!displayUpToDateMessage && !shouldCheckNow()) {
+			return null;
+		}
+
 		String displayedReleaseNotesVersion = SkyTubeApp.getSettings().getDisplayedReleaseNoteTag();
 		showReleaseNotes = !Objects.equals(currentVersionNumber, displayedReleaseNotesVersion) && !displayUpToDateMessage;
 		Logger.d(this, "Current Version Number: %s, last displayed: %s, show release notes: %s", currentVersionNumber, displayedReleaseNotesVersion, showReleaseNotes);
-		UpdatesChecker updatesChecker = new UpdatesChecker(showReleaseNotes, currentVersionNumber);
+		UpdatesChecker updatesChecker = new UpdatesChecker(currentVersionNumber);
 		updatesChecker.checkForUpdates();
+		SkyTubeApp.getSettings().setLastUpdateCheckTime(System.currentTimeMillis());
 		return updatesChecker;
+	}
+
+	/**
+	 * @return True if an automatic check should run now: the device is online
+	 *         and the last check was more than a day ago (or never ran).
+	 */
+	private boolean shouldCheckNow() {
+		if (!SkyTubeApp.isConnected(context)) {
+			return false;
+		}
+		long lastCheck = SkyTubeApp.getSettings().getLastUpdateCheckTime();
+		return System.currentTimeMillis() - lastCheck > AUTO_CHECK_INTERVAL_MS;
 	}
 
 	@Override
 	protected void onPostExecute(final UpdatesChecker updatesChecker) {
+		// Null means the automatic check was throttled: nothing to do.
+		if (updatesChecker == null) {
+			return;
+		}
+
 		// if there is an update available...
-		if (updatesChecker != null && updatesChecker.isUpdateAvailable()) {
-			// ask the user whether he wants to update or not
-			new AlertDialog.Builder(context)
-					.setTitle(R.string.update_available)
-					.setMessage(String.format(context.getString(
-							updatesChecker.getLatestApkUrl() != null ?
-							R.string.update_dialog_msg :
-							R.string.update_available_fdroid),
-						updatesChecker.getLatestApkVersion()))
-					.setPositiveButton(
-							updatesChecker.getLatestApkUrl() != null ?
-							R.string.update : 
-							R.string.update_open_fdroid,
-							(dialog, which) -> {
-								if (updatesChecker.getLatestApkUrl() != null) {
-									new UpgradeAppTask(updatesChecker.getLatestApkUrl(), context).executeInParallel();
-								} else {
-									new OpenFDroidTask(context).executeInParallel();
-								}
-							})
-					.setNegativeButton(R.string.later, null)
-					.show();
+		if (updatesChecker.isUpdateAvailable()) {
+			// ...unless the user already tapped "Later" for this version
+			// (a manual check still shows it, so the user can change their mind).
+			String latestVersion = updatesChecker.getLatestApkVersion();
+			if (displayUpToDateMessage
+					|| !latestVersion.equals(SkyTubeApp.getSettings().getSkippedUpdateVersion())) {
+				if (context instanceof Activity) {
+					UpdateAvailableDialog.show((Activity) context, latestVersion,
+							updatesChecker.getReleaseNotes(), updatesChecker.getLatestReleaseUrl());
+				}
+			}
 		} else if (displayUpToDateMessage) {
-            if (updatesChecker.getFailure() != null) {
-                Toast.makeText(context, context.getString(R.string.unable_to_check_for_updates, updatesChecker.getFailure().getMessage()), Toast.LENGTH_LONG).show();
-            } else {
-                // inform the user that there is no update available (app is up-to-date)
-                new AlertDialog.Builder(context)
-                        .setTitle(R.string.up_to_date)
-                        .setMessage(R.string.up_to_date_msg)
-                        .setNeutralButton(R.string.ok, null)
-                        .show();
-            }
+			// Manual check: say the app is up to date, but stay silent when
+			// the check itself failed (no network, GitHub error, ...).
+			if (updatesChecker.getFailure() == null) {
+				Toast.makeText(context, R.string.update_up_to_date_toast, Toast.LENGTH_LONG).show();
+			}
 		} else if (showReleaseNotes && updatesChecker.getReleaseNotes() != null) {
 			new AlertDialog.Builder(context)
 					.setTitle(String.format(context.getString(R.string.release_notes), updatesChecker.getLatestApkVersion()))

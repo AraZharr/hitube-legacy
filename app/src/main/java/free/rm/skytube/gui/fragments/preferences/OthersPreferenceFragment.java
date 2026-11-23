@@ -26,6 +26,7 @@ import androidx.preference.CheckBoxPreference;
 import androidx.preference.EditTextPreference;
 import androidx.preference.ListPreference;
 import androidx.preference.MultiSelectListPreference;
+import androidx.preference.Preference;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -38,6 +39,7 @@ import free.rm.skytube.app.SkyTubeApp;
 import free.rm.skytube.businessobjects.AsyncTaskParallel;
 import free.rm.skytube.businessobjects.YouTube.POJOs.YouTubeAPIKey;
 import free.rm.skytube.businessobjects.YouTube.ValidateYouTubeAPIKey;
+import free.rm.skytube.gui.businessobjects.updates.UpdatesCheckerTask;
 
 /**
  * Preference fragment for other settings.
@@ -81,6 +83,14 @@ public class OthersPreferenceFragment extends BasePreferenceFragment {
 			themePref.setValue("dark");
 		}
 		themePref.setSummary(String.format(getString(R.string.pref_summary_theme), themePref.getEntry()));
+
+		// Check for updates: run the update checker right away, ignoring the
+		// once-a-day throttle used by the automatic check on startup.
+		Preference checkForUpdatesPref = findPreference(getString(R.string.pref_key_check_for_updates));
+		checkForUpdatesPref.setOnPreferenceClickListener(preference -> {
+			new UpdatesCheckerTask(getActivity(), true).executeInParallel();
+			return true;
+		});
 
 		MultiSelectListPreference hiddenTabsPref = findPreference(getString(R.string.pref_key_hide_tabs));
 		hiddenTabsPref.setEntries(tabListLabels);

@@ -1,0 +1,1 @@
+Home feed is now a single-column list of full-width video cards, like the YouTube app. Search moved out of the bottom bar (it stays in the top bar) and Downloads takes its place there. New: an in-app update checker shows the new version and what's new, and checks at most once a day (or manually in Settings → Others → Check for updates).

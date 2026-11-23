@@ -32,6 +32,12 @@
 		app:defaultValue="dark"
 		app:iconSpaceReserved="false" />
 
+	<Preference
+		app:key="@string/pref_key_check_for_updates"
+		app:title="@string/pref_title_check_for_updates"
+		app:summary="@string/pref_summary_check_for_updates"
+		app:iconSpaceReserved="false" />
+
 	<MultiSelectListPreference
 		app:key="@string/pref_key_hide_tabs"
 		app:title="@string/pref_title_hide_tabs"
