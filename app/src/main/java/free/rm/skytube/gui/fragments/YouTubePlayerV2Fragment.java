@@ -108,8 +108,11 @@ import free.rm.skytube.gui.businessobjects.adapters.CommentsAdapter;
 import free.rm.skytube.gui.businessobjects.fragments.ImmersiveModeFragment;
 import free.rm.skytube.gui.businessobjects.views.ChannelActionHandler;
 import free.rm.skytube.gui.businessobjects.views.Linker;
+import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers;
+import io.reactivex.rxjava3.core.Maybe;
 import io.reactivex.rxjava3.disposables.CompositeDisposable;
 import io.reactivex.rxjava3.internal.functions.Functions;
+import io.reactivex.rxjava3.schedulers.Schedulers;
 
 /**
  * A fragment that holds a standalone YouTube player (version 2).
@@ -498,15 +501,33 @@ public class YouTubePlayerV2Fragment extends ImmersiveModeFragment implements Yo
 
     /**
      * Retrieve the sponsorBlock information, either from the internal downloaded videos table, or from the network.
+     * The lookup (a SQLite query plus a network call) runs off the UI thread: doing it here used to crash
+     * on Android 10+ debug builds, where SkyTubeApp.nonUiThread() throws when the UI thread is blocked
+     * (pressing BACK minimises the player, which notifies this fragment synchronously on the UI thread).
      */
     private void retrieveSponsorBlockIfPossible() {
         if (SkyTubeApp.getSettings().isSponsorblockEnabled()) {
             if (sponsorBlockVideoInfo == null) {
-                sponsorBlockVideoInfo = DownloadedVideosDb.getVideoDownloadsDb().getDownloadedVideoSponsorblock(youTubeVideo.getId());
-                if (sponsorBlockVideoInfo == null) {
-                    sponsorBlockVideoInfo = SBTasks.retrieveSponsorblockSegmentsBk(youTubeVideo.getVideoId());
-                }
-                initSponsorBlock();
+                final String lookupVideoId = youTubeVideo.getId();
+                final VideoId lookupSbVideoId = youTubeVideo.getVideoId();
+                compositeDisposable.add(
+                        Maybe.fromCallable(() -> {
+                            SBVideoInfo info = DownloadedVideosDb.getVideoDownloadsDb().getDownloadedVideoSponsorblock(lookupVideoId);
+                            if (info == null) {
+                                info = SBTasks.retrieveSponsorblockSegmentsBk(lookupSbVideoId);
+                            }
+                            return info;
+                        })
+                        .subscribeOn(Schedulers.io())
+                        .observeOn(AndroidSchedulers.mainThread())
+                        .subscribe(info -> {
+                            // The video may have changed while the lookup was in flight; only apply
+                            // the result if this fragment is still showing the same video.
+                            if (fragmentBinding != null && youTubeVideo != null && lookupVideoId.equals(youTubeVideo.getId())) {
+                                sponsorBlockVideoInfo = info;
+                                initSponsorBlock();
+                            }
+                        }, throwable -> Log.w(TAG, "Failed retrieving Sponsorblock info", throwable)));
             }
         }
     }

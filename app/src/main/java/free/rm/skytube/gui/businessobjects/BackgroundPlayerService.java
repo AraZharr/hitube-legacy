@@ -137,6 +137,12 @@ public class BackgroundPlayerService extends Service {
 
 	@Override
 	public int onStartCommand(Intent intent, int flags, int startId) {
+		// A service started with startForegroundService() MUST call startForeground()
+		// within ~5 seconds or the system kills the app (RemoteServiceException).
+		// Call it first, before any branch that can stop the service: the start
+		// check in SkyTubeApp races with the player being closed, so onStartCommand
+		// can arrive when there is no longer a player or video to serve.
+		startForeground(NOTIFICATION_ID, buildNotification());
 		if (intent == null || intent.getAction() == null) {
 			// Restarted by the system with no intent: there is no player to serve.
 			stopSelf();
