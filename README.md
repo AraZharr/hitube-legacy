@@ -16,16 +16,14 @@ Nothing else changed: **all features are kept exactly as they were**, and
 the app still supports old Android devices (**minSdk 14 / Android 4.0+**).
 The application ID (`free.rm.skytube.legacy`) is unchanged.
 
-<a href="#download">![Download APK](https://img.shields.io/github/downloads/SkyTubeTeam/SkyTubeLegacy/total.svg?label=SkyTube+Legacy+Extra+Downloads)</a>
-<a href="https://hosted.weblate.org/engage/skytube/?utm_source=widget"> <img src="https://hosted.weblate.org/widgets/skytube/-/svg-badge.svg" alt="Translate"/> </a>
+[![GitHub release](https://img.shields.io/github/v/release/AraZharr/hitube-legacy)](https://github.com/AraZharr/hitube-legacy/releases)
 
 <p align="center">
-  <a href="#features">Features</a> | 
-  <a href="#download"><img src="https://i.imgur.com/BYKw7FK.png" />Download</a> | 
-  <a href="#why-skytube">Why SkyTube?</a> | 
-  <a href="#screenshots">Screenshots</a> | 
-  <a href="#contribute">Contribute</a> | 
-  <a href="#translate">Translate</a> | 
+  <a href="#features">Features</a> |
+  <a href="#download">Download</a> |
+  <a href="#why-hitube-legacy">Why HiTube Legacy?</a> |
+  <a href="#screenshots">Screenshots</a> |
+  <a href="#contribute">Contribute</a> |
   <a href="#license">License</a>
 </p>
 
@@ -39,12 +37,15 @@ The application ID (`free.rm.skytube.legacy`) is unchanged.
   - Block high-dislike videos
   - Toolbar icon showing number of blocked videos
 * Watched or partially watched videos are marked accordingly. "Resume playing" feature also implemented
-* Video swipe controls, including controls for volume, brightness, comments and video description
+* In-app mini player — keep watching while you browse
+* Autoplay next video, with a toggle right inside the player
+* Double-tap to seek ±5 seconds, YouTube-style
+* Video swipe controls for volume, comments and video description
 * Bookmark videos
 * Import subscriptions from YouTube
 * Play channels' playlists
 * Download videos
-* Ability to play the video faster — or slower than live. **[New!]**
+* Ability to play the video faster — or slower than live.
 * View and download video thumbnails
 * No adverts when browsing or playing videos
 * SponsorBlock to skip advertisement segments
@@ -56,8 +57,7 @@ The application ID (`free.rm.skytube.legacy`) is unchanged.
 * Play YouTube videos
 * View video comments
 * Search videos, music and channels
-* Channel subscription & non-intrusive notifications
-* Subscriptions feed
+* Channel subscription
 
 More features will be added in the near future.
 
@@ -65,18 +65,12 @@ More features will be added in the near future.
 Android 4.0 (Ice Cream Sandwich) or later. For techies, that means an API level of 14 or greater.
 
 ## Download
-HiTube Legacy is built from this repository (oss flavor). The table below
-describes the two upstream SkyTube Legacy variants this redesign is based on.
-| Feature          | SkyTube Legacy Extra                | SkyTube Legacy |
-| ---------------- |------------------------------------| ---------------|
-| Description      | Contains extra features that are powered by non-OSS libraries. | Fully open-source and free software. |
-| GPLv3 license                    | ✅                   | ✅       |
-| Official YouTube player support* | ✅                   | ❌       |
-| Chromecast Support*              | ✅                   | ❌       |
-| Updates availability             | Immediate            | Normally up to 5 days |
-| Download APK                     | [![Download SkyTube Extra APK](screenshots/download_apk.png)](https://github.com/SkyTubeTeam/SkyTubeLegacy/releases/download/v3.000/SkyTube-Legacy-Extra-3.000.apk) | [![Download SkyTube (Vanilla) APK](https://upload.wikimedia.org/wikipedia/commons/thumb/0/0d/Get_it_on_F-Droid.svg/200px-Get_it_on_F-Droid.svg.png)](https://f-droid.org/packages/free.rm.skytube.legacy.oss/)
+Get the latest release from the [Releases page](https://github.com/AraZharr/hitube-legacy/releases) — the APK is attached there (for example, `hitube-legacy-Legacy-Oss-1.0.1.apk` for v1.0.1).
 
-_* powered by a closed-source, third-party library._
+| Flavor | Description |
+| ------ | ----------- |
+| HiTube (OSS) | Fully open-source and free software. This is the main flavor. |
+| Extra | Extra flavor with the official YouTube player and Chromecast support, powered by a closed-source, third-party library. |
 
 ## Why HiTube Legacy?
 * Copylefted libre software
@@ -87,14 +81,6 @@ _* powered by a closed-source, third-party library._
 * Not dependent on GApps/Google Apps (the official YouTube app)
 * No need for Google/YouTube account to operate
 * Does not spy on your behaviour!
-
-## Translate
-You can help us translate this app into your native language by visiting [SkyTube's Weblate page](https://hosted.weblate.org/engage/skytube/). Just log in using your GitHub/GitLab/BitBucket/Google/Facebook account and start translating!
-
-### Translation status:
-<a href="https://hosted.weblate.org/engage/skytube/?utm_source=widget">
-<img src="https://hosted.weblate.org/widgets/skytube/-/multi-auto.svg" alt="Translation status" />
-</a>
 
 ## Screenshots
 ### Phone
@@ -120,13 +106,13 @@ You can help us translate this app into your native language by visiting [SkyTub
 </a>
 
 ## Contribute
-This project was possible with the support and contribution of [numerous volunteers and third-party projects](http://skytube-app.com/credits.html).
+Contributions are welcome — open an issue or a pull request in this repository.
 
-Help improve SkyTube by [translating](https://github.com/SkyTubeTeam/SkyTube/wiki/Contribute#translate) or [developing](https://github.com/SkyTubeTeam/SkyTube/wiki/Contribute#developers-guidelines) it.
+This project is based on SkyTube Legacy by SkyTubeTeam; the original code was made possible by the support and contribution of [numerous volunteers and third-party projects](http://skytube-app.com/credits.html).
 
 ## Star History
 
-[![Star History Chart](https://star-history.dera.page/svg?repos=SkyTubeTeam/SkyTubeLegacy&type=Date)](https://star-history.dera.page/#SkyTubeTeam/SkyTubeLegacy&Date)
+[![Star History Chart](https://star-history.dera.page/svg?repos=AraZharr/hitube-legacy&type=Date)](https://star-history.dera.page/#AraZharr/hitube-legacy&Date)
 
 ## License
 
