@@ -40,6 +40,7 @@ The application ID (`free.rm.skytube.legacy`) is unchanged.
   - Toolbar icon showing number of blocked videos
 * Watched or partially watched videos are marked accordingly. "Resume playing" feature also implemented
 * In-app mini player — keep watching while you browse
+* Background playback — audio keeps playing when you leave the app, with controls in the notification
 * Autoplay next video, with a toggle right inside the player
 * Double-tap to seek ±5 seconds, YouTube-style
 * If the app crashes, the crash log is shown on the next launch — copy it or report it on GitHub
@@ -68,12 +69,12 @@ More features will be added in the near future.
 Android 4.0 (Ice Cream Sandwich) or later. For techies, that means an API level of 14 or greater.
 
 ## Download
-Get the latest release from the [Releases page](https://github.com/AraZharr/hitube-legacy/releases). Each release includes five APKs (for example, for v1.0.4):
+Get the latest release from the [Releases page](https://github.com/AraZharr/hitube-legacy/releases). Each release includes five APKs (for example, for v1.0.5):
 
-* `hitube-legacy-Legacy-Oss-1.0.4-arm64-v8a.apk` — most modern phones (64-bit ARM), including most phones from 2015 onwards
-* `hitube-legacy-Legacy-Oss-1.0.4-armeabi-v7a.apk` — older 32-bit ARM phones
-* `hitube-legacy-Legacy-Oss-1.0.4-x86.apk` / `hitube-legacy-Legacy-Oss-1.0.4-x86_64.apk` — Intel-based devices and emulators
-* `hitube-legacy-Legacy-Oss-1.0.4.apk` — universal APK, works on every device; pick this one if you are unsure
+* `hitube-legacy-Legacy-Oss-1.0.5-arm64-v8a.apk` — most modern phones (64-bit ARM), including most phones from 2015 onwards
+* `hitube-legacy-Legacy-Oss-1.0.5-armeabi-v7a.apk` — older 32-bit ARM phones
+* `hitube-legacy-Legacy-Oss-1.0.5-x86.apk` / `hitube-legacy-Legacy-Oss-1.0.5-x86_64.apk` — Intel-based devices and emulators
+* `hitube-legacy-Legacy-Oss-1.0.5.apk` — universal APK, works on every device; pick this one if you are unsure
 
 All five contain the same app — the split files only exist so you can pick the one matching your device.
 
