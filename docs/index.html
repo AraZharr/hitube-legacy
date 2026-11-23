@@ -45,6 +45,16 @@
   details p { color:var(--muted); font-size:15px; margin-top:8px; }
   footer { border-top:1px solid #222; padding:32px 0 48px; color:var(--muted); font-size:14px; text-align:center; }
   footer a { color:var(--muted); }
+  .stats { margin-top:28px; background:var(--surface); border-radius:16px; padding:20px; }
+  .stats h3 { font-size:17px; margin-bottom:4px; }
+  .stats p.sub { color:var(--muted); font-size:14px; margin-bottom:16px; }
+  .bar-row { display:grid; grid-template-columns:76px 1fr 40px; align-items:center; gap:12px; margin-bottom:12px; font-size:14px; }
+  .bar-row .lbl { font-weight:600; }
+  .bar-track { background:#2a2a2a; border-radius:999px; height:14px; overflow:hidden; }
+  .bar-fill { background:var(--red); height:100%; border-radius:999px; }
+  .bar-row .num { text-align:right; font-weight:600; }
+  .stats .total { margin-top:14px; font-size:15px; }
+  .stats .total b { color:var(--red); }
   @media (max-width:600px){ header h1{font-size:40px} header p.tagline{font-size:17px} }
 </style>
 </head>
@@ -61,14 +71,21 @@
 <section id="download">
   <h2>Download</h2>
   <p class="lead">Version 1.0.5 — pick the APK that matches your device. All five contain the same app.</p>
-  <!-- NOTE: when a new version ships, update the version number in the five links below. -->
+  <!-- NOTE: when a new version ships, update the version number in the five links below and the download statistics. -->
   <a class="btn" href="https://github.com/AraZharr/hitube-legacy/releases/download/v1.0.5/hitube-legacy-Legacy-Oss-1.0.5-arm64-v8a.apk">arm64-v8a<small>Most modern phones</small></a>
   <a class="btn" href="https://github.com/AraZharr/hitube-legacy/releases/download/v1.0.5/hitube-legacy-Legacy-Oss-1.0.5-armeabi-v7a.apk">armeabi-v7a<small>Older 32-bit ARM phones</small></a>
   <a class="btn" href="https://github.com/AraZharr/hitube-legacy/releases/download/v1.0.5/hitube-legacy-Legacy-Oss-1.0.5-x86_64.apk">x86_64<small>Intel devices &amp; emulators</small></a>
   <a class="btn" href="https://github.com/AraZharr/hitube-legacy/releases/download/v1.0.5/hitube-legacy-Legacy-Oss-1.0.5-x86.apk">x86<small>Intel 32-bit devices</small></a>
   <a class="btn ghost" href="https://github.com/AraZharr/hitube-legacy/releases/download/v1.0.5/hitube-legacy-Legacy-Oss-1.0.5.apk">Universal APK<small>Works everywhere — pick this if unsure</small></a>
   <p class="note">Android 4.0 or later. Enable “Install from unknown sources” before installing. <a href="https://github.com/AraZharr/hitube-legacy/releases">See all releases</a></p>
-  <p class="note">Downloads so far: <img src="https://img.shields.io/github/downloads/AraZharr/hitube-legacy/total" alt="Total downloads" style="vertical-align:middle"> — v1.0.5: <img src="https://img.shields.io/github/downloads/AraZharr/hitube-legacy/v1.0.5/total" alt="v1.0.5 downloads" style="vertical-align:middle"> · v1.0.4: <img src="https://img.shields.io/github/downloads/AraZharr/hitube-legacy/v1.0.4/total" alt="v1.0.4 downloads" style="vertical-align:middle"> · v1.0.1: <img src="https://img.shields.io/github/downloads/AraZharr/hitube-legacy/v1.0.1/total" alt="v1.0.1 downloads" style="vertical-align:middle"> (live counts from GitHub)</p>
+  <div class="stats">
+    <h3>Download statistics</h3>
+    <p class="sub">Downloads from GitHub Releases, as of 23 Nov 2026.</p>
+    <div class="bar-row"><span class="lbl">v1.0.5</span><div class="bar-track"><div class="bar-fill" style="width:4.5%;min-width:6px"></div></div><span class="num">1</span></div>
+    <div class="bar-row"><span class="lbl">v1.0.4</span><div class="bar-track"><div class="bar-fill" style="width:100%"></div></div><span class="num">22</span></div>
+    <div class="bar-row"><span class="lbl">v1.0.1</span><div class="bar-track"><div class="bar-fill" style="width:9%;min-width:6px"></div></div><span class="num">2</span></div>
+    <p class="total">Total: <b>25 downloads</b></p>
+  </div>
 </section>
 
 <section id="features">
