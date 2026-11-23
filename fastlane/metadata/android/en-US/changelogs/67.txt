@@ -1,0 +1,1 @@
+Added a light theme (Settings > Others > Theme: Dark / Light / System default) and UI animations: fade + slide activity transitions and a staggered fade-in for the video grid.

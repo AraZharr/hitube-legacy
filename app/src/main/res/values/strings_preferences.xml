@@ -561,6 +561,20 @@
     <string name="pref_key_background_playback" translatable="false">pref_key_background_playback</string>
     <string name="pref_title_background_playback">Background playback</string>
     <string name="pref_summary_background_playback">Keep playing audio when you leave the app, with controls in the notification.</string>
+
+    <string name="pref_key_theme" translatable="false">pref_key_theme</string>
+    <string name="pref_title_theme">Theme</string>
+    <string name="pref_summary_theme">App theme: %s</string>
+    <string-array name="theme_entries">
+        <item>Dark</item>
+        <item>Light</item>
+        <item>System default</item>
+    </string-array>
+    <string-array name="theme_values" translatable="false">
+        <item>dark</item>
+        <item>light</item>
+        <item>system</item>
+    </string-array>
     <string name="pref_youtube_api_key" translatable="false">pref_youtube_api_key</string>
     <string name="pref_title_youtube_api_key">YouTube API key</string>
     <string name="pref_summary_youtube_api_key">Enter a personal YouTube API key to use instead.</string>

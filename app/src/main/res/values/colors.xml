@@ -2,39 +2,29 @@
 <resources>
 	<!--
 		HiTube design tokens (fresh UI, following modern Material 3
-		guidelines). The dark variant is this app's default theme; the
-		light tokens are provided for completeness. Every theme colour in
-		this app should reference these tokens, never a raw hex value in a
+		guidelines). The LIGHT variant is this file's default theme; the
+		dark tokens live in values-night/colors.xml and take over when
+		the app runs in night mode. Every theme colour in this app
+		should reference these tokens, never a raw hex value in a
 		layout or style.
 	-->
 
-	<!-- Dark (app default) -->
+	<!-- Light (app default) -->
 	<color name="hitube_primary">#FF0000</color>          <!-- YouTube red -->
 	<color name="hitube_on_primary">#FFFFFF</color>
-	<color name="hitube_secondary">#AAAAAA</color>
-	<color name="hitube_background">#0F0F0F</color>
-	<color name="hitube_surface">#1D1D1D</color>
-	<color name="hitube_surface_container_high">#262626</color>
-	<color name="hitube_dialog_button_pressed">#333333</color>
-	<color name="hitube_on_surface">#F4F4F4</color>
-	<color name="hitube_on_surface_variant">#B8B8B8</color>
-	<color name="hitube_outline">#343434</color>
-	<color name="hitube_error">#EF5350</color>
+	<color name="hitube_secondary">#606060</color>
+	<color name="hitube_background">#FFFFFF</color>
+	<color name="hitube_surface">#F3F3F3</color>
+	<color name="hitube_surface_container_high">#E8E8E8</color>
+	<color name="hitube_dialog_button_pressed">#DDDDDD</color>
+	<color name="hitube_on_surface">#111111</color>
+	<color name="hitube_on_surface_variant">#5F5F5F</color>
+	<color name="hitube_outline">#D7D7D7</color>
+	<color name="hitube_error">#D32F2F</color>
 	<!-- Marks that stay YouTube red in every theme -->
 	<color name="hitube_youtube_red">#FF0000</color>
 	<!-- Dark translucent chip used for badges over thumbnails (duration, like %) -->
 	<color name="hitube_badge_background">#CC0F0F0F</color>
-
-	<!-- Light (tokens only; the app theme stays dark) -->
-	<color name="hitube_light_primary">#FF0000</color>
-	<color name="hitube_light_on_primary">#FFFFFF</color>
-	<color name="hitube_light_secondary">#606060</color>
-	<color name="hitube_light_background">#FFFFFF</color>
-	<color name="hitube_light_surface">#F3F3F3</color>
-	<color name="hitube_light_on_surface">#111111</color>
-	<color name="hitube_light_on_surface_variant">#5F5F5F</color>
-	<color name="hitube_light_outline">#D7D7D7</color>
-	<color name="hitube_light_error">#D32F2F</color>
 
 	<!--
 		Legacy SkyTube colour names, re-pointed at the tokens above.

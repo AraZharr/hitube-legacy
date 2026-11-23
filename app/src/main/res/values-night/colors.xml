@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+	HiTube design tokens — DARK variant.
+
+	Only the tokens that differ from the light defaults in
+	values/colors.xml are overridden here. Every other colour
+	(dialogs, drawers, player HUD, badges) references these tokens,
+	so it follows the night mode automatically.
+-->
+<resources>
+	<color name="hitube_primary">#FF0000</color>          <!-- YouTube red -->
+	<color name="hitube_on_primary">#FFFFFF</color>
+	<color name="hitube_secondary">#AAAAAA</color>
+	<color name="hitube_background">#0F0F0F</color>
+	<color name="hitube_surface">#1D1D1D</color>
+	<color name="hitube_surface_container_high">#262626</color>
+	<color name="hitube_dialog_button_pressed">#333333</color>
+	<color name="hitube_on_surface">#F4F4F4</color>
+	<color name="hitube_on_surface_variant">#B8B8B8</color>
+	<color name="hitube_outline">#343434</color>
+	<color name="hitube_error">#EF5350</color>
+</resources>

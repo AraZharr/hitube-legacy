@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layoutAnimation xmlns:android="http://schemas.android.com/apk/res/android"
+	android:animation="@anim/hitube_grid_item_fade"
+	android:delay="30%"
+	android:animationOrder="normal" />

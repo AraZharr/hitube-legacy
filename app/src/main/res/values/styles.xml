@@ -1,7 +1,9 @@
 <resources>
 
-	<!-- HiTube theme — fresh UI, modern Material 3 dark palette -->
-	<style name="AppTheme" parent="Theme.MaterialComponents">
+	<!-- HiTube theme — fresh UI, modern Material 3 palette.
+		DayNight parent: the colours switch between values/colors.xml
+		(light) and values-night/colors.xml (dark) automatically. -->
+	<style name="AppTheme" parent="Theme.MaterialComponents.DayNight">
 		<item name="colorPrimary">@color/hitube_primary</item>
 		<item name="colorPrimaryDark">@color/hitube_background</item>
 		<item name="colorAccent">@color/hitube_primary</item>
@@ -9,6 +11,9 @@
 		<item name="colorSurface">@color/hitube_surface</item>
 		<item name="colorOnSurface">@color/hitube_on_surface</item>
 		<item name="colorError">@color/hitube_error</item>
+
+		<!-- Window open/close animations (fade + slight slide). -->
+		<item name="android:windowAnimationStyle">@style/HitubeWindowAnimation</item>
 
 		<item name="android:windowBackground">@color/hitube_background</item>
 		<item name="android:colorBackground">@color/hitube_background</item>
@@ -33,6 +38,14 @@
 		<item name="android:alertDialogTheme">@style/HitubeFrameworkAlertDialog</item>
 	</style>
 
+	<!-- Activity window animations: short fade + slide, light enough for old devices. -->
+	<style name="HitubeWindowAnimation" parent="@android:style/Animation.Activity">
+		<item name="android:activityOpenEnterAnimation">@anim/hitube_activity_open_enter</item>
+		<item name="android:activityOpenExitAnimation">@anim/hitube_activity_open_exit</item>
+		<item name="android:activityCloseEnterAnimation">@anim/hitube_activity_close_enter</item>
+		<item name="android:activityCloseExitAnimation">@anim/hitube_activity_close_exit</item>
+	</style>
+
 	<style name="HitubeAlertDialog" parent="ThemeOverlay.MaterialComponents.MaterialAlertDialog">
 		<item name="shapeAppearanceOverlay">@style/HitubeDialogShape</item>
 	</style>
@@ -42,10 +55,11 @@
 		<item name="cornerSize">28dp</item>
 	</style>
 
-	<!-- Framework AlertDialog theme — dark dialog, white text, small outlined buttons.
-		Parent must be API 14+ compatible: Theme.AppCompat.Dialog.Alert (NOT a
-		Theme.Material.* parent, which only exists from API 21 and would crash the Q10). -->
-	<style name="HitubeFrameworkAlertDialog" parent="Theme.AppCompat.Dialog.Alert">
+	<!-- Framework AlertDialog theme — follows the app theme (light/dark),
+		white text on dark in night mode. Parent must be API 14+ compatible:
+		Theme.AppCompat.DayNight.Dialog.Alert (NOT a Theme.Material.* parent,
+		which only exists from API 21 and would crash the Q10). -->
+	<style name="HitubeFrameworkAlertDialog" parent="Theme.AppCompat.DayNight.Dialog.Alert">
 		<item name="android:windowBackground">@color/hitube_surface</item>
 		<item name="android:colorBackground">@color/hitube_surface</item>
 		<item name="android:textColorPrimary">@color/hitube_on_surface</item>
@@ -57,7 +71,8 @@
 	</style>
 
 	<!-- Small outlined dialog button (framework dialogs only): 12sp text, 32dp high,
-		12dp side padding, dark fill + 1dp light outline ("line"), white text. -->
+		12dp side padding, surface fill + 1dp outline ("line"), theme text. Colours
+		come from the theme tokens, so the button follows light/dark. -->
 	<style name="HitubeFrameworkDialogButton" parent="Widget.AppCompat.Button.ButtonBar.AlertDialog">
 		<item name="android:textColor">@color/hitube_on_surface</item>
 		<item name="android:textSize">12sp</item>
@@ -67,8 +82,8 @@
 		<item name="android:background">@drawable/hitube_dialog_button_background</item>
 	</style>
 
-	<!-- Settings / Preferences — dark, same palette (was Light before) -->
-	<style name="AppTheme.Preferences" parent="Theme.AppCompat">
+	<!-- Settings / Preferences — same palette as the app theme (was dark-only before) -->
+	<style name="AppTheme.Preferences" parent="Theme.AppCompat.DayNight">
 		<item name="colorPrimary">@color/hitube_primary</item>
 		<item name="colorPrimaryDark">@color/hitube_background</item>
 		<item name="colorAccent">@color/hitube_primary</item>
@@ -174,7 +189,7 @@
 	</style>
 
 	<!-- Bottom sheet for video actions: rounded top corners with a small gap at the screen edges. -->
-	<style name="HitubeBottomSheetDialog" parent="Theme.MaterialComponents.BottomSheetDialog">
+	<style name="HitubeBottomSheetDialog" parent="Theme.MaterialComponents.DayNight.BottomSheetDialog">
 		<item name="bottomSheetStyle">@style/HitubeBottomSheet</item>
 	</style>
 

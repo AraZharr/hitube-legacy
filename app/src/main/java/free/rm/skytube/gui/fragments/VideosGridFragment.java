@@ -22,6 +22,7 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.AnimationUtils;
 import android.widget.GridView;
 
 import androidx.annotation.NonNull;
@@ -83,6 +84,10 @@ public abstract class VideosGridFragment extends BaseVideosGridFragment {
                     getResources().getInteger(R.integer.video_grid_num_columns)));
             gridviewBinding.gridView.setAdapter(videoGridAdapter);
         }
+        // Entrance animation for the video grid: cards fade + rise in once,
+        // staggered. Cheap (180ms, alpha + translate only) so old devices cope.
+        gridviewBinding.gridView.setLayoutAnimation(
+                AnimationUtils.loadLayoutAnimation(context, R.anim.hitube_grid_layout_animation));
         gridviewBinding.swipeRefreshLayout.setOnRefreshListener(this);
     }
 

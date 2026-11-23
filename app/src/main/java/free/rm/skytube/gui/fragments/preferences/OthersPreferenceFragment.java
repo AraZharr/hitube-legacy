@@ -21,6 +21,7 @@ import android.content.SharedPreferences;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AlertDialog;
+import androidx.appcompat.app.AppCompatDelegate;
 import androidx.preference.CheckBoxPreference;
 import androidx.preference.EditTextPreference;
 import androidx.preference.ListPreference;
@@ -74,6 +75,13 @@ public class OthersPreferenceFragment extends BasePreferenceFragment {
 		}
 		defaultTabPref.setSummary(String.format(getString(R.string.pref_summary_default_tab), defaultTabPref.getEntry()));
 
+		// Theme (dark / light / system): show the current choice as the summary.
+		ListPreference themePref = findPreference(getString(R.string.pref_key_theme));
+		if (themePref.getValue() == null) {
+			themePref.setValue("dark");
+		}
+		themePref.setSummary(String.format(getString(R.string.pref_summary_theme), themePref.getEntry()));
+
 		MultiSelectListPreference hiddenTabsPref = findPreference(getString(R.string.pref_key_hide_tabs));
 		hiddenTabsPref.setEntries(tabListLabels);
 
@@ -87,6 +95,12 @@ public class OthersPreferenceFragment extends BasePreferenceFragment {
 				// If the user changed the Default Tab Preference, update the summary to show the new default tab
 				ListPreference defaultTabPref = findPreference(key);
 				defaultTabPref.setSummary(String.format(getString(R.string.pref_summary_default_tab), defaultTabPref.getEntry()));
+			} else if (key.equals(getString(R.string.pref_key_theme))) {
+				// Theme changed: update the summary and apply the new palette
+				// at once (AppCompat recreates the activities).
+				ListPreference themePref = findPreference(key);
+				themePref.setSummary(String.format(getString(R.string.pref_summary_theme), themePref.getEntry()));
+				AppCompatDelegate.setDefaultNightMode(SkyTubeApp.getSettings().getThemeMode());
 			} else if (key.equals(getString(R.string.pref_key_hide_tabs))) {
 				//
 				EventBus.getInstance().notifyMainTabChanged(EventBus.SettingChange.HIDE_TABS);

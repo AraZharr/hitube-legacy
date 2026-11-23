@@ -45,6 +45,7 @@ import androidx.annotation.ArrayRes;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
+import androidx.appcompat.app.AppCompatDelegate;
 import androidx.core.app.NotificationChannelCompat;
 import androidx.core.app.NotificationManagerCompat;
 import androidx.core.app.PendingIntentCompat;
@@ -134,6 +135,9 @@ public class SkyTubeApp extends MultiDexApplication {
 		CrashHandler.install(this);
 		this.settings = new Settings(this);
 		this.settings.migrate();
+		// Apply the theme the user picked (dark / light / system) before any
+		// activity is created, so every screen starts with the right palette.
+		AppCompatDelegate.setDefaultNightMode(this.settings.getThemeMode());
 		this.names = new FragmentNames(this);
 		skyTubeApp = this;
 		registerBackgroundPlaybackLifecycleCallbacks();

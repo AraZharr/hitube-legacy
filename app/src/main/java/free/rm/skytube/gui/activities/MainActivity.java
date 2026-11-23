@@ -20,6 +20,7 @@ package free.rm.skytube.gui.activities;
 import android.content.ClipData;
 import android.content.ClipboardManager;
 import android.content.Intent;
+import android.content.res.Configuration;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.os.Build;
@@ -33,6 +34,7 @@ import android.widget.FrameLayout;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.app.AppCompatDelegate;
 import androidx.appcompat.content.res.AppCompatResources;
 import androidx.appcompat.widget.SearchView;
 import androidx.core.content.ContextCompat;
@@ -250,6 +252,16 @@ public class MainActivity extends BaseActivity {
 	@Override
 	protected void onResume() {
 		super.onResume();
+
+		// If the theme was changed in Settings while this activity was in
+		// the back stack, recreate so the new palette applies at once.
+		int desiredNightMode = SkyTubeApp.getSettings().getThemeMode();
+		int currentNight = getResources().getConfiguration().uiMode & Configuration.UI_MODE_NIGHT_MASK;
+		if ((desiredNightMode == AppCompatDelegate.MODE_NIGHT_YES && currentNight != Configuration.UI_MODE_NIGHT_YES)
+				|| (desiredNightMode == AppCompatDelegate.MODE_NIGHT_NO && currentNight != Configuration.UI_MODE_NIGHT_NO)) {
+			recreate();
+			return;
+		}
 
 		// Activity may be destroyed when the devices is rotated, so we need to make sure that the
 		// channel play list is holding a reference to the activity being currently in use...

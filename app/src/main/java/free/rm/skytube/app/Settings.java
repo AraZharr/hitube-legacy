@@ -23,6 +23,7 @@ import android.os.Build;
 import android.os.Environment;
 
 import androidx.annotation.StringRes;
+import androidx.appcompat.app.AppCompatDelegate;
 import androidx.preference.PreferenceManager;
 
 import java.io.File;
@@ -287,6 +288,22 @@ public class Settings {
 
     public void setBackgroundPlaybackEnabled(boolean backgroundPlaybackEnabled) {
         setPreference(R.string.pref_key_background_playback, backgroundPlaybackEnabled);
+    }
+
+    /**
+     * @return The AppCompat night mode for the theme the user picked
+     *         (dark / light / system default). Defaults to dark, the
+     *         theme HiTube has always used.
+     */
+    public int getThemeMode() {
+        String theme = getPreference(R.string.pref_key_theme, "dark");
+        if ("light".equals(theme)) {
+            return AppCompatDelegate.MODE_NIGHT_NO;
+        } else if ("system".equals(theme)) {
+            return AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM;
+        } else {
+            return AppCompatDelegate.MODE_NIGHT_YES;
+        }
     }
 
     /**
