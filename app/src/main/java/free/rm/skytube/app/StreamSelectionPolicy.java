@@ -175,7 +175,19 @@ public class StreamSelectionPolicy {
                 Logger.d(this, "found %s", VideoStreamWithResolution.toHumanReadable(vs));
             }
         }
-        return pick(streams);
+        VideoStreamWithResolution best = pick(streams, true);
+        if (best == null) {
+            // HiTube fallback (fixes SkyTube issues #49 and #59): no stream
+            // matched the requested resolution range (e.g. only 360p is
+            // available but the user asked for 480p+). Fall back to the best
+            // available usable stream instead of failing with
+            // "Could not find a stream within the requested resolution".
+            best = pick(streams, false);
+            if (BuildConfig.DEBUG && best != null) {
+                Logger.d(this, "fallback stream -> %s", VideoStreamWithResolution.toHumanReadable(best));
+            }
+        }
+        return best;
     }
 
     /**
@@ -218,11 +230,11 @@ public class StreamSelectionPolicy {
         return stream.isUrl() && isAllowedVideoFormat(stream.getFormat());
     }
 
-    private VideoStreamWithResolution pick(Collection<VideoStream> streams) {
+    private VideoStreamWithResolution pick(Collection<VideoStream> streams, boolean enforceResolution) {
         VideoStreamWithResolution best = null;
         for (VideoStream stream : streams) {
             VideoStreamWithResolution videoStream = new VideoStreamWithResolution(stream);
-            if (isAllowed(videoStream.resolution) && isAllowedVideoFormat(videoStream.videoStream.getFormat()) && stream.isUrl()) {
+            if ((!enforceResolution || isAllowed(videoStream.resolution)) && isAllowedVideoFormat(videoStream.videoStream.getFormat()) && stream.isUrl()) {
                 switch (videoQuality) {
                     case BEST_QUALITY:
                         if (videoStream.isBetterQualityThan(best)) {
