@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>HiTube — YouTube, redesigned for the way you watch</title>
+<meta name="description" content="HiTube is a free, open-source YouTube client for Android. No ads, no account needed, with a fresh music-app-style interface, mini player, autoplay and more.">
+<style>
+  :root { --bg:#0f0f0f; --surface:#1d1d1d; --surface2:#262626; --text:#f5f5f5; --muted:#b3b3b3; --red:#ff0000; --red-dark:#cc0000; }
+  * { box-sizing:border-box; margin:0; padding:0; }
+  body { background:var(--bg); color:var(--text); font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif; line-height:1.6; }
+  a { color:#ff4d4d; }
+  .wrap { max-width:960px; margin:0 auto; padding:0 20px; }
+  header { padding:64px 0 40px; text-align:center; }
+  header img.logo { width:128px; height:128px; border-radius:28px; box-shadow:0 8px 32px rgba(255,0,0,.25); }
+  header h1 { font-size:52px; letter-spacing:-1px; margin:20px 0 8px; }
+  header h1 span { color:var(--red); }
+  header p.tagline { font-size:20px; color:var(--muted); max-width:640px; margin:0 auto; }
+  .badges { margin-top:18px; font-size:14px; color:var(--muted); }
+  .badges span { display:inline-block; border:1px solid #333; border-radius:999px; padding:4px 12px; margin:4px; }
+  section { padding:40px 0; }
+  h2 { font-size:28px; margin-bottom:8px; }
+  section p.lead { color:var(--muted); margin-bottom:20px; }
+  .btn { display:inline-block; background:var(--red); color:#fff; text-decoration:none; font-weight:600; padding:12px 22px; border-radius:999px; margin:6px 6px 6px 0; }
+  .btn:hover { background:var(--red-dark); }
+  .btn.ghost { background:var(--surface); color:var(--text); border:1px solid #333; }
+  .btn.ghost:hover { background:var(--surface2); }
+  .btn small { display:block; font-weight:400; font-size:12px; opacity:.85; }
+  .note { color:var(--muted); font-size:14px; margin-top:10px; }
+  .grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(240px,1fr)); gap:16px; }
+  .card { background:var(--surface); border-radius:16px; padding:20px; }
+  .card h3 { font-size:17px; margin-bottom:6px; }
+  .card p { color:var(--muted); font-size:15px; }
+  .shots { display:grid; grid-template-columns:repeat(auto-fit,minmax(160px,1fr)); gap:16px; }
+  .shots figure { background:var(--surface); border-radius:16px; overflow:hidden; }
+  .shots img { width:100%; display:block; }
+  .shots figcaption { padding:10px 12px; font-size:13px; color:var(--muted); }
+  table { width:100%; border-collapse:collapse; font-size:15px; }
+  th, td { padding:10px 12px; text-align:left; border-bottom:1px solid #2a2a2a; }
+  th { color:var(--muted); font-weight:600; }
+  td:first-child { font-weight:600; }
+  .yes { color:#4ade80; } .no { color:#f87171; }
+  details { background:var(--surface); border-radius:12px; padding:14px 18px; margin-bottom:10px; }
+  details summary { cursor:pointer; font-weight:600; }
+  details p { color:var(--muted); font-size:15px; margin-top:8px; }
+  footer { border-top:1px solid #222; padding:32px 0 48px; color:var(--muted); font-size:14px; text-align:center; }
+  footer a { color:var(--muted); }
+  @media (max-width:600px){ header h1{font-size:40px} header p.tagline{font-size:17px} }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header>
+  <img class="logo" src="https://raw.githubusercontent.com/AraZharr/hitube-legacy/main/app/src/main/res/mipmap-xxxhdpi/ic_launcher.png" alt="HiTube logo">
+  <h1>Hi<span>Tube</span></h1>
+  <p class="tagline">YouTube, redesigned for the way you watch. Free, open-source, no ads — with a fresh music-app-style interface.</p>
+  <div class="badges"><span>No ads</span><span>No account needed</span><span>Open source (GPL-3.0)</span><span>Works on older devices</span></div>
+</header>
+
+<section id="download">
+  <h2>Download</h2>
+  <p class="lead">Version 1.0.4 — pick the APK that matches your device. All five contain the same app.</p>
+  <!-- NOTE: when a new version ships, update the version number in the five links below. -->
+  <a class="btn" href="https://github.com/AraZharr/hitube-legacy/releases/download/v1.0.4/hitube-legacy-Legacy-Oss-1.0.4-arm64-v8a.apk">arm64-v8a<small>Most modern phones</small></a>
+  <a class="btn" href="https://github.com/AraZharr/hitube-legacy/releases/download/v1.0.4/hitube-legacy-Legacy-Oss-1.0.4-armeabi-v7a.apk">armeabi-v7a<small>Older 32-bit ARM phones</small></a>
+  <a class="btn" href="https://github.com/AraZharr/hitube-legacy/releases/download/v1.0.4/hitube-legacy-Legacy-Oss-1.0.4-x86_64.apk">x86_64<small>Intel devices &amp; emulators</small></a>
+  <a class="btn" href="https://github.com/AraZharr/hitube-legacy/releases/download/v1.0.4/hitube-legacy-Legacy-Oss-1.0.4-x86.apk">x86<small>Intel 32-bit devices</small></a>
+  <a class="btn ghost" href="https://github.com/AraZharr/hitube-legacy/releases/download/v1.0.4/hitube-legacy-Legacy-Oss-1.0.4.apk">Universal APK<small>Works everywhere — pick this if unsure</small></a>
+  <p class="note">Android 4.0 or later. Enable “Install from unknown sources” before installing. <a href="https://github.com/AraZharr/hitube-legacy/releases">See all releases</a></p>
+</section>
+
+<section id="features">
+  <h2>Features</h2>
+  <p class="lead">Everything you expect from a YouTube client, with a modern interface on top.</p>
+  <div class="grid">
+    <div class="card"><h3>🎵 Mini player</h3><p>Keep watching while you browse — the video shrinks to a mini player at the bottom of the screen.</p></div>
+    <div class="card"><h3>▶️ Autoplay</h3><p>Videos keep playing one after another, with the toggle right inside the player.</p></div>
+    <div class="card"><h3>👆 Double-tap to seek</h3><p>Double-tap left or right to jump back or forward 5 seconds, YouTube-style.</p></div>
+    <div class="card"><h3>🐛 Crash reporter</h3><p>If the app crashes, the crash log is shown on the next launch — copy it or report it on GitHub in one tap.</p></div>
+    <div class="card"><h3>🚫 No ads, no tracking</h3><p>Watch without ads and without a Google account. Your data stays on your device.</p></div>
+    <div class="card"><h3>⬇️ Downloads</h3><p>Download videos to watch offline, and pick the resolution that fits your connection.</p></div>
+    <div class="card"><h3>🔖 Bookmarks &amp; playlists</h3><p>Save videos for later, build playlists, and import your YouTube subscriptions.</p></div>
+    <div class="card"><h3>⏩ SponsorBlock</h3><p>Skip sponsored segments automatically, and adjust playback speed to your liking.</p></div>
+    <div class="card"><h3>📱 Made for old devices</h3><p>Lightweight and built for legacy Android — it keeps older phones useful as media players.</p></div>
+  </div>
+</section>
+
+<section id="screenshots">
+  <h2>Screenshots</h2>
+  <p class="lead">The new HiTube interface, fresh from version 1.0.1 onwards.</p>
+  <div class="shots">
+    <figure><img src="https://raw.githubusercontent.com/AraZharr/hitube-legacy/main/screenshots/hitube-home.png" alt="Home with bottom navigation, filter chips and video shelves"><figcaption>Home</figcaption></figure>
+    <figure><img src="https://raw.githubusercontent.com/AraZharr/hitube-legacy/main/screenshots/hitube-player-menu.png" alt="Player menu with Autoplay toggle"><figcaption>Player menu</figcaption></figure>
+    <figure><img src="https://raw.githubusercontent.com/AraZharr/hitube-legacy/main/screenshots/hitube-playlist.png" alt="Playlist detail with Play and Shuffle"><figcaption>Playlist</figcaption></figure>
+    <figure><img src="https://raw.githubusercontent.com/AraZharr/hitube-legacy/main/screenshots/hitube-dialog.png" alt="FreeDroidWarn dialog with readable buttons"><figcaption>First-run dialog</figcaption></figure>
+    <figure><img src="https://raw.githubusercontent.com/AraZharr/hitube-legacy/main/screenshots/hitube-bottomsheet.png" alt="Video action bottom sheet"><figcaption>Video actions</figcaption></figure>
+    <figure><img src="https://raw.githubusercontent.com/AraZharr/hitube-legacy/main/screenshots/hitube-crash-report.png" alt="Crash report dialog with copy and report buttons"><figcaption>Crash report</figcaption></figure>
+  </div>
+</section>
+
+<section id="compare">
+  <h2>HiTube vs the official app</h2>
+  <table>
+    <tr><th></th><th>HiTube</th><th>Official YouTube app</th></tr>
+    <tr><td>Ads</td><td class="yes">None</td><td class="no">Included</td></tr>
+    <tr><td>Google account</td><td class="yes">Not required</td><td class="no">Required</td></tr>
+    <tr><td>Video downloads</td><td class="yes">Free</td><td class="no">Premium only</td></tr>
+    <tr><td>Open source</td><td class="yes">Yes (GPL-3.0)</td><td class="no">No</td></tr>
+    <tr><td>Works on old devices</td><td class="yes">Yes, Android 4.0+</td><td class="no">Limited</td></tr>
+  </table>
+</section>
+
+<section id="faq">
+  <h2>Troubleshooting &amp; FAQ</h2>
+  <details><summary>Installation is blocked — what do I do?</summary><p>Enable “Install from unknown sources” in your Android settings, then open the APK again.</p></details>
+  <details><summary>The app crashed. How do I report it?</summary><p>Just reopen the app — a dialog will show the crash log. Tap “Copy log” or “Report on GitHub” and paste it into a new issue. The log contains only the app version, Android version, device model and the error itself — no personal data.</p></details>
+  <details><summary>The Featured tab is empty.</summary><p>The Featured feed needs a YouTube API key, which is not bundled with the app. Home, Search and Subscriptions work without one.</p></details>
+  <details><summary>A video won’t play or shows an error.</summary><p>YouTube changes its internals from time to time. First, update to the latest HiTube release — stream selection falls back to the best available stream automatically. If it still fails, please report it with the video link.</p></details>
+  <details><summary>Is HiTube free?</summary><p>Yes — free and open-source under the GPL-3.0 license, forever.</p></details>
+</section>
+
+<footer>
+  <p>HiTube is based on <a href="https://github.com/SkyTubeTeam/SkyTubeLegacy">SkyTube Legacy</a> by SkyTubeTeam, licensed under GPL-3.0.</p>
+  <p><a href="https://github.com/AraZharr/hitube-legacy">Source code</a> · <a href="https://github.com/AraZharr/hitube-legacy/releases">Releases</a> · <a href="https://github.com/AraZharr/hitube-legacy/issues">Report an issue</a></p>
+</footer>
+
+</div>
+</body>
+</html>
