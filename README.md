@@ -18,7 +18,7 @@ Nothing else changed: **all features are kept exactly as they were**, and
 the app still supports old Android devices (**minSdk 14 / Android 4.0+**).
 The application ID (`free.rm.skytube.legacy`) is unchanged.
 
-[![GitHub release](https://img.shields.io/github/v/release/AraZharr/hitube-legacy)](https://github.com/AraZharr/hitube-legacy/releases)
+[![GitHub release](https://img.shields.io/github/v/release/AraZharr/hitube-legacy)](https://github.com/AraZharr/hitube-legacy/releases) [![GitHub downloads](https://img.shields.io/github/downloads/AraZharr/hitube-legacy/total)](https://github.com/AraZharr/hitube-legacy/releases)
 
 <p align="center">
   <a href="#features">Features</a> |
@@ -77,6 +77,12 @@ Get the latest release from the [Releases page](https://github.com/AraZharr/hitu
 * `hitube-legacy-Legacy-Oss-1.0.5.apk` — universal APK, works on every device; pick this one if you are unsure
 
 All five contain the same app — the split files only exist so you can pick the one matching your device.
+
+### Download statistics
+
+[![Total downloads](https://img.shields.io/github/downloads/AraZharr/hitube-legacy/total)](https://github.com/AraZharr/hitube-legacy/releases) [![v1.0.5 downloads](https://img.shields.io/github/downloads/AraZharr/hitube-legacy/v1.0.5/total)](https://github.com/AraZharr/hitube-legacy/releases/tag/v1.0.5) [![v1.0.4 downloads](https://img.shields.io/github/downloads/AraZharr/hitube-legacy/v1.0.4/total)](https://github.com/AraZharr/hitube-legacy/releases/tag/v1.0.4) [![v1.0.1 downloads](https://img.shields.io/github/downloads/AraZharr/hitube-legacy/v1.0.1/total)](https://github.com/AraZharr/hitube-legacy/releases/tag/v1.0.1)
+
+Snapshot 23 Nov 2026: **25 total downloads** — v1.0.5: 1, v1.0.4: 22, v1.0.1: 2. The badges above are live counts from GitHub (every download is counted, including repeat downloads).
 
 | Flavor | Description |
 | ------ | ----------- |
