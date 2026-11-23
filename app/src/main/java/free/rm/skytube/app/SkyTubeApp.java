@@ -130,6 +130,11 @@ public class SkyTubeApp extends MultiDexApplication {
 	@Override
 	public void onCreate() {
 		super.onCreate();
+		// Must be first: SkyTubeApp.getStr() reads through this static
+		// instance, and Settings (built below) uses getStr() to resolve
+		// preference keys. Reading any preference before this line
+		// crashes the app with a NullPointerException in onCreate.
+		skyTubeApp = this;
 		// Save the stack trace of any force close, so the next launch can
 		// show the crash log to the user instead of a blind crash report.
 		CrashHandler.install(this);
@@ -139,7 +144,6 @@ public class SkyTubeApp extends MultiDexApplication {
 		// activity is created, so every screen starts with the right palette.
 		AppCompatDelegate.setDefaultNightMode(this.settings.getThemeMode());
 		this.names = new FragmentNames(this);
-		skyTubeApp = this;
 		registerBackgroundPlaybackLifecycleCallbacks();
 		setupRxJava();
 		preloadPrettyTime();

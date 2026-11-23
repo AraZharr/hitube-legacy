@@ -1,0 +1,1 @@
+Fixed a startup crash in 1.0.6: the app died before opening because the theme setting was read before the app instance was ready. Light theme + animations now work.
