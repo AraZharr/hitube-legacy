@@ -107,7 +107,7 @@ Snapshot 23 Nov 2026: **25 total downloads** — v1.0.5: 1, v1.0.4: 22, v1.0.1: 
 ### Phone
 
 <a href="screenshots/hitube-home.png">
-<img src="screenshots/hitube-home.png" alt="Home with bottom navigation, filter chips and video shelves" width="140px"/>
+<img src="screenshots/hitube-home.png" alt="Home with bottom navigation, filter chips and single-column video list" width="140px"/>
 </a>
 
 <a href="screenshots/hitube-player-menu.png">
@@ -118,8 +118,8 @@ Snapshot 23 Nov 2026: **25 total downloads** — v1.0.5: 1, v1.0.4: 22, v1.0.1: 
 <img src="screenshots/hitube-playlist.png" alt="Playlist detail with Play and Shuffle" width="140px"/>
 </a>
 
-<a href="screenshots/hitube-dialog.png">
-<img src="screenshots/hitube-dialog.png" alt="FreeDroidWarn dialog with readable buttons" width="140px"/>
+<a href="screenshots/hitube-downloads.png">
+<img src="screenshots/hitube-downloads.png" alt="Downloads tab with empty state" width="140px"/>
 </a>
 
 <a href="screenshots/hitube-bottomsheet.png">
