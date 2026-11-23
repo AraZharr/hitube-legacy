@@ -64,6 +64,7 @@ import free.rm.skytube.businessobjects.db.SearchHistoryTable;
 import free.rm.skytube.databinding.DialogEnterVideoUrlBinding;
 import free.rm.skytube.gui.businessobjects.BlockedVideosDialog;
 import free.rm.skytube.gui.businessobjects.CleanerDialog;
+import free.rm.skytube.gui.businessobjects.CrashReportDialog;
 import free.rm.skytube.gui.businessobjects.PinUtils;
 import free.rm.skytube.gui.businessobjects.PrivacyControlDialog;
 import free.rm.skytube.gui.businessobjects.adapters.SearchHistoryCursorAdapter;
@@ -114,6 +115,10 @@ public class MainActivity extends BaseActivity {
 		// Warn the user that this app will no longer work on certified Android devices once
 		// Google's developer verification is enforced (see https://keepandroidopen.org).
 		FreeDroidWarn.showWarningOnUpgrade(this, BuildConfig.VERSION_CODE);
+
+		// If the previous run ended in a crash, show the saved crash log so the
+		// user can copy it into a bug report instead of reporting blindly.
+		CrashReportDialog.showIfNeeded(this);
 
 		// To enable downloading with https on pre-kitkat devices.
 		if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.KITKAT) {

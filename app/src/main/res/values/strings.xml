@@ -56,4 +56,11 @@
     <string name="mini_player_pause">Pause</string>
     <string name="mini_player_close">Close mini player</string>
     <string name="mini_player_expand">Expand player</string>
+
+    <string name="crash_report_title">HiTube crashed last time</string>
+    <string name="crash_report_message">HiTube closed unexpectedly the last time it was opened. Please help fix it:\n\n1. Tap “Copy log” (or “Report on GitHub” to copy it and open the report page).\n2. On the GitHub page, create a new issue and paste the log into it.\n\nThe log contains only the app version, your Android version, device model and the error itself — no personal data.</string>
+    <string name="crash_report_copy">Copy log</string>
+    <string name="crash_report_github">Report on GitHub</string>
+    <string name="crash_report_close">Close</string>
+    <string name="crash_report_copied">Crash log copied — paste it into the GitHub issue</string>
 </resources>

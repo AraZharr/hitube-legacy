@@ -102,6 +102,9 @@ public class SkyTubeApp extends MultiDexApplication {
 	@Override
 	public void onCreate() {
 		super.onCreate();
+		// Save the stack trace of any force close, so the next launch can
+		// show the crash log to the user instead of a blind crash report.
+		CrashHandler.install(this);
 		this.settings = new Settings(this);
 		this.settings.migrate();
 		this.names = new FragmentNames(this);

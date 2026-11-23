@@ -24,7 +24,9 @@ public class StreamSelectionPolicyTest {
         test(policy, "1080P", "480P", "720P", "1080P", "1440P");
         test(policy, "1080P", "480P", "720P", "1080P");
         test(policy, "720P", "480P", "720P");
-        test(policy, null, "144P", "1440P");
+        // HiTube fallback: nothing in the requested 480P-1080P range, so the
+        // best available stream (1440P) is picked instead of failing.
+        test(policy, "1440P", "144P", "1440P");
     }
 
     @Test
@@ -33,7 +35,9 @@ public class StreamSelectionPolicyTest {
         test(policy, "480P", "144P", "480P", "720P", "1080P", "1440P");
         test(policy, "480P", "480P", "720P", "1080P");
         test(policy, "720P", "720P", "1080P");
-        test(policy, null, "144P", "1440P");
+        // HiTube fallback: nothing in the requested 480P-1080P range, so the
+        // least-bandwidth available stream (144P) is picked instead of failing.
+        test(policy, "144P", "144P", "1440P");
     }
 
     @Test

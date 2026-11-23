@@ -1,0 +1,3 @@
+Crash log reporter: when the app force-closes, the next launch shows the saved crash log so it can be copied and pasted into a GitHub issue.
+- No more blind crash reports: the log includes app version, Android version, device model and the full error.
+- Version 1.0.3.
