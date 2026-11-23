@@ -19,88 +19,54 @@ package free.rm.skytube.gui.businessobjects.updates;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-import com.grack.nanojson.JsonObject;
-import com.grack.nanojson.JsonParser;
-import com.grack.nanojson.JsonParserException;
 import org.junit.jupiter.api.Test;
 
-class UpdatesCheckerFDroidTest {
+/**
+ * Tests for the HiTube update checker, which asks the GitHub API for the
+ * latest release (this file used to test the old F-Droid updater, removed
+ * in v1.0.9). Only the pure version comparison is unit-tested here; the
+ * network fetch in {@link UpdatesChecker#checkForUpdates()} is not covered.
+ */
+class UpdatesCheckerTest {
 
-    private static final String FDROID_RESPONSE =
-            "{\"packageName\":\"free.rm.skytube.oss\"," +
-            "\"suggestedVersionCode\":59," +
-            "\"packages\":" +
-            "[{\"versionName\":\"2.999\",\"versionCode\":59}," +
-             "{\"versionName\":\"2.998\",\"versionCode\":58}," +
-             "{\"versionName\":\"2.997\",\"versionCode\":57}]}";
+	@Test
+	void testNewerPatchVersion() {
+		assertTrue(UpdatesChecker.isNewerVersion("1.0.9", "1.0.7"));
+	}
 
-    private JsonObject parseJson(String json) throws JsonParserException {
-        return JsonParser.object().from(json);
-    }
+	@Test
+	void testOlderVersionIsNotNewer() {
+		assertFalse(UpdatesChecker.isNewerVersion("1.0.7", "1.0.9"));
+	}
 
-    @Test
-    void testGetVersionReturnsCorrectVersionNameForMatchingVersionCode() throws JsonParserException {
-        JsonObject json = parseJson(FDROID_RESPONSE);
-        UpdatesChecker checker = new UpdatesChecker(false, "2.998");
+	@Test
+	void testSameVersionIsNotNewer() {
+		assertFalse(UpdatesChecker.isNewerVersion("1.0.9", "1.0.9"));
+	}
 
-        String version = checker.getVersion(json, 59);
+	@Test
+	void testDoubleDigitPatchComparesNumerically() {
+		// "1.0.10" must be newer than "1.0.9" (plain string comparison would say otherwise).
+		assertTrue(UpdatesChecker.isNewerVersion("1.0.10", "1.0.9"));
+		assertFalse(UpdatesChecker.isNewerVersion("1.0.9", "1.0.10"));
+	}
 
-        assertEquals("2.999", version);
-    }
+	@Test
+	void testLeadingVIsIgnored() {
+		assertTrue(UpdatesChecker.isNewerVersion("v1.0.9", "1.0.8"));
+		assertFalse(UpdatesChecker.isNewerVersion("1.0.9", "v1.0.9"));
+	}
 
-    @Test
-    void testGetVersionReturnsMiddleVersion() throws JsonParserException {
-        JsonObject json = parseJson(FDROID_RESPONSE);
-        UpdatesChecker checker = new UpdatesChecker(false, "2.999");
+	@Test
+	void testDifferentLengthVersions() {
+		assertTrue(UpdatesChecker.isNewerVersion("1.0.1", "1.0"));
+		assertFalse(UpdatesChecker.isNewerVersion("1.0", "1.0.1"));
+	}
 
-        String version = checker.getVersion(json, 58);
-
-        assertEquals("2.998", version);
-    }
-
-    @Test
-    void testGetVersionReturnsFirstVersion() throws JsonParserException {
-        JsonObject json = parseJson(FDROID_RESPONSE);
-        UpdatesChecker checker = new UpdatesChecker(false, "2.997");
-
-        String version = checker.getVersion(json, 57);
-
-        assertEquals("2.997", version);
-    }
-
-    @Test
-    void testGetVersionReturnsNullForNonExistentVersionCode() throws JsonParserException {
-        JsonObject json = parseJson(FDROID_RESPONSE);
-        UpdatesChecker checker = new UpdatesChecker(false, "2.999");
-
-        String version = checker.getVersion(json, 999);
-
-        assertNull(version);
-    }
-
-    @Test
-    void testGetVersionWithSinglePackage() throws JsonParserException {
-        JsonObject json = parseJson(
-                "{\"packageName\":\"free.rm.skytube.oss\"," +
-                "\"suggestedVersionCode\":1," +
-                "\"packages\":[{\"versionName\":\"1.0.0\",\"versionCode\":1}]}");
-        UpdatesChecker checker = new UpdatesChecker(false, "0.9");
-
-        String version = checker.getVersion(json, 1);
-
-        assertEquals("1.0.0", version);
-    }
-
-    @Test
-    void testGetVersionWithEmptyPackagesArray() throws JsonParserException {
-        JsonObject json = parseJson(
-                "{\"packageName\":\"free.rm.skytube.oss\"," +
-                "\"suggestedVersionCode\":1," +
-                "\"packages\":[]}");
-        UpdatesChecker checker = new UpdatesChecker(false, "0.9");
-
-        String version = checker.getVersion(json, 1);
-
-        assertNull(version);
-    }
+	@Test
+	void testUnparseableVersionIsNotNewer() {
+		assertFalse(UpdatesChecker.isNewerVersion("abc", "1.0.7"));
+		assertFalse(UpdatesChecker.isNewerVersion("", "1.0.7"));
+		assertFalse(UpdatesChecker.isNewerVersion("1.0.9", "xyz"));
+	}
 }
