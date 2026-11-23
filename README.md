@@ -43,6 +43,8 @@ The application ID (`free.rm.skytube.legacy`) is unchanged.
 * Background playback — audio keeps playing when you leave the app, with controls in the notification
 * Light theme — Dark, Light, or System, in Settings → Others → Theme
 * Smooth UI animations — fade transitions and grid entrance
+* Single-column home — full-width video cards, one per row
+* In-app update checker — tells you when a new version is out (Settings → Others → Check for updates)
 * Autoplay next video, with a toggle right inside the player
 * Double-tap to seek ±5 seconds, YouTube-style
 * If the app crashes, the crash log is shown on the next launch — copy it or report it on GitHub
@@ -71,18 +73,18 @@ More features will be added in the near future.
 Android 4.0 (Ice Cream Sandwich) or later. For techies, that means an API level of 14 or greater.
 
 ## Download
-Get the latest release from the [Releases page](https://github.com/AraZharr/hitube-legacy/releases). Each release includes five APKs (for example, for v1.0.7):
+Get the latest release from the [Releases page](https://github.com/AraZharr/hitube-legacy/releases). Each release includes five APKs (for example, for v1.0.10):
 
-* `hitube-legacy-Legacy-Oss-1.0.7-arm64-v8a.apk` — most modern phones (64-bit ARM), including most phones from 2015 onwards
-* `hitube-legacy-Legacy-Oss-1.0.7-armeabi-v7a.apk` — older 32-bit ARM phones
-* `hitube-legacy-Legacy-Oss-1.0.7-x86.apk` / `hitube-legacy-Legacy-Oss-1.0.7-x86_64.apk` — Intel-based devices and emulators
-* `hitube-legacy-Legacy-Oss-1.0.7.apk` — universal APK, works on every device; pick this one if you are unsure
+* `hitube-legacy-Legacy-Oss-1.0.10-arm64-v8a.apk` — most modern phones (64-bit ARM), including most phones from 2015 onwards
+* `hitube-legacy-Legacy-Oss-1.0.10-armeabi-v7a.apk` — older 32-bit ARM phones
+* `hitube-legacy-Legacy-Oss-1.0.10-x86.apk` / `hitube-legacy-Legacy-Oss-1.0.10-x86_64.apk` — Intel-based devices and emulators
+* `hitube-legacy-Legacy-Oss-1.0.10.apk` — universal APK, works on every device; pick this one if you are unsure
 
 All five contain the same app — the split files only exist so you can pick the one matching your device.
 
 ### Download statistics
 
-[![Total downloads](https://img.shields.io/github/downloads/AraZharr/hitube-legacy/total)](https://github.com/AraZharr/hitube-legacy/releases) [![v1.0.7 downloads](https://img.shields.io/github/downloads/AraZharr/hitube-legacy/v1.0.7/total)](https://github.com/AraZharr/hitube-legacy/releases/tag/v1.0.7) [![v1.0.5 downloads](https://img.shields.io/github/downloads/AraZharr/hitube-legacy/v1.0.5/total)](https://github.com/AraZharr/hitube-legacy/releases/tag/v1.0.5) [![v1.0.4 downloads](https://img.shields.io/github/downloads/AraZharr/hitube-legacy/v1.0.4/total)](https://github.com/AraZharr/hitube-legacy/releases/tag/v1.0.4) [![v1.0.1 downloads](https://img.shields.io/github/downloads/AraZharr/hitube-legacy/v1.0.1/total)](https://github.com/AraZharr/hitube-legacy/releases/tag/v1.0.1)
+[![Total downloads](https://img.shields.io/github/downloads/AraZharr/hitube-legacy/total)](https://github.com/AraZharr/hitube-legacy/releases) [![v1.0.10 downloads](https://img.shields.io/github/downloads/AraZharr/hitube-legacy/v1.0.10/total)](https://github.com/AraZharr/hitube-legacy/releases/tag/v1.0.10) [![v1.0.7 downloads](https://img.shields.io/github/downloads/AraZharr/hitube-legacy/v1.0.7/total)](https://github.com/AraZharr/hitube-legacy/releases/tag/v1.0.7) [![v1.0.5 downloads](https://img.shields.io/github/downloads/AraZharr/hitube-legacy/v1.0.5/total)](https://github.com/AraZharr/hitube-legacy/releases/tag/v1.0.5) [![v1.0.4 downloads](https://img.shields.io/github/downloads/AraZharr/hitube-legacy/v1.0.4/total)](https://github.com/AraZharr/hitube-legacy/releases/tag/v1.0.4) [![v1.0.1 downloads](https://img.shields.io/github/downloads/AraZharr/hitube-legacy/v1.0.1/total)](https://github.com/AraZharr/hitube-legacy/releases/tag/v1.0.1)
 
 Snapshot 23 Nov 2026: **25 total downloads** — v1.0.5: 1, v1.0.4: 22, v1.0.1: 2. The badges above are live counts from GitHub (every download is counted, including repeat downloads).
 
