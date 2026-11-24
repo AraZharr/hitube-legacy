@@ -73,20 +73,22 @@ More features will be added in the near future.
 Android 4.0 (Ice Cream Sandwich) or later. For techies, that means an API level of 14 or greater.
 
 ## Download
-Get the latest release from the [Releases page](https://github.com/AraZharr/hitube-legacy/releases). Each release includes five APKs (for example, for v1.0.11). Just pick the first one unless you already know your device's architecture:
+Get the latest release from the [Releases page](https://github.com/AraZharr/hitube-legacy/releases). Each release includes five APKs (for example, for v1.0.12). Just pick the first one unless you already know your device's architecture:
 
-* `hitube-legacy-Legacy-Oss-1.0.11.apk` — **HiTube APK**, works on every device; just tap and install
-* `hitube-legacy-Legacy-Oss-1.0.11-arm64-v8a.apk` — most modern phones (64-bit ARM), including most phones from 2015 onwards
-* `hitube-legacy-Legacy-Oss-1.0.11-armeabi-v7a.apk` — older 32-bit ARM phones
-* `hitube-legacy-Legacy-Oss-1.0.11-x86.apk` / `hitube-legacy-Legacy-Oss-1.0.11-x86_64.apk` — Intel-based devices and emulators
+* `hitube-legacy-Legacy-Oss-1.0.12.apk` — **HiTube APK**, works on every device; just tap and install
+* `hitube-legacy-Legacy-Oss-1.0.12-arm64-v8a.apk` — most modern phones (64-bit ARM), including most phones from 2015 onwards
+* `hitube-legacy-Legacy-Oss-1.0.12-armeabi-v7a.apk` — older 32-bit ARM phones
+* `hitube-legacy-Legacy-Oss-1.0.12-x86.apk` / `hitube-legacy-Legacy-Oss-1.0.12-x86_64.apk` — Intel-based devices and emulators
+
+v1.0.12 (version code 73): all five APKs are identical (no native libraries), 18,322,680 bytes each, SHA-256 `d018ed58254bbe260d779f7aa7f6fe6184c1cd311aa277cae443f193a6401379`.
 
 All five contain the same app — the split files only exist for users who already know their device's architecture.
 
 ### Download statistics
 
-[![Total downloads](https://img.shields.io/github/downloads/AraZharr/hitube-legacy/total)](https://github.com/AraZharr/hitube-legacy/releases) [![v1.0.11 downloads](https://img.shields.io/github/downloads/AraZharr/hitube-legacy/v1.0.11/total)](https://github.com/AraZharr/hitube-legacy/releases/tag/v1.0.11) [![v1.0.10 downloads](https://img.shields.io/github/downloads/AraZharr/hitube-legacy/v1.0.10/total)](https://github.com/AraZharr/hitube-legacy/releases/tag/v1.0.10) [![v1.0.7 downloads](https://img.shields.io/github/downloads/AraZharr/hitube-legacy/v1.0.7/total)](https://github.com/AraZharr/hitube-legacy/releases/tag/v1.0.7) [![v1.0.5 downloads](https://img.shields.io/github/downloads/AraZharr/hitube-legacy/v1.0.5/total)](https://github.com/AraZharr/hitube-legacy/releases/tag/v1.0.5) [![v1.0.4 downloads](https://img.shields.io/github/downloads/AraZharr/hitube-legacy/v1.0.4/total)](https://github.com/AraZharr/hitube-legacy/releases/tag/v1.0.4) [![v1.0.1 downloads](https://img.shields.io/github/downloads/AraZharr/hitube-legacy/v1.0.1/total)](https://github.com/AraZharr/hitube-legacy/releases/tag/v1.0.1)
+[![Total downloads](https://img.shields.io/github/downloads/AraZharr/hitube-legacy/total)](https://github.com/AraZharr/hitube-legacy/releases) [![v1.0.12 downloads](https://img.shields.io/github/downloads/AraZharr/hitube-legacy/v1.0.12/total)](https://github.com/AraZharr/hitube-legacy/releases/tag/v1.0.12) [![v1.0.11 downloads](https://img.shields.io/github/downloads/AraZharr/hitube-legacy/v1.0.11/total)](https://github.com/AraZharr/hitube-legacy/releases/tag/v1.0.11) [![v1.0.10 downloads](https://img.shields.io/github/downloads/AraZharr/hitube-legacy/v1.0.10/total)](https://github.com/AraZharr/hitube-legacy/releases/tag/v1.0.10) [![v1.0.7 downloads](https://img.shields.io/github/downloads/AraZharr/hitube-legacy/v1.0.7/total)](https://github.com/AraZharr/hitube-legacy/releases/tag/v1.0.7) [![v1.0.5 downloads](https://img.shields.io/github/downloads/AraZharr/hitube-legacy/v1.0.5/total)](https://github.com/AraZharr/hitube-legacy/releases/tag/v1.0.5) [![v1.0.4 downloads](https://img.shields.io/github/downloads/AraZharr/hitube-legacy/v1.0.4/total)](https://github.com/AraZharr/hitube-legacy/releases/tag/v1.0.4) [![v1.0.1 downloads](https://img.shields.io/github/downloads/AraZharr/hitube-legacy/v1.0.1/total)](https://github.com/AraZharr/hitube-legacy/releases/tag/v1.0.1)
 
-Snapshot 23 Nov 2026: **25 total downloads** — v1.0.5: 1, v1.0.4: 22, v1.0.1: 2. The badges above are live counts from GitHub (every download is counted, including repeat downloads).
+Snapshot 24 Nov 2026: **56 total downloads** — v1.0.11: 8, v1.0.10: 6, v1.0.7: 7, v1.0.5: 9, v1.0.4: 24, v1.0.1: 2. The badges above are live counts from GitHub (every download is counted, including repeat downloads).
 
 | Flavor | Description |
 | ------ | ----------- |
