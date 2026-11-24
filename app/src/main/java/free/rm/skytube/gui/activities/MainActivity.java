@@ -673,12 +673,21 @@ public class MainActivity extends BaseActivity {
 
 	/**
 	 * Sets the highlighted bottom-nav item directly, without triggering
-	 * a navigation. Pass 0 to highlight nothing. setSelectedItemId keeps
-	 * the view's own selected item in sync (guarded by
-	 * {@link #syncingBottomNav}); the checked states are then also set
-	 * directly on the menu items, so the highlight is right whatever the
-	 * listener short-circuit did — a stale restored selection cannot
-	 * survive (the old #3 bug: Library highlighted while on Home).
+	 * a navigation. Pass 0 to leave the selection unchanged.
+	 * <p>
+	 * Only {@link BottomNavigationView#setSelectedItemId(int)} is used here,
+	 * on purpose. The three direct {@code menu.findItem(...).setChecked(...)}
+	 * lines that used to follow it were the #3 bug: BottomNavigationView
+	 * items are exclusive-checkable (NavigationBarMenu.addInternal forces
+	 * setExclusiveCheckable(true)), and AppCompat's MenuItemImpl.setChecked
+	 * IGNORES its argument for exclusive items — it always checks that item
+	 * (setExclusiveItemChecked). So the three calls checked Home, then
+	 * Search, then Library in sequence, and the last one — Library — always
+	 * won, whatever itemId was passed. setSelectedItemId alone is enough:
+	 * it falls back to item.setChecked(true) when the listener short-circuits
+	 * (guarded by {@link #syncingBottomNav}) or is not attached yet, which
+	 * for an exclusive item correctly checks it and unchecks the others.
+	 * Do NOT re-add direct setChecked calls on this menu.
 	 */
 	private void setBottomNavChecked(int itemId) {
 		if (binding == null || binding.bottomNav == null) {
@@ -688,10 +697,6 @@ public class MainActivity extends BaseActivity {
 		if (itemId != 0) {
 			binding.bottomNav.setSelectedItemId(itemId);
 		}
-		android.view.Menu menu = binding.bottomNav.getMenu();
-		menu.findItem(R.id.bottom_nav_home).setChecked(itemId == R.id.bottom_nav_home);
-		menu.findItem(R.id.bottom_nav_search).setChecked(itemId == R.id.bottom_nav_search);
-		menu.findItem(R.id.bottom_nav_library).setChecked(itemId == R.id.bottom_nav_library);
 		syncingBottomNav = false;
 	}
 
