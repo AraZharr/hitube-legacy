@@ -51,6 +51,9 @@ public class UpdatesCheckerTask extends AsyncTaskParallel<Void, Void, UpdatesChe
 	private final Context context;
 	private boolean showReleaseNotes;
 	private String currentVersionNumber;
+	/** Release notes of the version actually installed (null when GitHub
+	 * has no release for it — then no "what's new" dialog is shown). */
+	private String installedVersionReleaseNotes;
 
 	/**
 	 * Constructor.
@@ -79,6 +82,15 @@ public class UpdatesCheckerTask extends AsyncTaskParallel<Void, Void, UpdatesChe
 		Logger.d(this, "Current Version Number: %s, last displayed: %s, show release notes: %s", currentVersionNumber, displayedReleaseNotesVersion, showReleaseNotes);
 		UpdatesChecker updatesChecker = new UpdatesChecker(currentVersionNumber);
 		updatesChecker.checkForUpdates();
+		if (showReleaseNotes && !updatesChecker.isUpdateAvailable()) {
+			// The "what's new" dialog must show the notes of the version
+			// actually installed, not the latest release's notes (those
+			// belong to an older version after an upgrade). When there is
+			// an update available the update dialog takes precedence, so
+			// no second request is made.
+			installedVersionReleaseNotes =
+					updatesChecker.fetchReleaseNotesForVersion(currentVersionNumber);
+		}
 		SkyTubeApp.getSettings().setLastUpdateCheckTime(System.currentTimeMillis());
 		return updatesChecker;
 	}
@@ -120,10 +132,16 @@ public class UpdatesCheckerTask extends AsyncTaskParallel<Void, Void, UpdatesChe
 			if (updatesChecker.getFailure() == null) {
 				Toast.makeText(context, R.string.update_up_to_date_toast, Toast.LENGTH_LONG).show();
 			}
-		} else if (showReleaseNotes && updatesChecker.getReleaseNotes() != null) {
+		} else if (showReleaseNotes && installedVersionReleaseNotes != null) {
+			// Show the notes of the version actually installed, titled
+			// with that version. When GitHub has no release for the
+			// installed version (installedVersionReleaseNotes is null),
+			// show nothing at all — and do not mark the notes as
+			// displayed, so a later check can show them once the release
+			// exists.
 			new AlertDialog.Builder(context)
-					.setTitle(String.format(context.getString(R.string.release_notes), updatesChecker.getLatestApkVersion()))
-					.setMessage(updatesChecker.getReleaseNotes())
+					.setTitle(String.format(context.getString(R.string.release_notes), currentVersionNumber))
+					.setMessage(installedVersionReleaseNotes)
 					.setNeutralButton(R.string.ok, (dialog,button) ->
 							SkyTubeApp.getSettings().setDisplayedReleaseNoteTag(currentVersionNumber))
 					.show();

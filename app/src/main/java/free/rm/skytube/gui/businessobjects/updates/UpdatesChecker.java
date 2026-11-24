@@ -38,9 +38,13 @@ import java.net.URL;
  */
 public class UpdatesChecker {
 
+	/** GitHub API endpoint for HiTube's releases. */
+	private static final String HITUBE_RELEASES_API_URL =
+			"https://api.github.com/repos/AraZharr/hitube-legacy/releases";
+
 	/** GitHub API endpoint for HiTube's latest release. */
 	private static final String HITUBE_LATEST_RELEASE_URL =
-			"https://api.github.com/repos/AraZharr/hitube-legacy/releases/latest";
+			HITUBE_RELEASES_API_URL + "/latest";
 
 	private final static String TAG = UpdatesChecker.class.getSimpleName();
 
@@ -107,15 +111,51 @@ public class UpdatesChecker {
 	}
 
 	/**
+	 * Fetch the release notes of the release for the given installed
+	 * version (e.g. "1.0.12" reads the "v1.0.12" release). The "what's
+	 * new" dialog must show the notes of the version actually installed,
+	 * not the latest release's notes — after an upgrade the latest
+	 * release is often still the previous version, so the dialog showed
+	 * the wrong notes. Returns the release body, or null when GitHub has
+	 * no release with that tag (HTTP 404) or the request fails; the
+	 * caller then shows no dialog at all.
+	 */
+	public String fetchReleaseNotesForVersion(String version) {
+		try {
+			JSONObject json = fetchRelease(HITUBE_RELEASES_API_URL
+					+ "/tags/v" + stripLeadingV(version));
+			return json != null ? json.optString("body", "") : null;
+		} catch (Throwable e) {
+			Log.d(TAG, "No release notes for version " + version + ": " + e.getMessage());
+			return null;
+		}
+	}
+
+	/**
 	 * Fetch the latest release JSON from the GitHub API.
 	 *
 	 * @return The parsed release object.
 	 * @throws IOException If the request fails or GitHub answers with an error.
 	 */
 	private JSONObject fetchLatestRelease() throws Exception {
+		JSONObject json = fetchRelease(HITUBE_LATEST_RELEASE_URL);
+		if (json == null) {
+			throw new IOException("GitHub API did not return the latest release");
+		}
+		return json;
+	}
+
+	/**
+	 * GET a release object from the GitHub API.
+	 *
+	 * @return The parsed release object, or null when GitHub answers with
+	 *         an error (e.g. HTTP 404: no release with that tag).
+	 * @throws IOException If the request itself fails.
+	 */
+	private JSONObject fetchRelease(String url) throws Exception {
 		HttpURLConnection connection = null;
 		try {
-			connection = (HttpURLConnection) new URL(HITUBE_LATEST_RELEASE_URL).openConnection();
+			connection = (HttpURLConnection) new URL(url).openConnection();
 			connection.setRequestMethod("GET");
 			connection.setRequestProperty("Accept", "application/vnd.github+json");
 			// GitHub's API rejects requests without a User-Agent header.
@@ -125,7 +165,7 @@ public class UpdatesChecker {
 			connection.connect();
 
 			if (connection.getResponseCode() != HttpURLConnection.HTTP_OK) {
-				throw new IOException("GitHub API returned HTTP " + connection.getResponseCode());
+				return null;
 			}
 
 			BufferedReader reader = new BufferedReader(

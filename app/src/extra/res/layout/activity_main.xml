@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <com.sothree.slidinguppanel.SlidingUpPanelLayout
 	xmlns:android="http://schemas.android.com/apk/res/android"
+	xmlns:app="http://schemas.android.com/apk/res-auto"
 	xmlns:sothree="http://schemas.android.com/apk/res-auto"
 	android:id="@+id/sliding_layout"
 	android:layout_width="match_parent"
@@ -14,23 +15,39 @@
 	sothree:umanoOverlay="true"
 	sothree:umanoInitialState="hidden">
 
+	<!-- Main content: fragment container on top, mini player bar ABOVE the
+		bottom navigation (v1.0.11 put the bar at the very bottom, below the
+		nav). Both live here, not in MainFragment, so they show on every
+		page — home, channel, search, library, downloads. The bar takes
+		layout space when visible (gone otherwise), so it never covers
+		content or the nav — no bottom-margin inset is needed. -->
 	<RelativeLayout
 		android:layout_width="match_parent"
-		android:layout_height="wrap_content">
-		<FrameLayout
-			android:id="@+id/fragment_container"
+		android:layout_height="match_parent">
+		<LinearLayout
 			android:layout_width="match_parent"
-			android:layout_height="match_parent" />
-		<!-- Mini player bar (activity level, so it shows on every page, not
-			just on MainFragment). Anchored to the bottom of the main content;
-			MainActivity shrinks the fragment container by the bar height
-			while the bar is visible, so it never covers content. -->
-		<include
-			android:id="@+id/mini_player_bar_container"
-			layout="@layout/mini_player_bar"
-			android:layout_width="match_parent"
-			android:layout_height="@dimen/hitube_mini_player_height"
-			android:layout_alignParentBottom="true" />
+			android:layout_height="match_parent"
+			android:orientation="vertical">
+			<FrameLayout
+				android:id="@+id/fragment_container"
+				android:layout_width="match_parent"
+				android:layout_height="0dp"
+				android:layout_weight="1" />
+			<include
+				android:id="@+id/mini_player_bar_container"
+				layout="@layout/mini_player_bar"
+				android:layout_width="match_parent"
+				android:layout_height="@dimen/hitube_mini_player_height" />
+			<com.google.android.material.bottomnavigation.BottomNavigationView
+				android:id="@+id/bottom_nav"
+				android:layout_width="match_parent"
+				android:layout_height="@dimen/hitube_bottom_nav_height"
+				android:background="@color/hitube_surface"
+				app:itemIconTint="@color/hitube_bottom_nav_item_color"
+				app:itemTextColor="@color/hitube_bottom_nav_item_color"
+				app:labelVisibilityMode="labeled"
+				app:menu="@menu/bottom_nav_menu" />
+		</LinearLayout>
 		<ProgressBar
 			android:id="@+id/chromecastLoadingSpinner"
 			android:layout_centerInParent="true"

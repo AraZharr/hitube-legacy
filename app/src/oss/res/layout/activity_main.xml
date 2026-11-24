@@ -1,22 +1,34 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- The mini player bar is a direct child of this root (NOT of the fragment
-	container) so it shows on every page — home, channel, search, library,
-	downloads — instead of only on MainFragment. It sits at the bottom of the
-	screen, above the fragment container's bottom edge; MainActivity shrinks
-	the fragment container by the bar height while the bar is visible, so the
-	bar never covers the bottom nav (home) or the last list items (other
-	pages). No view here is a direct child of a DrawerLayout. -->
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
-			 android:layout_width="match_parent"
-			 android:layout_height="match_parent">
+<!-- The mini player bar and the bottom navigation are direct children of
+	this root (NOT of the fragment container) so they show on every page —
+	home, channel, search, library, downloads — instead of only on
+	MainFragment. Vertical order: fragment container on top, mini player
+	bar ABOVE the bottom nav (v1.0.11 put the bar at the very bottom, below
+	the nav). The bar takes layout space when visible (gone otherwise), so
+	it never covers content or the nav — no bottom-margin inset is needed.
+	No view here is a direct child of a DrawerLayout. -->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+			  xmlns:app="http://schemas.android.com/apk/res-auto"
+			  android:layout_width="match_parent"
+			  android:layout_height="match_parent"
+			  android:orientation="vertical">
 	<FrameLayout
 		android:id="@+id/fragment_container"
 		android:layout_width="match_parent"
-		android:layout_height="match_parent" />
+		android:layout_height="0dp"
+		android:layout_weight="1" />
 	<include
 		android:id="@+id/mini_player_bar_container"
 		layout="@layout/mini_player_bar"
 		android:layout_width="match_parent"
-		android:layout_height="@dimen/hitube_mini_player_height"
-		android:layout_gravity="bottom" />
-</FrameLayout>
+		android:layout_height="@dimen/hitube_mini_player_height" />
+	<com.google.android.material.bottomnavigation.BottomNavigationView
+		android:id="@+id/bottom_nav"
+		android:layout_width="match_parent"
+		android:layout_height="@dimen/hitube_bottom_nav_height"
+		android:background="@color/hitube_surface"
+		app:itemIconTint="@color/hitube_bottom_nav_item_color"
+		app:itemTextColor="@color/hitube_bottom_nav_item_color"
+		app:labelVisibilityMode="labeled"
+		app:menu="@menu/bottom_nav_menu" />
+</LinearLayout>

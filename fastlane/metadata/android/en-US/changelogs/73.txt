@@ -1,0 +1,1 @@
+HiTube 1.0.12: the bottom bar now stays visible on every page, with the mini player above it. Search moved into the bottom bar, Downloads moved to the toolbar. The "what's new" dialog now shows the notes of the version you installed.

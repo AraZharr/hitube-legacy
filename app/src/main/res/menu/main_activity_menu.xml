@@ -11,6 +11,13 @@
 		  app:showAsAction="collapseActionView|ifRoom"
 		  app:actionViewClass="androidx.appcompat.widget.SearchView"/>
 
+	<!-- Downloads moved here from the bottom navigation in v1.0.12 (Search
+		took its place in the bar); opens the Downloads tab. -->
+	<item android:id="@+id/menu_downloads"
+		  android:title="@string/bottom_nav_downloads"
+		  android:icon="@drawable/ic_download"
+		  app:showAsAction="ifRoom"/>
+
 	<item
 		android:id="@+id/menu_blocker"
 		android:title="@string/pref_video_blocker_category"

@@ -1,13 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!-- Bottom navigation: Home / Search / Library. Downloads moved to the
+	toolbar (menu_downloads) in v1.0.12, so Search takes its place here.
+	The bar lives in the activity layout (see activity_main.xml), not in
+	MainFragment, so it shows on every page. -->
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
 	<item
 		android:id="@+id/bottom_nav_home"
 		android:icon="@drawable/ic_home"
 		android:title="@string/bottom_nav_home" />
 	<item
-		android:id="@+id/bottom_nav_downloads"
-		android:icon="@drawable/ic_download"
-		android:title="@string/bottom_nav_downloads" />
+		android:id="@+id/bottom_nav_search"
+		android:icon="@drawable/ic_search"
+		android:title="@string/bottom_nav_search" />
 	<item
 		android:id="@+id/bottom_nav_library"
 		android:icon="@drawable/ic_library"

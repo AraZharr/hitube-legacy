@@ -19,7 +19,6 @@
 			android:layout_width="match_parent"
 			android:layout_height="match_parent"
 			android:fillViewport="true"
-			android:paddingBottom="@dimen/hitube_bottom_nav_height"
 			android:clipToPadding="false"
 			app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
@@ -49,7 +48,8 @@
 				app:layout_scrollFlags="scroll|enterAlways" />
 
 			<!-- TABS — kept (but hidden) so the ViewPager wiring in MainFragment
-				keeps working; navigation now lives in the bottom bar below. -->
+				keeps working; navigation now lives in the activity layout
+				(see activity_main.xml), so it shows on every page. -->
 			<com.google.android.material.tabs.TabLayout
 				android:id="@+id/tab_layout"
 				android:layout_width="match_parent"
@@ -62,35 +62,6 @@
             />
 
 		</com.google.android.material.appbar.AppBarLayout>
-
-		<!-- Bottom bar: the bottom navigation. The in-app mini player used to
-			live here too; it now lives in the activity layout (see
-			activity_main.xml) so it shows on every page, and the activity
-			shrinks this fragment's container while the bar is visible so no
-			content is hidden behind it. The scroll view above keeps its
-			static bottom padding for the nav (see main_scroll_view).
-			The whole container lives INSIDE the CoordinatorLayout, not
-			as a direct child of DrawerLayout — DrawerLayout only accepts layout_gravity
-			LEFT/RIGHT/NO_GRAVITY for direct children and crashes on "bottom". -->
-		<LinearLayout
-			android:id="@+id/bottom_bar_container"
-			android:layout_width="match_parent"
-			android:layout_height="wrap_content"
-			android:layout_gravity="bottom"
-			android:orientation="vertical">
-
-			<!-- Bottom navigation: Home / Downloads / Library. -->
-			<com.google.android.material.bottomnavigation.BottomNavigationView
-				android:id="@+id/bottom_nav"
-				android:layout_width="match_parent"
-				android:layout_height="@dimen/hitube_bottom_nav_height"
-				android:background="@color/hitube_surface"
-				app:itemIconTint="@color/hitube_bottom_nav_item_color"
-				app:itemTextColor="@color/hitube_bottom_nav_item_color"
-				app:labelVisibilityMode="labeled"
-				app:menu="@menu/bottom_nav_menu" />
-
-		</LinearLayout>
 
 	</androidx.coordinatorlayout.widget.CoordinatorLayout>
 

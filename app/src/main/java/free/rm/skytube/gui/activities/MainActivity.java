@@ -28,9 +28,7 @@ import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.AutoCompleteTextView;
-import android.widget.FrameLayout;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
@@ -96,6 +94,15 @@ public class MainActivity extends BaseActivity {
 	/** Listens to the shared player so the mini player bar stays in sync. */
 	private MiniPlayerManager.MiniPlayerListener miniPlayerListener;
 
+	/** The toolbar SearchView item, kept so the bottom nav's Search item
+	 * can expand it from any page. Set in onCreateOptionsMenu; the menu is
+	 * recreated whenever the toolbar changes, so this stays fresh. */
+	private MenuItem searchMenuItem;
+
+	/** While true, setBottomNavChecked() is updating the selection
+	 * programmatically and the nav listener must not navigate. */
+	private boolean syncingBottomNav = false;
+
 	/** Set to true of the UpdatesCheckerTask has run; false otherwise. */
 	private static boolean updatesCheckerTaskRan = false;
 
@@ -146,6 +153,10 @@ public class MainActivity extends BaseActivity {
 		// The mini player bar lives in this activity's layout (not in
 		// MainFragment) so it shows on every page.
 		setupMiniPlayer();
+
+		// The bottom navigation also lives in this activity's layout, so it
+		// shows on every page, with the mini player bar above it.
+		setupBottomNav();
 
 		// Show the privacy control dialog once (i.e. the dialog that offers to enable/disable
 		// the SponsorBlock and Return YouTube Dislike features), if it was never run before.
@@ -293,6 +304,13 @@ public class MainActivity extends BaseActivity {
 		// The full player may have been minimised into the mini player bar while this
 		// activity was paused: show or hide the bar accordingly.
 		refreshMiniPlayer();
+
+		// The visible page may have changed while paused (e.g. back from a
+		// channel page to MainFragment): re-highlight the bottom nav for
+		// the page actually shown. This also overrides any stale selection
+		// the nav view restored (the old #3 bug: Library highlighted while
+		// on Home).
+		syncBottomNav();
 	}
 
 	private ChannelBrowserFragment getChannelBrowserFragment() {
@@ -331,6 +349,9 @@ public class MainActivity extends BaseActivity {
 
 		// setup the SearchView (actionbar)
 		final MenuItem searchItem = menu.findItem(R.id.menu_search);
+		// Keep it so the bottom nav's Search item can expand the search
+		// view from any page, without going back home first.
+		searchMenuItem = searchItem;
 		final SearchView searchView = (SearchView) searchItem.getActionView();
 
 		searchView.setQueryHint(getString(R.string.search_videos));
@@ -386,6 +407,11 @@ public class MainActivity extends BaseActivity {
 		switch (item.getItemId()) {
 			case R.id.menu_blocker:
 				videoBlockerPlugin.onMenuBlockerIconClicked();
+				return true;
+			case R.id.menu_downloads:
+				// Downloads moved to the toolbar in v1.0.12 (Search took its
+				// place in the bottom bar): open the Downloads tab.
+				showDownloadsTab();
 				return true;
 			case R.id.menu_preferences:
 				Intent i = new Intent(this, PreferencesActivity.class);
@@ -563,6 +589,158 @@ public class MainActivity extends BaseActivity {
 		bundle.putString(SearchVideoGridFragment.QUERY, query);
 		searchVideoGridFragment.setArguments(bundle);
 		switchToFragment(searchVideoGridFragment, true, SEARCH_FRAGMENT_TAG);
+		// The search results page is showing: highlight Search in the bar.
+		setBottomNavChecked(R.id.bottom_nav_search);
+	}
+
+	///////////////////////////////////////////////////////////////////////////////////////////////
+	// Bottom navigation (Home / Search / Library). Lives in this activity's
+	// layout, not in MainFragment, so it shows on every page — home,
+	// channel, search, library, downloads — with the mini player bar above
+	// it. Search opens the toolbar SearchView in place (no need to go back
+	// home first); Downloads moved to the toolbar in v1.0.12.
+	///////////////////////////////////////////////////////////////////////////////////////////////
+
+	/**
+	 * Wires the bottom navigation and explicitly selects Home first (#3:
+	 * on first open the wrong item — Library — was highlighted, because
+	 * nothing ever set the initial selection). The initial selection is
+	 * set BEFORE the listener is attached, so it cannot trigger a
+	 * navigation. See also {@link #syncBottomNav()}, which re-highlights
+	 * the bar from the page actually shown.
+	 */
+	private void setupBottomNav() {
+		setBottomNavChecked(R.id.bottom_nav_home);
+		binding.bottomNav.setOnItemSelectedListener(item -> {
+			if (syncingBottomNav) {
+				return true;
+			}
+			int itemId = item.getItemId();
+			if (itemId == R.id.bottom_nav_home) {
+				collapseSearchView();
+				showMainFragment();
+				MainFragment mainFragment = getMainFragment();
+				if (mainFragment != null) {
+					mainFragment.showHomeTab();
+				}
+				return true;
+			} else if (itemId == R.id.bottom_nav_search) {
+				expandSearchView();
+				return true;
+			} else if (itemId == R.id.bottom_nav_library) {
+				collapseSearchView();
+				showMainFragment();
+				MainFragment mainFragment = getMainFragment();
+				if (mainFragment != null) {
+					mainFragment.showLibraryTab();
+				}
+				return true;
+			}
+			return false;
+		});
+	}
+
+	/**
+	 * Highlights the bottom-nav item matching the page currently shown.
+	 * Home/Library follow MainFragment's pager (Featured and Most Popular
+	 * both count as Home; Bookmarks and Downloads both count as Library);
+	 * the search results page highlights Search. Drill-down pages
+	 * (channel, playlist) leave the selection unchanged. Called whenever
+	 * the visible page may have changed.
+	 */
+	public void syncBottomNav() {
+		if (binding == null || binding.bottomNav == null) {
+			return;
+		}
+		MainFragment mainFragment = getMainFragment();
+		if (mainFragment != null && mainFragment.isVisible()) {
+			int position = mainFragment.getCurrentPagerItem();
+			if (mainFragment.isHomeTab(position)) {
+				setBottomNavChecked(R.id.bottom_nav_home);
+			} else if (mainFragment.isLibraryTab(position)) {
+				setBottomNavChecked(R.id.bottom_nav_library);
+			} else {
+				setBottomNavChecked(0);
+			}
+			return;
+		}
+		Fragment searchFragment = getSupportFragmentManager().findFragmentByTag(SEARCH_FRAGMENT_TAG);
+		if (searchFragment instanceof SearchVideoGridFragment && searchFragment.isVisible()) {
+			setBottomNavChecked(R.id.bottom_nav_search);
+		}
+		// Channel / playlist pages: leave the selection unchanged.
+	}
+
+	/**
+	 * Sets the highlighted bottom-nav item directly, without triggering
+	 * a navigation. Pass 0 to highlight nothing. setSelectedItemId keeps
+	 * the view's own selected item in sync (guarded by
+	 * {@link #syncingBottomNav}); the checked states are then also set
+	 * directly on the menu items, so the highlight is right whatever the
+	 * listener short-circuit did — a stale restored selection cannot
+	 * survive (the old #3 bug: Library highlighted while on Home).
+	 */
+	private void setBottomNavChecked(int itemId) {
+		if (binding == null || binding.bottomNav == null) {
+			return;
+		}
+		syncingBottomNav = true;
+		if (itemId != 0) {
+			binding.bottomNav.setSelectedItemId(itemId);
+		}
+		android.view.Menu menu = binding.bottomNav.getMenu();
+		menu.findItem(R.id.bottom_nav_home).setChecked(itemId == R.id.bottom_nav_home);
+		menu.findItem(R.id.bottom_nav_search).setChecked(itemId == R.id.bottom_nav_search);
+		menu.findItem(R.id.bottom_nav_library).setChecked(itemId == R.id.bottom_nav_library);
+		syncingBottomNav = false;
+	}
+
+	/**
+	 * Brings MainFragment to the front, popping any channel / search /
+	 * playlist page above it. If MainFragment is not on the back stack
+	 * (the page above it was opened without adding to the back stack), a
+	 * fresh MainFragment is added instead.
+	 */
+	private void showMainFragment() {
+		MainFragment mainFragment = getMainFragment();
+		if (mainFragment != null && mainFragment.isVisible()) {
+			return;
+		}
+		getSupportFragmentManager().popBackStackImmediate(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);
+		mainFragment = getMainFragment();
+		if (mainFragment == null) {
+			mainFragment = new MainFragment();
+			getSupportFragmentManager().beginTransaction()
+					.add(R.id.fragment_container, mainFragment, MAIN_FRAGMENT_TAG)
+					.commitNow();
+		}
+	}
+
+	/** Opens the Downloads tab (toolbar action, since v1.0.12). */
+	private void showDownloadsTab() {
+		collapseSearchView();
+		showMainFragment();
+		MainFragment mainFragment = getMainFragment();
+		if (mainFragment != null) {
+			mainFragment.showDownloadsTab();
+		}
+	}
+
+	/** Expands the toolbar SearchView in place, from any page. */
+	private void expandSearchView() {
+		if (searchMenuItem != null) {
+			searchMenuItem.expandActionView();
+			if (searchMenuItem.getActionView() != null) {
+				searchMenuItem.getActionView().requestFocus();
+			}
+		}
+	}
+
+	/** Collapses an expanded toolbar SearchView, if any. */
+	private void collapseSearchView() {
+		if (searchMenuItem != null && searchMenuItem.isActionViewExpanded()) {
+			searchMenuItem.collapseActionView();
+		}
 	}
 
 	///////////////////////////////////////////////////////////////////////////////////////////////
@@ -628,9 +806,8 @@ public class MainActivity extends BaseActivity {
 		updateMiniPlayerPlayPause(MiniPlayerManager.getInstance().isPlaying());
 		if (binding.miniPlayerBarContainer.miniPlayerBar.getVisibility() != View.VISIBLE) {
 			binding.miniPlayerBarContainer.miniPlayerBar.setVisibility(View.VISIBLE);
-			// Shrink the fragment container by the bar height so the bar never
-			// covers the bottom nav (home) or the last list items (other pages).
-			setMiniPlayerContainerInset(true);
+			// The bar takes layout space (it sits above the bottom nav in
+			// the activity layout), so it never covers content or the nav.
 		}
 		// Attach the shared player so the video keeps playing in the mini bar.
 		MiniPlayerManager.getInstance().attachToPlayerView(binding.miniPlayerBarContainer.miniPlayerView);
@@ -640,22 +817,6 @@ public class MainActivity extends BaseActivity {
 		MiniPlayerManager.getInstance().detachPlayerView();
 		if (binding.miniPlayerBarContainer.miniPlayerBar.getVisibility() != View.GONE) {
 			binding.miniPlayerBarContainer.miniPlayerBar.setVisibility(View.GONE);
-			setMiniPlayerContainerInset(false);
-		}
-	}
-
-	/**
-	 * Shrinks (or restores) the fragment container by the mini player bar height, so the
-	 * bar never covers the bottom navigation or the content of the current page.
-	 */
-	private void setMiniPlayerContainerInset(boolean miniPlayerVisible) {
-		int inset = miniPlayerVisible
-				? getResources().getDimensionPixelSize(R.dimen.hitube_mini_player_height) : 0;
-		ViewGroup.MarginLayoutParams layoutParams =
-				(ViewGroup.MarginLayoutParams) binding.fragmentContainer.getLayoutParams();
-		if (layoutParams.bottomMargin != inset) {
-			layoutParams.bottomMargin = inset;
-			binding.fragmentContainer.setLayoutParams(layoutParams);
 		}
 	}
 

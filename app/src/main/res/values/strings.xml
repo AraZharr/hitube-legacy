@@ -18,6 +18,7 @@
     <string name="playback_error_toast">Video playback failed</string>
     <!-- Bottom navigation labels -->
     <string name="bottom_nav_home">Home</string>
+    <string name="bottom_nav_search">Search</string>
     <string name="bottom_nav_downloads">Downloads</string>
     <string name="bottom_nav_library">Library</string>
     <!-- Filter chips on the home feed -->

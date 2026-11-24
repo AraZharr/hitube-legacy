@@ -39,6 +39,7 @@ import free.rm.skytube.businessobjects.YouTube.newpipe.ChannelId;
 import free.rm.skytube.databinding.FragmentMainBinding;
 import free.rm.skytube.databinding.SubsDrawerBinding;
 import free.rm.skytube.gui.activities.BaseActivity;
+import free.rm.skytube.gui.activities.MainActivity;
 import free.rm.skytube.gui.businessobjects.adapters.SubsAdapter;
 import free.rm.skytube.gui.businessobjects.fragments.FragmentEx;
 
@@ -60,6 +61,13 @@ public class MainFragment extends FragmentEx {
 	private ActionBarDrawerToggle subsDrawerToggle;
 
 	private SimplePagerAdapter videosPagerAdapter = null;
+
+	/**
+	 * Tab requested (by the activity's bottom navigation) while this
+	 * fragment's view did not exist yet — applied in onCreateView, after
+	 * the default-tab selection. -1 means no pending request.
+	 */
+	private int pendingTabIndex = -1;
 
 	@Nullable
 	@Override
@@ -163,7 +171,7 @@ public class MainFragment extends FragmentEx {
 			}
 		});
 
-		setupBottomNav();
+		setupPagerPageChangeListener();
 
 		// select the default tab:  the default tab is defined by the user through the Preferences
 		SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(getActivity());
@@ -192,11 +200,19 @@ public class MainFragment extends FragmentEx {
 			fragmentBinding.pager.setCurrentItem(shownFragmentList.indexOf(defaultTab));
 		}
 
+		// A tab requested by the activity's bottom navigation while this
+		// fragment's view did not exist yet (e.g. the user tapped Home or
+		// Library while this fragment was being restored): apply it now,
+		// overriding the default tab above.
+		if (pendingTabIndex >= 0 && pendingTabIndex < videosPagerAdapter.getCount()) {
+			fragmentBinding.pager.setCurrentItem(pendingTabIndex);
+			pendingTabIndex = -1;
+		}
+
 		// Set the current viewpager fragment as selected, as when the Activity is recreated, the Fragment
 		// won't know that it's selected. When the Feeds fragment is the default tab, this will prevent the
 		// refresh dialog from showing when an automatic refresh happens.
 		videosPagerAdapter.selectTabAtPosition(fragmentBinding.pager.getCurrentItem());
-		syncBottomNav(fragmentBinding.pager.getCurrentItem());
 
 		EventBus.getInstance().registerMainFragment(this);
 
@@ -204,50 +220,109 @@ public class MainFragment extends FragmentEx {
 	}
 
 	/**
-	 * Bottom navigation (Home / Downloads / Library) synced with the ViewPager.
-	 * The top TabLayout is hidden but kept, so all ViewPager wiring keeps working.
-	 * Search lives only in the toolbar now (its icon expands the SearchView);
-	 * the bottom bar no longer has a Search item.
+	 * Notifies the activity whenever the ViewPager page changes, so it can
+	 * highlight the matching bottom-nav item. The bottom navigation lives
+	 * in the activity layout now (see MainActivity.setupBottomNav), not in
+	 * this fragment, so it shows on every page.
 	 */
-	private void setupBottomNav() {
-		fragmentBinding.bottomNav.setOnItemSelectedListener(item -> {
-			int itemId = item.getItemId();
-			// Home / Downloads / Library: collapse an expanded search view first.
-			MenuItem searchItem = fragmentBinding.toolbar.getMenu().findItem(R.id.menu_search);
-			if (searchItem != null && searchItem.isActionViewExpanded()) {
-				searchItem.collapseActionView();
-			}
-			int targetIndex;
-			if (itemId == R.id.bottom_nav_home) {
-				targetIndex = getHomeTabIndex();
-			} else if (itemId == R.id.bottom_nav_downloads) {
-				targetIndex = getDownloadsTabIndex();
-			} else if (itemId == R.id.bottom_nav_library) {
-				targetIndex = getLibraryTabIndex();
-			} else {
-				return false;
-			}
-			if (targetIndex < 0) {
-				return false;
-			}
-			if (fragmentBinding.pager.getCurrentItem() == targetIndex) {
-				// Re-tapping the current page scrolls to the top (same as tab re-select).
-				scrollCurrentTabToTop();
-			} else {
-				fragmentBinding.pager.setCurrentItem(targetIndex);
-			}
-			return true;
-		});
-
+	private void setupPagerPageChangeListener() {
 		fragmentBinding.pager.addOnPageChangeListener(new ViewPager.SimpleOnPageChangeListener() {
 			@Override
 			public void onPageSelected(int position) {
-				syncBottomNav(position);
+				if (getActivity() instanceof MainActivity) {
+					((MainActivity) getActivity()).syncBottomNav();
+				}
 			}
 		});
 	}
 
+	/**
+	 * Show the Home tab (Most Popular, or Featured when Most Popular is
+	 * hidden). Called by the activity's bottom navigation.
+	 */
+	public void showHomeTab() {
+		selectTab(getHomeTabIndex());
+	}
+
+	/**
+	 * Show the Library tab (Bookmarks, or Downloads when Bookmarks is
+	 * hidden). Called by the activity's bottom navigation.
+	 */
+	public void showLibraryTab() {
+		selectTab(getLibraryTabIndex());
+	}
+
+	/**
+	 * Show the Downloads tab (falls back to the Library tab when the
+	 * Downloads tab is hidden in Settings). Called by the activity's
+	 * toolbar Downloads action.
+	 */
+	public void showDownloadsTab() {
+		int index = getDownloadsTabIndex();
+		if (index < 0) {
+			index = getLibraryTabIndex();
+		}
+		selectTab(index);
+	}
+
+	/**
+	 * Switches the pager to the given tab; re-tapping the current tab
+	 * scrolls it to the top (same as tab re-select). If this fragment's
+	 * view does not exist yet, the request is remembered and applied in
+	 * onCreateView.
+	 */
+	private void selectTab(int index) {
+		if (index < 0) {
+			return;
+		}
+		if (fragmentBinding == null || videosPagerAdapter == null
+				|| index >= videosPagerAdapter.getCount()) {
+			pendingTabIndex = index;
+			return;
+		}
+		pendingTabIndex = -1;
+		if (fragmentBinding.pager.getCurrentItem() == index) {
+			scrollCurrentTabToTop();
+		} else {
+			fragmentBinding.pager.setCurrentItem(index);
+		}
+	}
+
+	/** @return The ViewPager's current tab index, or -1 if the view does not exist yet. */
+	public int getCurrentPagerItem() {
+		if (fragmentBinding == null) {
+			return -1;
+		}
+		return fragmentBinding.pager.getCurrentItem();
+	}
+
+	/**
+	 * @return True when the given tab is a Home tab (Featured or Most
+	 *         Popular). Both count as Home for the bottom nav — the
+	 *         default tab is Featured, so checking only Most Popular left
+	 *         nothing (or the wrong item) highlighted on first open (#3).
+	 */
+	public boolean isHomeTab(int position) {
+		return videosPagerAdapter != null && position >= 0
+				&& (position == videosPagerAdapter.getIndexOf(FEATURED_VIDEOS_FRAGMENT)
+						|| position == videosPagerAdapter.getIndexOf(MOST_POPULAR_VIDEOS_FRAGMENT));
+	}
+
+	/**
+	 * @return True when the given tab is a Library tab (Bookmarks or
+	 *         Downloads — the Downloads page is saved content too, and it
+	 *         is reached from the toolbar now).
+	 */
+	public boolean isLibraryTab(int position) {
+		return videosPagerAdapter != null && position >= 0
+				&& (position == videosPagerAdapter.getIndexOf(BOOKMARKS_FRAGMENT)
+						|| position == videosPagerAdapter.getIndexOf(DOWNLOADED_VIDEOS_FRAGMENT));
+	}
+
 	private int getHomeTabIndex() {
+		if (videosPagerAdapter == null) {
+			return -1;
+		}
 		int index = videosPagerAdapter.getIndexOf(MOST_POPULAR_VIDEOS_FRAGMENT);
 		if (index < 0) {
 			index = videosPagerAdapter.getIndexOf(FEATURED_VIDEOS_FRAGMENT);
@@ -256,6 +331,9 @@ public class MainFragment extends FragmentEx {
 	}
 
 	private int getLibraryTabIndex() {
+		if (videosPagerAdapter == null) {
+			return -1;
+		}
 		int index = videosPagerAdapter.getIndexOf(BOOKMARKS_FRAGMENT);
 		if (index < 0) {
 			index = videosPagerAdapter.getIndexOf(DOWNLOADED_VIDEOS_FRAGMENT);
@@ -264,6 +342,9 @@ public class MainFragment extends FragmentEx {
 	}
 
 	private int getDownloadsTabIndex() {
+		if (videosPagerAdapter == null) {
+			return -1;
+		}
 		return videosPagerAdapter.getIndexOf(DOWNLOADED_VIDEOS_FRAGMENT);
 	}
 
@@ -271,28 +352,6 @@ public class MainFragment extends FragmentEx {
 		VideosGridFragment fragment = videosPagerAdapter.getFragmentFrom(fragmentBinding.pager.getCurrentItem(), true);
 		if (fragment != null && fragment.gridviewBinding != null) {
 			fragment.gridviewBinding.gridView.smoothScrollToPosition(TOP_LIST_INDEX);
-		}
-	}
-
-	/** Highlights the bottom-nav item matching the given page (directly setting the
-	 * checked state, so the item listener is not triggered). Tabs with no bottom-nav
-	 * equivalent (e.g. the Subscriptions feed) leave nothing highlighted. */
-	private void syncBottomNav(int position) {
-		if (fragmentBinding == null || fragmentBinding.bottomNav == null) {
-			return;
-		}
-		android.view.Menu menu = fragmentBinding.bottomNav.getMenu();
-		MenuItem homeItem = menu.findItem(R.id.bottom_nav_home);
-		MenuItem downloadsItem = menu.findItem(R.id.bottom_nav_downloads);
-		MenuItem libraryItem = menu.findItem(R.id.bottom_nav_library);
-		if (homeItem != null) {
-			homeItem.setChecked(position == getHomeTabIndex());
-		}
-		if (downloadsItem != null) {
-			downloadsItem.setChecked(position == getDownloadsTabIndex());
-		}
-		if (libraryItem != null) {
-			libraryItem.setChecked(position == getLibraryTabIndex());
 		}
 	}
 
@@ -333,7 +392,12 @@ public class MainFragment extends FragmentEx {
 		if (videosPagerAdapter != null && fragmentBinding != null) {
 			Logger.d(this, "MAINFRAGMENT RESUMED " + fragmentBinding.tabLayout.getSelectedTabPosition());
 			videosPagerAdapter.selectTabAtPosition(fragmentBinding.tabLayout.getSelectedTabPosition());
-			syncBottomNav(fragmentBinding.pager.getCurrentItem());
+		}
+		// This fragment's view may have been recreated (e.g. returning from
+		// a channel page): tell the activity to re-highlight the bottom
+		// nav for the page actually shown.
+		if (getActivity() instanceof MainActivity) {
+			((MainActivity) getActivity()).syncBottomNav();
 		}
 		// If the selectedFragment is not the subscriptionsFeedFragment, try out refreshing the subs in the background
 		if (SkyTubeApp.getSettings().isFullRefreshTimely()) {
@@ -364,7 +428,6 @@ public class MainFragment extends FragmentEx {
 		switch (settingChange) {
 			case HIDE_TABS: {
 				videosPagerAdapter.updateVisibleTabs(fragmentBinding.tabLayout);
-				syncBottomNav(fragmentBinding.pager.getCurrentItem());
 				break;
 			}
 			case CONTENT_COUNTRY: {
