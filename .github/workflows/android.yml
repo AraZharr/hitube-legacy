@@ -36,8 +36,10 @@ jobs:
       with:
         name: HiTube-Legacy-Oss
         path: app/build/outputs/apk/oss/snapshot/*.apk
+        retention-days: 7
     - name: Upload Artifacts - Extra version
       uses: actions/upload-artifact@v4
       with:
         name: HiTube-Legacy-Extra
         path: app/build/outputs/apk/extra/snapshot/*.apk
+        retention-days: 7
